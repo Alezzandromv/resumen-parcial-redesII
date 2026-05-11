@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes & Cisco — Semana 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161921;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --text: #e8eaf0;
+    --muted: #7c8494;
+    --tag-bg: #1a2535;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(13,15,20,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 0 2rem;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-right: auto;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-section {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-right: 1rem;
+  }
+  .nav-section span {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0 8px;
+  }
+  .nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: all 0.2s;
+    color: var(--muted);
+  }
+  .nav-pill:hover { color: var(--text); border-color: var(--border); background: var(--surface); }
+  .nav-pill.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.08); }
+  .nav-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .nav-weeks { display: flex; gap: 2px; }
+  .nav-week {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: all 0.15s;
+    color: var(--muted);
+  }
+  .nav-week:hover { color: var(--text); border-color: var(--border); }
+  .nav-week.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.1); }
+  .nav-week.locked { color: #3a4050; cursor: default; }
+
+  /* HERO */
+  .hero {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3.5rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+    background: linear-gradient(135deg, #e8eaf0 0%, #a0a8b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 640px;
+    margin-bottom: 1.5rem;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .stat-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .stat-dot.green { background: var(--accent); }
+  .stat-dot.blue { background: var(--accent2); }
+  .stat-dot.amber { background: var(--accent3); }
+
+  /* SECTION TABS */
+  .section-tabs {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    padding: 1rem 1.5rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background: none;
+    font-family: 'Sora', sans-serif;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* MODULE CARD */
+  .module-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.5rem 0 1.2rem;
+  }
+  .module-header:first-child { margin-top: 0; }
+  .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.25);
+    padding: 3px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .module-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .module-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CONCEPT GRID */
+  .concepts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  .concept-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    transition: border-color 0.2s;
+  }
+  .concept-card:hover { border-color: #3a4558; }
+  .concept-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .concept-card h3 .ic {
+    font-size: 16px;
+  }
+  .concept-card p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .concept-card .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--accent2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+
+  /* KEY TABLE */
+  .key-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.2rem;
+    font-size: 13.5px;
+  }
+  .key-table thead tr {
+    border-bottom: 1px solid var(--border);
+  }
+  .key-table th {
+    text-align: left;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 0 12px 10px 0;
+  }
+  .key-table td {
+    padding: 9px 12px 9px 0;
+    color: var(--text);
+    border-bottom: 1px solid rgba(42,48,64,0.5);
+    vertical-align: top;
+  }
+  .key-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    white-space: nowrap;
+    min-width: 180px;
+  }
+  .key-table td:last-child {
+    color: var(--muted);
+  }
+
+  /* CLI BLOCK */
+  .cli-block {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+  }
+  .cli-header {
+    background: var(--surface2);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cli-dots { display: flex; gap: 5px; }
+  .cli-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cli-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+  .cli-body {
+    padding: 1rem 1.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .cli-prompt { color: var(--accent); }
+  .cli-cmd { color: #93c5fd; }
+  .cli-comment { color: #4a5568; }
+  .cli-out { color: var(--muted); }
+
+  /* ALERT / KEY POINT */
+  .keypoint {
+    background: rgba(245,158,11,0.06);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    font-size: 13.5px;
+    color: #d4a855;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .keypoint-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+  /* COMPARE TABLE */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1.2rem;
+  }
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .compare-card-header {
+    padding: 0.8rem 1.2rem;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-card-header.green { color: var(--accent); background: rgba(0,212,170,0.05); }
+  .compare-card-header.blue { color: var(--accent2); background: rgba(59,130,246,0.05); }
+  .compare-card ul {
+    list-style: none;
+    padding: 0.8rem 1.2rem;
+  }
+  .compare-card ul li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(42,48,64,0.4);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .compare-card ul li::before {
+    content: '→';
+    color: var(--border);
+    font-size: 12px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .compare-card ul li:last-child { border-bottom: none; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 2rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* OSI LAYER */
+  .osi-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 13.5px;
+  }
+  .osi-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .osi-name { font-weight: 600; min-width: 130px; }
+  .osi-desc { color: var(--muted); font-size: 13px; }
+  .osi-active { border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.05); }
+  .osi-active .osi-num { background: rgba(0,212,170,0.15); color: var(--accent); }
+  .osi-active .osi-name { color: var(--accent); }
+
+  /* SUMMARY BOX */
+  .summary-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .summary-box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .summary-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .summary-box ul li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 3px 0;
+    display: flex;
+    gap: 8px;
+  }
+  .summary-box ul li::before {
+    content: '✦';
+    color: var(--accent);
+    font-size: 9px;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* LABS */
+  .lab-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 1.2rem;
+  }
+  .lab-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--border);
+    min-width: 48px;
+    line-height: 1;
+    padding-top: 2px;
+  }
+  .lab-content h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .lab-content p {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 0.7rem;
+  }
+  .lab-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .lab-tag {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--accent3);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .lab-tool-tag {
+    color: var(--accent2);
+  }
+
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.7rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr; }
+    nav .nav-weeks { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">◈ REDES / CISCO</a>
+    <div class="nav-section">
+      <span>Sección</span>
+      <a class="nav-pill active" onclick="setSection('teoria')" href="#">Teoría</a>
+      <a class="nav-pill" onclick="setSection('labs')" href="#">Laboratorios</a>
+    </div>
+    <div class="nav-weeks" id="weeksNav">
+      <a class="nav-week active"  href="semana1.html" title="Semana 1">1</a>
+      <a class="nav-week locked" href="semana2.html" title="Pendiente">2</a>
+      <a class="nav-week locked" href="semana3.html" title="Pendiente">3</a>
+      <a class="nav-week locked" href="semana4.html" title="Pendiente">4</a>
+      <a class="nav-week locked" href="semana5.html" title="Pendiente">5</a>
+      <a class="nav-week locked" href="semana6.html" title="Pendiente">6</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">7</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">◉ SEMANA 1 — ACTIVA</div>
+  <h1>Fundamentos de Redes<br>& Switching Ethernet</h1>
+  <p class="hero-sub">Capa de Enlace de Datos, Conmutación Ethernet, Switching LAN y Configuración Básica de Dispositivos Cisco. Curso SRWE v7.0 + ITN v7.0.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-dot green"></div>4 módulos teóricos</div>
+    <div class="stat"><div class="stat-dot blue"></div>Cisco IOS CLI</div>
+    <div class="stat"><div class="stat-dot amber"></div>Wireshark · Packet Tracer</div>
+  </div>
+</div>
+
+<div class="section-tabs">
+  <button class="tab-btn active" onclick="showTab('teoria', this)">📘 Teoría</button>
+  <button class="tab-btn" onclick="showTab('labs', this)">🧪 Laboratorios</button>
+</div>
+
+<main>
+
+<!-- ============== TEORIA ============== -->
+<div class="tab-content active" id="tab-teoria">
+
+  <!-- MÓDULO 1: Capa de Enlace de Datos -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 6 · ITN</div>
+    <div class="module-title">Capa de Enlace de Datos</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Objetivo clave:</strong> La Capa 2 (enlace de datos) es responsable de la comunicación NIC a NIC dentro del mismo segmento de red. Encapsula paquetes de Capa 3 en <strong>tramas</strong> y realiza detección de errores.</span>
+  </div>
+
+  <div class="section-title">Subcapas IEEE 802</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3><span class="ic">🔗</span> LLC — Control de Enlace Lógico</h3>
+      <p>IEEE 802.2. Comunica el software de red (capas superiores) con el hardware. Identifica qué protocolo de Capa 3 usa la trama (IPv4, IPv6, ARP…).</p>
+      <div class="tag">software-facing</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">📡</span> MAC — Control de Acceso a Medios</h3>
+      <p>IEEE 802.3 / 802.11 / 802.15. Responsable de la encapsulación de datos, control de acceso al medio y el <strong>direccionamiento físico (MAC address)</strong>.</p>
+      <div class="tag">hardware-facing</div>
+    </div>
+  </div>
+
+  <div class="section-title">Topologías</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3><span class="ic">🗺</span> Topología WAN: Punto a Punto</h3>
+      <p>Enlace permanente entre dos nodos. La más simple. Todo el tráfico va del punto A al B.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">⭐</span> Topología LAN: Estrella / Estrella Extendida</h3>
+      <p>Estándar moderno. Todos los dispositivos finales conectan a un switch central. Fácil de escalar y troubleshoot.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">🔄</span> Semidúplex (Half-duplex)</h3>
+      <p>Solo un dispositivo transmite a la vez. Usado en WLAN y Ethernet legacy con hubs. Requiere CSMA/CD o CSMA/CA.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">⚡</span> Dúplex completo (Full-duplex)</h3>
+      <p>Transmisión y recepción simultáneas. Los switches Ethernet modernos operan en full-duplex. <strong>Elimina los dominios de colisión.</strong></p>
+    </div>
+  </div>
+
+  <div class="section-title">Control de Acceso al Medio</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">CSMA/CD — Ethernet Legacy</div>
+      <ul>
+        <li>Detección de colisiones post-hecho</li>
+        <li>Al detectar colisión, espera tiempo aleatorio y retransmite</li>
+        <li>Solo en semidúplex con hubs</li>
+        <li>IEEE 802.3 (topología bus)</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header blue">CSMA/CA — WLAN 802.11</div>
+      <ul>
+        <li>Evitar colisiones antes de transmitir</li>
+        <li>Incluye tiempo de duración en la trama</li>
+        <li>Otros dispositivos esperan ese tiempo</li>
+        <li>IEEE 802.11 (WiFi)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Estructura de la Trama de Enlace de Datos</div>
+  <table class="key-table">
+    <thead><tr><th>Campo</th><th>Función</th></tr></thead>
+    <tbody>
+      <tr><td>Start/Stop Flag</td><td>Delimitadores de inicio y fin de trama</td></tr>
+      <tr><td>Addressing (Src/Dst MAC)</td><td>Nodos de origen y destino en la LAN local</td></tr>
+      <tr><td>Type / EtherType</td><td>Protocolo Capa 3 encapsulado (0x0800=IPv4, 0x86DD=IPv6, 0x0806=ARP)</td></tr>
+      <tr><td>Control</td><td>Servicios de control de flujo</td></tr>
+      <tr><td>Data (Payload)</td><td>Paquete de Capa 3 encapsulado</td></tr>
+      <tr><td>FCS — Frame Check Sequence</td><td>Detección de errores mediante CRC</td></tr>
+    </tbody>
+  </table>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚠</span>
+    <span>Las direcciones de Capa 2 solo son válidas para entrega <strong>local en el mismo enlace</strong>. En cada salto (router), las MACs de origen y destino se reemplazan; las IPs permanecen iguales.</span>
+  </div>
+
+  <!-- MÓDULO 2: Conmutación Ethernet -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 7 · ITN</div>
+    <div class="module-title">Conmutación Ethernet</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Trama Ethernet — Estándares</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3><span class="ic">📏</span> Tamaños de Trama Ethernet</h3>
+      <p>Mínimo: <strong>64 bytes</strong>. Máximo: <strong>1518 bytes</strong>. El preámbulo (8 bytes) no se incluye en el conteo. Tramas menores = runts (colisiones). Tramas mayores = jumbo frames.</p>
+      <div class="tag">IEEE 802.3</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">🏷</span> Dirección MAC Ethernet</h3>
+      <p>48 bits = 12 dígitos hexadecimales = 6 bytes. Los primeros 3 bytes son el <strong>OUI (Organizationally Unique Identifier)</strong> del fabricante. Los últimos 3 bytes son asignados por el fabricante.</p>
+      <div class="tag">OUI + Device ID</div>
+    </div>
+  </div>
+
+  <div class="section-title">Tipos de Direcciones MAC</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3><span class="ic">🎯</span> Unicast</h3>
+      <p>Envío a un único dispositivo. Dirección única destino. ARP resuelve IP→MAC en IPv4; Neighbor Discovery (ND) en IPv6.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">📢</span> Broadcast</h3>
+      <p>Destino: <code>FF-FF-FF-FF-FF-FF</code>. El switch lo envía a todos los puertos excepto el de entrada. El router no lo reenvía (limita el dominio de broadcast).</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">👥</span> Multicast</h3>
+      <p>Grupo de dispositivos. <code>01-00-5E-xx-xx-xx</code> para IPv4 multicast. <code>33-33-xx</code> para IPv6. Solo los miembros del grupo procesan la trama.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Tabla de Direcciones MAC (Tabla CAM)</div>
+  <div class="summary-box">
+    <h4>🔍 Proceso de Aprendizaje del Switch — 2 Pasos</h4>
+    <ul>
+      <li><strong>Paso 1 — Aprender:</strong> Examina la MAC de ORIGEN. Si no existe en la tabla, la agrega junto con el número de puerto. Si existe, reinicia el timer a 5 minutos.</li>
+      <li><strong>Paso 2 — Reenviar:</strong> Examina la MAC de DESTINO. Si está en tabla → reenvía por ese puerto específico. Si NO está → <em>flooding</em> a todos los puertos excepto el de entrada.</li>
+      <li>Si el destino es broadcast o multicast → flooding automático a todos los puertos excepto origen.</li>
+      <li>El switch NUNCA reenvía por el mismo puerto en que recibió la trama.</li>
+    </ul>
+  </div>
+
+  <div class="section-title">Métodos de Reenvío de Switch</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">Store-and-Forward (Almacenar y Reenviar)</div>
+      <ul>
+        <li>Recibe la trama COMPLETA antes de reenviar</li>
+        <li>Verifica CRC en el campo FCS</li>
+        <li>Descarta tramas con errores → ahorra ancho de banda</li>
+        <li>Mayor latencia pero más confiable</li>
+        <li>Soporta puertos con velocidades distintas</li>
+        <li>Requerido para QoS (calidad de servicio)</li>
+        <li>Método principal de Cisco</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header blue">Cut-Through (Corte)</div>
+      <ul>
+        <li>Reenvía apenas lee el MAC de destino (sin recibir trama completa)</li>
+        <li><strong>Fast-forward:</strong> latencia mínima (&lt;10μs), no verifica errores</li>
+        <li><strong>Fragment-free:</strong> espera 64 bytes mínimo, elimina runts</li>
+        <li>Puede propagar tramas con errores</li>
+        <li>No soporta puertos con velocidades diferentes</li>
+        <li>Útil en entornos HPC de ultra-baja latencia</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MÓDULO 3: Conceptos de LAN Switching -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 2 · SRWE</div>
+    <div class="module-title">Conceptos de LAN Switching</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span>Los switches usan <strong>ASICs</strong> (Application-Specific Integrated Circuits) para tomar decisiones de reenvío a velocidad de hardware, muy superiores a las decisiones por software.</span>
+  </div>
+
+  <div class="section-title">Dominios de Colisión vs Difusión</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3><span class="ic">💥</span> Dominio de Colisión</h3>
+      <p>Área de red donde dos dispositivos pueden causar colisión simultánea. Los <strong>hubs</strong> extienden el dominio de colisión. Los <strong>switches en full-duplex</strong> lo <em>eliminan</em>. Si hay semidúplex (negociación automática fallida), el dominio de colisión reaparece en ese enlace.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">📡</span> Dominio de Difusión (Broadcast Domain)</h3>
+      <p>Todos los dispositivos que reciben un frame broadcast. Los switches y hubs lo <em>extienden</em>. Solo un <strong>router (Capa 3)</strong> lo segmenta — no reenvía broadcasts. Las VLANs también lo segmentan sin hardware físico adicional.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="ic">⚙</span> Alivio de Congestión</h3>
+      <p>Técnicas del switch: velocidades de puerto hasta 100 Gbps, switching interno vía bus/memoria compartida, buffers para tramas grandes, alta densidad de puertos (menos tráfico externo).</p>
+    </div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">📌</span>
+    <span>Regla de oro: <strong>Capa 1 y 2 extienden dominios de broadcast. Capa 3 (router) los divide.</strong> Nunca un router inunda broadcasts. Un switch amplía dominios de difusión pero puede eliminar dominios de colisión.</span>
+  </div>
+
+  <!-- MÓDULO 4: Config Básica -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 1 · SRWE</div>
+    <div class="module-title">Configuración Básica de Dispositivos</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Secuencia de Arranque del Switch (5 pasos)</div>
+  <div class="summary-box">
+    <h4>🚀 Boot Sequence — Cisco Switch</h4>
+    <ul>
+      <li><strong>Paso 1:</strong> POST (Power-On Self-Test) — verifica CPU, DRAM y flash desde ROM</li>
+      <li><strong>Paso 2:</strong> Carga el Boot Loader desde ROM</li>
+      <li><strong>Paso 3:</strong> Boot Loader inicializa la CPU y registros</li>
+      <li><strong>Paso 4:</strong> Boot Loader inicializa el sistema de archivos Flash</li>
+      <li><strong>Paso 5:</strong> Carga el IOS desde flash y transfiere control al IOS</li>
+    </ul>
+  </div>
+
+  <div class="section-title">Configuración de SVI (Switch Virtual Interface)</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots">
+        <div class="cli-dot" style="background:#ff5f57"></div>
+        <div class="cli-dot" style="background:#febc2e"></div>
+        <div class="cli-dot" style="background:#28c840"></div>
+      </div>
+      <span class="cli-label">IOS CLI — Configurar acceso remoto al switch</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">! Paso 1: Crear VLAN de administración (no usar VLAN 1 por seguridad)</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">configure terminal</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 99</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name MGMT</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">exit</span>
+
+<span class="cli-comment">! Paso 2: Configurar la interfaz virtual (SVI) de la VLAN 99</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip address 172.17.99.11 255.255.255.0</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">exit</span>
+
+<span class="cli-comment">! Paso 3: Default gateway (para administración remota desde otras redes)</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip default-gateway 172.17.99.1</span>
+
+<span class="cli-comment">! Guardar configuración</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">end</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+  </div>
+
+  <div class="section-title">Configuración de Puertos del Switch</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots">
+        <div class="cli-dot" style="background:#ff5f57"></div>
+        <div class="cli-dot" style="background:#febc2e"></div>
+        <div class="cli-dot" style="background:#28c840"></div>
+      </div>
+      <span class="cli-label">IOS CLI — Puertos, dúplex y velocidad</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">! Configurar puerto específico</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">duplex full</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">speed 100</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">description Conexion-a-PC1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+
+<span class="cli-comment">! Configurar rango de puertos</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/1 - 24</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">duplex auto</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">speed auto</span>
+
+<span class="cli-comment">! Verificar puertos</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fastethernet 0/1</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces status</span></div>
+  </div>
+
+  <div class="section-title">Configuración SSH (Acceso Seguro)</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots">
+        <div class="cli-dot" style="background:#ff5f57"></div>
+        <div class="cli-dot" style="background:#febc2e"></div>
+        <div class="cli-dot" style="background:#28c840"></div>
+      </div>
+      <span class="cli-label">IOS CLI — SSH v2 (reemplaza Telnet inseguro)</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">! Requisito: hostname y dominio configurados</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">hostname S1</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip domain-name cisco.local</span>
+
+<span class="cli-comment">! Generar claves RSA (mínimo 1024 bits para SSH v2)</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">crypto key generate rsa modulus 2048</span>
+
+<span class="cli-comment">! Forzar SSH versión 2</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip ssh version 2</span>
+
+<span class="cli-comment">! Crear usuario local</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">username admin privilege 15 secret Cisco123!</span>
+
+<span class="cli-comment">! Habilitar SSH en líneas VTY</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line vty 0 15</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">transport input ssh</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login local</span>
+
+<span class="cli-comment">! Verificar SSH</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip ssh</span></div>
+  </div>
+
+  <div class="section-title">Verificación y Troubleshooting</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots">
+        <div class="cli-dot" style="background:#ff5f57"></div>
+        <div class="cli-dot" style="background:#febc2e"></div>
+        <div class="cli-dot" style="background:#28c840"></div>
+      </div>
+      <span class="cli-label">Comandos show — verificación esencial</span>
+    </div>
+    <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">show mac address-table</span>     <span class="cli-out">→ Tabla CAM completa</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show mac address-table dynamic</span> <span class="cli-out">→ Solo entradas aprendidas dinámicamente</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces</span>                <span class="cli-out">→ Estado y estadísticas de interfaces</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip interface brief</span>         <span class="cli-out">→ Resumen IPs y estado</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show running-config</span>             <span class="cli-out">→ Configuración activa en RAM</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show startup-config</span>             <span class="cli-out">→ Configuración guardada en NVRAM</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show version</span>                    <span class="cli-out">→ IOS version, uptime, hardware</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show boot</span>                       <span class="cli-out">→ Archivo IOS de arranque configurado</span></div>
+  </div>
+
+  <div class="section-title">Glosario Clave — Semana 1</div>
+  <table class="key-table">
+    <thead><tr><th>Término</th><th>Definición</th></tr></thead>
+    <tbody>
+      <tr><td>CAM Table</td><td>Content Addressable Memory — tabla de MACs del switch. Máx. 5 min por entrada.</td></tr>
+      <tr><td>SVI</td><td>Switch Virtual Interface — interfaz lógica para administración remota.</td></tr>
+      <tr><td>OUI</td><td>Organizationally Unique Identifier — primeros 3 bytes de una MAC, identifica al fabricante.</td></tr>
+      <tr><td>FCS / CRC</td><td>Frame Check Sequence / Cyclic Redundancy Check — campo para detección de errores en la trama.</td></tr>
+      <tr><td>Flooding / Inundación</td><td>Envío a todos los puertos excepto el origen — ocurre con broadcast, multicast o MAC destino desconocida.</td></tr>
+      <tr><td>ASIC</td><td>Application-Specific Integrated Circuit — chip de hardware para decisiones de switching ultra-rápidas.</td></tr>
+      <tr><td>Runt</td><td>Trama menor a 64 bytes — señal de colisión, se descarta automáticamente.</td></tr>
+      <tr><td>Jumbo Frame</td><td>Trama mayor a 1518 bytes — soportada por la mayoría de switches/NICs modernas.</td></tr>
+      <tr><td>Fragment-free</td><td>Variante de cut-through — espera los primeros 64 bytes para eliminar runts sin verificar CRC completo.</td></tr>
+      <tr><td>CSMA/CD</td><td>Carrier Sense Multiple Access / Collision Detection — Ethernet legacy semidúplex.</td></tr>
+      <tr><td>CSMA/CA</td><td>Carrier Sense Multiple Access / Collision Avoidance — WiFi 802.11 semidúplex.</td></tr>
+      <tr><td>LLC</td><td>Logical Link Control (IEEE 802.2) — subcapa superior del enlace de datos.</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ============== LABORATORIOS ============== -->
+<div class="tab-content" id="tab-labs">
+
+  <div style="margin-bottom: 1.5rem; padding: 1rem 0;">
+    <p style="color: var(--muted); font-size: 14px;">Laboratorios correspondientes a los contenidos de la Semana 1. Usa Cisco Packet Tracer para los PT Labs y Wireshark para el análisis de tramas. Sube tu archivo .pkt o capturas cuando los completes.</p>
+  </div>
+
+  <div class="section-title">Laboratorios de Teoría — Semana 1</div>
+
+  <div class="lab-card">
+    <div class="lab-num">01</div>
+    <div class="lab-content">
+      <h3>Configuración Básica del Switch</h3>
+      <p>Configurar parámetros iniciales de un switch Cisco: hostname, contraseñas, banner MOTD, acceso seguro por consola y VTY, configuración de SVI para administración remota, verificación con comandos show.</p>
+      <div class="lab-tags">
+        <span class="lab-tag">Módulo 1 · SRWE</span>
+        <span class="lab-tag lab-tool-tag">Packet Tracer (Modo Físico)</span>
+        <span class="lab-tag lab-tool-tag">Hardware físico</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-card">
+    <div class="lab-num">02</div>
+    <div class="lab-content">
+      <h3>Configuración de Puertos del Switch</h3>
+      <p>Configurar puertos individuales y rangos: dúplex, velocidad, descripciones. Verificar configuración con show interfaces. Diagnosticar mismatch de dúplex. Verificador de sintaxis interactivo.</p>
+      <div class="lab-tags">
+        <span class="lab-tag">Módulo 1 · SRWE — Sección 1.2.9</span>
+        <span class="lab-tag lab-tool-tag">Syntax Checker</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-card">
+    <div class="lab-num">03</div>
+    <div class="lab-content">
+      <h3>Configuración de SSH</h3>
+      <p>Reemplazar Telnet por SSH v2. Generar claves RSA, crear usuarios locales, configurar líneas VTY solo para SSH. Probar conectividad segura desde PC simulado. Se prefiere SSH v2 sobre v1 por mayor seguridad.</p>
+      <div class="lab-tags">
+        <span class="lab-tag">Módulo 1 · SRWE — Sección 1.3.6</span>
+        <span class="lab-tag lab-tool-tag">Packet Tracer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-card">
+    <div class="lab-num">04</div>
+    <div class="lab-content">
+      <h3>Examinar Tramas Ethernet con Wireshark</h3>
+      <p>Capturar tráfico de red real con Wireshark. Analizar los campos de una trama Ethernet II: preámbulo, MACs de origen y destino, EtherType, payload, FCS. Identificar tráfico unicast, broadcast y multicast. Calcular tamaños de trama.</p>
+      <div class="lab-tags">
+        <span class="lab-tag">Módulo 7 · ITN — Sección 7.1.6</span>
+        <span class="lab-tag lab-tool-tag">Wireshark</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-card">
+    <div class="lab-num">05</div>
+    <div class="lab-content">
+      <h3>Ver Direcciones MAC de Dispositivos de Red</h3>
+      <p>Configurar la topología e inicializar dispositivos. Verificar conectividad. Mostrar y analizar direcciones MAC desde el sistema operativo (ipconfig /all, arp -a en Windows; ip link, arp en Linux) y desde el switch (show mac address-table).</p>
+      <div class="lab-tags">
+        <span class="lab-tag">Módulo 7 · ITN — Sección 7.2.7</span>
+        <span class="lab-tag lab-tool-tag">Hardware físico</span>
+        <span class="lab-tag lab-tool-tag">Packet Tracer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-card">
+    <div class="lab-num">06</div>
+    <div class="lab-content">
+      <h3>Ver la Tabla de Direcciones MAC del Switch</h3>
+      <p>Armar topología multi-switch. Generar tráfico entre hosts. Observar cómo se puebla la tabla CAM dinámicamente. Usar show mac address-table para analizar el proceso de aprendizaje. Verificar flooding vs forwarding selectivo.</p>
+      <div class="lab-tags">
+        <span class="lab-tag">Módulo 7 · ITN — Sección 7.3.7</span>
+        <span class="lab-tag lab-tool-tag">Packet Tracer</span>
+        <span class="lab-tag lab-tool-tag">Hardware físico</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-card">
+    <div class="lab-num">07</div>
+    <div class="lab-content">
+      <h3>Implementar una Red Pequeña</h3>
+      <p>Proyecto integrador: configurar routers y switches en una red pequeña. Configurar interfaces de router (IPv4 e IPv6), rutas, interfaces de switch, SSH, verificar conectividad end-to-end entre todas las redes directamente conectadas.</p>
+      <div class="lab-tags">
+        <span class="lab-tag">Módulo 1 · SRWE — Sección 1.6.1</span>
+        <span class="lab-tag lab-tool-tag">Packet Tracer</span>
+        <span class="lab-tag lab-tool-tag">Modo Físico</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Comandos Clave para los Labs</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots">
+        <div class="cli-dot" style="background:#ff5f57"></div>
+        <div class="cli-dot" style="background:#febc2e"></div>
+        <div class="cli-dot" style="background:#28c840"></div>
+      </div>
+      <span class="cli-label">Quick Reference — comandos frecuentes en labs</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- TABLA MAC ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show mac address-table</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">clear mac address-table dynamic</span>
+
+<span class="cli-comment">--- DESDE WINDOWS ---</span>
+<span class="cli-out">C:\> ipconfig /all</span>              <span class="cli-comment">→ Ver MAC e IP</span>
+<span class="cli-out">C:\> arp -a</span>                     <span class="cli-comment">→ Ver tabla ARP local</span>
+
+<span class="cli-comment">--- DESDE LINUX ---</span>
+<span class="cli-out">$ ip link show</span>                  <span class="cli-comment">→ Ver interfaces y MACs</span>
+<span class="cli-out">$ arp -n</span>                        <span class="cli-comment">→ Tabla ARP</span>
+
+<span class="cli-comment">--- VERIFICAR CONECTIVIDAD ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">ping 192.168.1.1</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">traceroute 192.168.1.1</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip interface brief</span>
+
+<span class="cli-comment">--- ROUTER: CONFIGURAR INTERFAZ ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.1 255.255.255.0</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span></div>
+  </div>
+
+</div>
+</main>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  // Update nav pills
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  if (name === 'teoria') document.querySelector('.nav-pill:first-child').classList.add('active');
+  else document.querySelectorAll('.nav-pill')[1].classList.add('active');
+}
+
+function setSection(name) {
+  const btn = name === 'teoria'
+    ? document.querySelectorAll('.tab-btn')[0]
+    : document.querySelectorAll('.tab-btn')[1];
+  showTab(name, btn);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes & Cisco — Semana 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161921;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --accent4: #a78bfa;
+    --text: #e8eaf0;
+    --muted: #7c8494;
+    --tag-bg: #1a2535;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; font-size: 15px; line-height: 1.7; min-height: 100vh; }
+
+  nav { position: sticky; top: 0; background: rgba(13,15,20,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 100; padding: 0 2rem; }
+  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 0; height: 56px; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; margin-right: auto; letter-spacing: 0.05em; text-decoration: none; }
+  .nav-section { display: flex; align-items: center; gap: 2px; margin-right: 1rem; }
+  .nav-section span { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 8px; }
+  .nav-pill { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.2s; color: var(--muted); background: none; font-family: 'Sora', sans-serif; }
+  .nav-pill:hover { color: var(--text); border-color: var(--border); background: var(--surface); }
+  .nav-pill.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.08); }
+  .nav-weeks { display: flex; gap: 2px; }
+  .nav-week { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; font-family: 'JetBrains Mono', monospace; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.15s; color: var(--muted); }
+  .nav-week:hover { color: var(--text); border-color: var(--border); }
+  .nav-week.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.1); }
+  .nav-week.done { color: #4a7a6a; border-color: #2a4a3a; }
+  .nav-week.locked { color: #3a4050; cursor: default; }
+
+  .hero { max-width: 1100px; margin: 0 auto; padding: 3.5rem 2rem 2rem; border-bottom: 1px solid var(--border); }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3); color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px; margin-bottom: 1.2rem; }
+  .hero h1 { font-size: 2.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.8rem; background: linear-gradient(135deg, #e8eaf0 0%, #a0a8b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { color: var(--muted); font-size: 15px; max-width: 640px; margin-bottom: 1.5rem; }
+  .hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+  .stat-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  .section-tabs { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab-btn { padding: 1rem 1.5rem; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; border-top: none; border-left: none; border-right: none; background: none; font-family: 'Sora', sans-serif; transition: all 0.2s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .module-header { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.2rem; }
+  .module-header:first-child { margin-top: 0; }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .module-title { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+  .module-line { flex: 1; height: 1px; background: var(--border); }
+
+  .concepts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; transition: border-color 0.2s; }
+  .concept-card:hover { border-color: #3a4558; }
+  .concept-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .concept-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+  .concept-card .tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--tag-bg); border: 1px solid var(--border); color: var(--accent2); padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+
+  .key-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 13.5px; }
+  .key-table thead tr { border-bottom: 1px solid var(--border); }
+  .key-table th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 0 12px 10px 0; }
+  .key-table td { padding: 9px 12px 9px 0; color: var(--text); border-bottom: 1px solid rgba(42,48,64,0.5); vertical-align: top; }
+  .key-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; min-width: 200px; }
+  .key-table td:last-child { color: var(--muted); }
+
+  .cli-block { background: #0a0c10; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1.2rem; }
+  .cli-header { background: var(--surface2); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .cli-dots { display: flex; gap: 5px; }
+  .cli-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cli-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .cli-body { padding: 1rem 1.4rem; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; overflow-x: auto; }
+  .cli-prompt { color: var(--accent); }
+  .cli-cmd { color: #93c5fd; }
+  .cli-comment { color: #4a5568; }
+  .cli-out { color: var(--muted); }
+  .cli-important { color: var(--accent3); }
+
+  .keypoint { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.9rem 1.2rem; font-size: 13.5px; color: #d4a855; margin-bottom: 1rem; display: flex; gap: 10px; align-items: flex-start; }
+  .keypoint-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .keypoint.info { background: rgba(59,130,246,0.06); border-color: rgba(59,130,246,0.2); color: #7ab3f0; }
+  .keypoint.danger { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); color: #f87171; }
+  .keypoint.green { background: rgba(0,212,170,0.06); border-color: rgba(0,212,170,0.2); color: var(--accent); }
+
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.2rem; }
+  .compare-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .compare-card-header { padding: 0.8rem 1.2rem; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); }
+  .compare-card-header.green { color: var(--accent); background: rgba(0,212,170,0.05); }
+  .compare-card-header.blue { color: var(--accent2); background: rgba(59,130,246,0.05); }
+  .compare-card-header.purple { color: var(--accent4); background: rgba(167,139,250,0.05); }
+  .compare-card-header.orange { color: var(--accent3); background: rgba(245,158,11,0.05); }
+  .compare-card-header.red { color: #f87171; background: rgba(239,68,68,0.05); }
+  .compare-card ul { list-style: none; padding: 0.8rem 1.2rem; }
+  .compare-card ul li { font-size: 13px; color: var(--muted); padding: 4px 0; border-bottom: 1px solid rgba(42,48,64,0.4); display: flex; gap: 8px; align-items: flex-start; }
+  .compare-card ul li::before { content: '→'; color: var(--border); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+  .compare-card ul li:last-child { border-bottom: none; }
+
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .summary-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+  .summary-box h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.7rem; }
+  .summary-box ul { list-style: none; padding: 0; }
+  .summary-box ul li { font-size: 13px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; }
+  .summary-box ul li::before { content: '✦'; color: var(--accent4); font-size: 9px; margin-top: 5px; flex-shrink: 0; }
+
+  /* ATTACK TABLE */
+  .atk-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 12.5px; }
+  .atk-table th, .atk-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+  .atk-table th { background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .atk-table td { color: var(--muted); }
+  .atk-table td:first-child { color: #f87171; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 11px; background: rgba(239,68,68,0.04); }
+  .atk-table td:nth-child(2) { color: var(--accent3); }
+  .atk-table td:nth-child(3) { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  /* VIOLATION TABLE */
+  .viol-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 12.5px; }
+  .viol-table th, .viol-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: center; }
+  .viol-table th { background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .viol-table td:first-child { text-align: left; color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; background: rgba(167,139,250,0.05); }
+  .viol-table .yes { color: var(--accent); font-weight: 600; }
+  .viol-table .no { color: #4a5568; }
+  .viol-table .partial { color: var(--accent3); }
+
+  /* LAB SOLUTION CARD */
+  .lab-solution { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem; }
+  .lab-solution-header { padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid var(--border); background: var(--surface2); cursor: pointer; user-select: none; }
+  .lab-solution-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .lab-solution-title { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .lab-solution-ref { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .lab-solution-body { padding: 1.4rem; }
+  .lab-objective { font-size: 13.5px; color: var(--muted); margin-bottom: 1rem; border-left: 3px solid var(--accent4); padding-left: 0.8rem; }
+  .lab-step { margin-bottom: 1.2rem; }
+  .lab-step-title { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .lab-step-title .step-num { background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); border-radius: 3px; padding: 1px 6px; font-size: 10px; }
+
+  /* IOS MODES */
+  .ios-modes { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 1.2rem; }
+  .ios-mode { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .ios-mode-prompt { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; min-width: 240px; }
+  .ios-mode-desc { font-size: 13px; color: var(--muted); }
+  .ios-mode-cmd { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent3); background: var(--tag-bg); border: 1px solid var(--border); padding: 1px 7px; border-radius: 3px; margin-left: 6px; }
+
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.7rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr; }
+    nav .nav-weeks { display: none; }
+    .ios-mode { flex-direction: column; gap: 4px; }
+    .ios-mode-prompt { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">◈ REDES / CISCO</a>
+    <div class="nav-section">
+      <span>Sección</span>
+      <button class="nav-pill active" onclick="setSection('teoria')">Teoría</button>
+      <button class="nav-pill" onclick="setSection('labs')">Laboratorios</button>
+    </div>
+    <div class="nav-weeks">
+      <a class="nav-week done" href="index.html" title="Semana 1 — completada">1</a>
+      <a class="nav-week done" href="semana2.html" title="Semana 2 — completada">2</a>
+      <a class="nav-week done" href="semana3.html" title="Semana 3 — completada">3</a>
+      <a class="nav-week done" href="semana4.html" title="Semana 4 — completada">4</a>
+      <a class="nav-week active" href="semana5.html" title="Semana 5 — actual">5</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">6</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">7</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">◉ SEMANA 5 — ACTIVA</div>
+  <h1>Seguridad de LAN<br>& Configuración en el Switch</h1>
+  <p class="hero-sub">Amenazas de Capa 2, AAA, 802.1X, Port Security, DHCP Snooping, DAI, IPSG, PortFast y BPDU Guard. Módulos 10 y 11 de SRWE v7.0.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-dot" style="background:var(--accent4)"></div>2 módulos teóricos</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent2)"></div>5 tipos de ataques LAN</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent3)"></div>Lab AAA: RADIUS + TACACS+</div>
+  </div>
+</div>
+
+<div class="section-tabs">
+  <button class="tab-btn active" onclick="showTab('teoria', this)">📘 Teoría</button>
+  <button class="tab-btn" onclick="showTab('labs', this)">🧪 Laboratorios + Soluciones</button>
+</div>
+
+<main>
+
+<!-- =============== TEORÍA =============== -->
+<div class="tab-content active" id="tab-teoria">
+
+  <!-- MÓDULO 10: CONCEPTOS DE SEGURIDAD LAN -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 10 · SRWE</div>
+    <div class="module-title">Conceptos de Seguridad de LAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Idea clave:</strong> Si la Capa 2 es comprometida, <strong>todas las capas superiores también caen</strong>. Los firewalls y VPNs no sirven si el atacante ya está dentro de la LAN con acceso a nivel de trama Ethernet.</span>
+  </div>
+
+  <div class="section-title">Seguridad de Endpoint</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🛡 NGFW — Firewall de Siguiente Generación</h3>
+      <p>Inspección de paquetes con estado + visibilidad de aplicaciones + NGIPS + protección contra malware (AMP) + filtrado de URLs. Protege el perímetro exterior de la red.</p>
+      <div class="tag">perímetro externo</div>
+    </div>
+    <div class="concept-card">
+      <h3>🔐 NAC — Control de Acceso a la Red</h3>
+      <p>Incluye servicios AAA (autenticación, autorización, contabilidad). Administra políticas de acceso para distintos usuarios y dispositivos. Ejemplo: <strong>Cisco ISE</strong> (Identity Services Engine).</p>
+      <div class="tag">Cisco ISE</div>
+    </div>
+    <div class="concept-card">
+      <h3>📧 ESA — Email Security Appliance</h3>
+      <p>Monitorea el tráfico SMTP. Bloquea amenazas conocidas, elimina correos con enlaces maliciosos, bloquea acceso a sitios infectados. Se actualiza cada 3-5 min con datos de Cisco Talos.</p>
+      <div class="tag">Cisco Talos</div>
+    </div>
+    <div class="concept-card">
+      <h3>🌐 WSA — Web Security Appliance</h3>
+      <p>Controla el tráfico web de los usuarios: listas negras de URL, filtrado, escaneo de malware, categorización, filtrado de aplicaciones, cifrado/descifrado de tráfico HTTPS.</p>
+      <div class="tag">proxy web seguro</div>
+    </div>
+    <div class="concept-card">
+      <h3>💻 Protección del Endpoint</h3>
+      <p>Antivirus/antimalware, firewall basado en host (HIPS). Hoy en día la protección óptima combina: <strong>NAC + AMP + ESA + WSA</strong> en conjunto, no solo antivirus local.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🎯 Amenazas Actuales</h3>
+      <p><strong>DDoS:</strong> ataque coordinado desde zombis para degradar servicios. <strong>Data Breach:</strong> robo de datos confidenciales. <strong>Malware/Ransomware:</strong> cifra datos hasta pagar rescate (ej. WannaCry).</p>
+    </div>
+  </div>
+
+  <div class="section-title">AAA — Autenticación, Autorización y Contabilidad</div>
+
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span><strong>AAA</strong> es el framework central para control de acceso. Responde tres preguntas: <strong>¿Quién eres?</strong> (Autenticación) · <strong>¿Qué puedes hacer?</strong> (Autorización) · <strong>¿Qué hiciste?</strong> (Contabilidad/Accounting)</span>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">AAA Local</div>
+      <ul>
+        <li>Usuarios y contraseñas guardados en el propio dispositivo</li>
+        <li>No requiere servidor externo</li>
+        <li>Ideal para redes pequeñas</li>
+        <li>No escala: hay que configurar cada router/switch por separado</li>
+        <li>Sin respaldo alternativo si falla</li>
+        <li>Comando: <code>username X secret Y</code></li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header blue">AAA Basada en Servidor</div>
+      <ul>
+        <li>Router consulta servidor central AAA</li>
+        <li>Un solo servidor gestiona todos los usuarios</li>
+        <li>Protocolos: <strong>RADIUS</strong> o <strong>TACACS+</strong></li>
+        <li>Escalable: ideal para múltiples routers/switches</li>
+        <li>Fallback local si el servidor no responde</li>
+        <li>Comando: <code>aaa new-model</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header blue">RADIUS</div>
+      <ul>
+        <li>Remote Authentication Dial-In User Service</li>
+        <li>Protocolo estándar abierto (RFC)</li>
+        <li>Combina autenticación y autorización en un solo proceso</li>
+        <li>Usa UDP (puertos 1812 auth / 1813 accounting)</li>
+        <li>Solo encripta la contraseña en el paquete</li>
+        <li>Usado en acceso a red (VPN, Wi-Fi, etc.)</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header purple">TACACS+</div>
+      <ul>
+        <li>Terminal Access Controller Access Control System</li>
+        <li>Protocolo propietario de Cisco</li>
+        <li>Separa autenticación, autorización y accounting</li>
+        <li>Usa TCP (puerto 49) — más confiable</li>
+        <li>Encripta TODO el paquete</li>
+        <li>Preferido para administración de dispositivos de red</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">802.1X — Autenticación Basada en Puerto</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>👤 Cliente (Suplicante)</h3>
+      <p>Dispositivo final (PC, laptop) con software cliente 802.1X. Solicita acceso a la red. <strong>No puede enviar tráfico de datos</strong> hasta que sea autenticado.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🔀 Switch (Autenticador)</h3>
+      <p>Actúa como intermediario entre el cliente y el servidor. Solicita credenciales al cliente y las valida con el servidor AAA. Controla el acceso al puerto físico.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🖥 Servidor de Autenticación</h3>
+      <p>Servidor AAA (RADIUS/TACACS+) que valida la identidad. Notifica al switch si el cliente está autorizado o no. Sin su aprobación, el puerto permanece bloqueado.</p>
+    </div>
+  </div>
+
+  <!-- MÓDULO 10: AMENAZAS CAPA 2 -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 10 · TEMA 3-5</div>
+    <div class="module-title">Amenazas de Seguridad de Capa 2 y Ataques LAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint danger">
+    <span class="keypoint-icon">⚠</span>
+    <span>La Capa 2 es el eslabón más débil. Históricamente se confiaba en todos los dispositivos de la LAN. Hoy con BYOD y ataques sofisticados, <strong>esa confianza ya no existe</strong>. Un atacante con acceso L2 puede capturar todas las tramas de la red.</span>
+  </div>
+
+  <div class="section-title">Categorías de Ataques y su Mitigación</div>
+  <table class="atk-table">
+    <thead>
+      <tr>
+        <th>Ataque</th>
+        <th>Descripción</th>
+        <th>Mitigación</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>MAC Flooding</td>
+        <td>Inunda la tabla MAC con direcciones falsas → switch actúa como hub, reenviando todo a todos</td>
+        <td>Port Security</td>
+      </tr>
+      <tr>
+        <td>VLAN Hopping</td>
+        <td>Atacante simula ser switch (DTP) para acceder a todas las VLANs sin pasar por router</td>
+        <td>Deshabilitar DTP / nonegotiate</td>
+      </tr>
+      <tr>
+        <td>VLAN Double-Tagging</td>
+        <td>Inserta doble etiqueta 802.1Q para que trama salte a VLAN de destino en segundo switch</td>
+        <td>Cambiar VLAN nativa ≠ VLAN 1</td>
+      </tr>
+      <tr>
+        <td>DHCP Starvation</td>
+        <td>Agota el pool DHCP con MACs falsas → DoS para clientes legítimos (herramienta: Gobbler)</td>
+        <td>DHCP Snooping</td>
+      </tr>
+      <tr>
+        <td>DHCP Spoofing</td>
+        <td>Servidor DHCP falso provee gateway/DNS incorrectos → Man-in-the-Middle</td>
+        <td>DHCP Snooping (puertos confiables)</td>
+      </tr>
+      <tr>
+        <td>ARP Spoofing</td>
+        <td>ARP gratuito falso asocia MAC del atacante con IP del gateway → intercepta tráfico</td>
+        <td>DAI (Dynamic ARP Inspection)</td>
+      </tr>
+      <tr>
+        <td>ARP Poisoning</td>
+        <td>Envenena la tabla ARP de hosts → redirección de tráfico al atacante</td>
+        <td>DAI</td>
+      </tr>
+      <tr>
+        <td>IP/MAC Spoofing</td>
+        <td>Atacante cambia su dirección IP o MAC para hacerse pasar por otro host</td>
+        <td>IP Source Guard (IPSG)</td>
+      </tr>
+      <tr>
+        <td>STP Attack</td>
+        <td>Envía BPDUs con prioridad baja para convertirse en Root Bridge → captura todo el tráfico</td>
+        <td>BPDU Guard + PortFast</td>
+      </tr>
+      <tr>
+        <td>CDP/LLDP Recon</td>
+        <td>CDP transmite sin cifrar: IP, versión IOS, plataforma, VLAN nativa → info para el atacante</td>
+        <td>no cdp run / no cdp enable</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Detalle: VLAN Hopping vs Double-Tagging</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header red">VLAN Hopping</div>
+      <ul>
+        <li>Atacante envía señalización DTP falsificada al switch</li>
+        <li>Switch forma trunk con el host atacante</li>
+        <li>Atacante accede a TODAS las VLANs del switch</li>
+        <li>Bidireccional: puede enviar y recibir en cualquier VLAN</li>
+        <li>Mitigación: <code>switchport mode access</code> + <code>switchport nonegotiate</code></li>
+        <li>Deshabilitar puertos no usados y meterlos en VLAN de basura</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header orange">Double-Tagging</div>
+      <ul>
+        <li>Trama con DOS etiquetas 802.1Q (una exterior = VLAN nativa)</li>
+        <li>Primer switch quita la etiqueta exterior (VLAN nativa sin etiquetar)</li>
+        <li>Segundo switch procesa la etiqueta interior → envía a VLAN víctima</li>
+        <li>Es UNIDIRECCIONAL: solo funciona de atacante hacia víctima</li>
+        <li>Requiere que atacante esté en misma VLAN que la VLAN nativa del trunk</li>
+        <li>Mitigación: VLAN nativa ≠ VLAN 1, no usar VLAN de usuario como nativa</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MÓDULO 11: CONFIGURACIÓN SEGURIDAD SWITCH -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 11 · SRWE</div>
+    <div class="module-title">Configuración de Seguridad en el Switch</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Port Security — Configuración Completa</div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Port Security</strong> limita qué direcciones MAC pueden usar un puerto. Es la defensa principal contra MAC Flooding y controla quién puede conectarse físicamente a cada puerto del switch.</span>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Configurar Port Security completo</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- PASO 1: El puerto DEBE estar en modo acceso antes de port-security ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>           <span class="cli-comment">→ OBLIGATORIO: port-security no funciona en dynamic auto</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security</span>           <span class="cli-comment">→ Activa port-security (máximo 1 MAC por defecto)</span>
+
+<span class="cli-comment">--- PASO 2: Configurar número máximo de MACs permitidas ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security maximum 2</span> <span class="cli-comment">→ Permite hasta 2 MACs (default = 1)</span>
+
+<span class="cli-comment">--- PASO 3: Aprendizaje de MACs (elegir uno) ---</span>
+<span class="cli-comment">Opción A: Manual — configurar MAC estática</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security mac-address aaaa.bbbb.cccc</span>
+
+<span class="cli-comment">Opción B: Dinámico normal — aprende pero no guarda en NVRAM (se pierde al recargar)</span>
+<span class="cli-comment">→ Solo con "switchport port-security" sin nada más</span>
+
+<span class="cli-comment">Opción C: Sticky — aprende Y guarda en running-config (persiste con wr)</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security mac-address sticky</span>
+
+<span class="cli-comment">--- PASO 4: Modo de violación (qué hacer si llega MAC no autorizada) ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security violation shutdown</span>   <span class="cli-comment">→ DEFAULT: apaga puerto (err-disabled)</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security violation restrict</span>   <span class="cli-comment">→ Descarta + log syslog + cuenta violaciones</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security violation protect</span>    <span class="cli-comment">→ Solo descarta (sin log, sin contador)</span>
+
+<span class="cli-comment">--- PASO 5: Vencimiento (opcional) ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security aging time 10</span>        <span class="cli-comment">→ 10 minutos</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security aging type inactivity</span> <span class="cli-comment">→ Vence si inactiva</span>
+
+<span class="cli-comment">--- VERIFICACIÓN ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show port-security</span>                             <span class="cli-comment">→ Resumen de todos los puertos</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show port-security interface fa0/1</span>             <span class="cli-comment">→ Detalle de un puerto específico</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show port-security address</span>                     <span class="cli-comment">→ MACs seguras aprendidas</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1</span>                          <span class="cli-comment">→ Si dice "err-disabled" → violación ocurrió</span>
+
+<span class="cli-comment">--- RECUPERAR PUERTO err-disabled (después de violación) ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">shutdown</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span>                                <span class="cli-comment">→ Vuelve a activar el puerto</span>
+
+<span class="cli-comment">--- DESHABILITAR PUERTOS NO USADOS (buena práctica) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/2 - 24</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">shutdown</span>                        <span class="cli-comment">→ Apaga todos de golpe</span></div>
+  </div>
+
+  <div class="section-title">Modos de Violación — Comparativa</div>
+  <table class="viol-table">
+    <thead>
+      <tr>
+        <th>Modo</th>
+        <th>Descarta tráfico</th>
+        <th>Envía syslog</th>
+        <th>Incrementa contador</th>
+        <th>Apaga puerto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>shutdown (default)</td>
+        <td class="yes">✓ Sí</td>
+        <td class="yes">✓ Sí</td>
+        <td class="yes">✓ Sí</td>
+        <td class="yes">✓ Sí (err-disabled)</td>
+      </tr>
+      <tr>
+        <td>restrict</td>
+        <td class="yes">✓ Sí</td>
+        <td class="yes">✓ Sí</td>
+        <td class="yes">✓ Sí</td>
+        <td class="no">✗ No</td>
+      </tr>
+      <tr>
+        <td>protect</td>
+        <td class="yes">✓ Sí</td>
+        <td class="no">✗ No</td>
+        <td class="no">✗ No</td>
+        <td class="no">✗ No (menos seguro)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Mitigar Ataques VLAN — Pasos Clave</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Hardening de puertos para evitar VLAN Hopping</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- PASO 1: Puertos de acceso → deshabilitar DTP ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/1 - 20</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport mode access</span>          <span class="cli-comment">→ Fuerza acceso, nunca trunk</span>
+
+<span class="cli-comment">--- PASO 2: Puertos no usados → apagar y meter en VLAN de basura ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/21 - 24</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport access vlan 999</span>       <span class="cli-comment">→ VLAN "papelera" que no se usa en ningún lado</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">shutdown</span>
+
+<span class="cli-comment">--- PASO 3: Puertos trunk → estáticos y sin DTP ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/24</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport nonegotiate</span>              <span class="cli-comment">→ Deshabilitar DTP en el trunk</span>
+
+<span class="cli-comment">--- PASO 4: VLAN nativa ≠ VLAN 1 en todos los trunks ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 999</span>    <span class="cli-comment">→ VLAN nativa en una VLAN no usada</span>
+
+<span class="cli-comment">--- DESHABILITAR CDP donde no se necesita ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no cdp run</span>                           <span class="cli-comment">→ Deshabilita CDP globalmente</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no cdp enable</span>                        <span class="cli-comment">→ Deshabilita CDP en un puerto específico</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no lldp run</span>                           <span class="cli-comment">→ Deshabilita LLDP globalmente</span></div>
+  </div>
+
+  <div class="section-title">DHCP Snooping — Configuración</div>
+
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span>DHCP Snooping crea una <strong>tabla de enlace (binding table)</strong> que relaciona la MAC del cliente, su IP asignada y el puerto del switch. Esta tabla es usada también por DAI e IPSG. Los puertos hacia servidores DHCP = confiables; todos los demás = no confiables.</span>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — DHCP Snooping configuración y verificación</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- PASO 1: Habilitar DHCP Snooping globalmente ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip dhcp snooping</span>                          <span class="cli-comment">→ Activa la función</span>
+
+<span class="cli-comment">--- PASO 2: Marcar puertos confiables (hacia el servidor DHCP real) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/24</span>               <span class="cli-comment">→ Puerto uplink al servidor / router</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip dhcp snooping trust</span>                <span class="cli-comment">→ Confía en mensajes DHCP de este puerto</span>
+
+<span class="cli-comment">--- PASO 3: Limitar velocidad en puertos NO confiables ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/1 - 20</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">ip dhcp snooping limit rate 6</span>  <span class="cli-comment">→ Máx 6 paquetes DHCP/seg (bloquea Gobbler)</span>
+
+<span class="cli-comment">--- PASO 4: Habilitar por VLAN ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip dhcp snooping vlan 10,20,50,51,52</span>      <span class="cli-comment">→ Activa en VLANs específicas</span>
+
+<span class="cli-comment">--- VERIFICACIÓN ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip dhcp snooping</span>                      <span class="cli-comment">→ Estado general y puertos confiables</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip dhcp snooping binding</span>              <span class="cli-comment">→ Tabla de enlace: MAC → IP → puerto</span></div>
+  </div>
+
+  <div class="section-title">DAI — Dynamic ARP Inspection</div>
+
+  <div class="keypoint danger">
+    <span class="keypoint-icon">⚠</span>
+    <span>DAI <strong>requiere DHCP Snooping</strong> activo para funcionar, ya que usa su tabla de enlace para verificar si un ARP es legítimo. Sin DHCP Snooping la tabla está vacía y DAI no puede validar nada.</span>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — DAI (Dynamic ARP Inspection) configuración</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- PREREQUISITO: DHCP Snooping debe estar activo ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip dhcp snooping</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip dhcp snooping vlan 10</span>
+
+<span class="cli-comment">--- HABILITAR DAI en la VLAN ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip arp inspection vlan 10</span>                 <span class="cli-comment">→ DAI activo para VLAN 10</span>
+
+<span class="cli-comment">--- Marcar puertos confiables (uplinks hacia routers/switches superiores) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/24</span>               <span class="cli-comment">→ Uplink al router</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip dhcp snooping trust</span>                <span class="cli-comment">→ Confiable para DHCP</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip arp inspection trust</span>               <span class="cli-comment">→ Confiable para ARP</span>
+
+<span class="cli-comment">--- Validación adicional (opcional pero recomendada) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip arp inspection validate src-mac dst-mac ip</span>
+<span class="cli-comment">→ Verifica MAC origen, MAC destino e IPs en el cuerpo ARP</span>
+<span class="cli-comment">→ NOTA: un solo comando sustituye al anterior (poner todo en la misma línea)</span>
+
+<span class="cli-comment">--- VERIFICACIÓN ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip arp inspection</span>                     <span class="cli-comment">→ Estado DAI por VLAN</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip arp inspection interfaces</span>          <span class="cli-comment">→ Estado por interfaz</span></div>
+  </div>
+
+  <div class="section-title">PortFast y BPDU Guard — Protección contra Ataques STP</div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">PortFast</div>
+      <ul>
+        <li>Omite los estados Listening y Learning de STP</li>
+        <li>Puerto pasa directamente a Forwarding al conectar</li>
+        <li>Elimina la espera de convergencia STP (~30 seg)</li>
+        <li>SOLO en puertos de acceso hacia dispositivos finales</li>
+        <li>NUNCA entre switches (crearía bucle STP)</li>
+        <li>Configurable por interfaz o globalmente</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header orange">BPDU Guard</div>
+      <ul>
+        <li>Si un puerto con BPDU Guard recibe una BPDU → err-disabled</li>
+        <li>Previene que un switch no autorizado manipule STP</li>
+        <li>Un atacante no puede "robar" el rol de Root Bridge</li>
+        <li>SOLO en puertos de acceso (dispositivos finales)</li>
+        <li>Se recupera con: <code>shutdown + no shutdown</code></li>
+        <li>O con <code>errdisable recovery cause psecure_violation</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — PortFast y BPDU Guard configuración</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- PORTFAST: por interfaz ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">spanning-tree portfast</span>                    <span class="cli-comment">→ PortFast en un puerto específico</span>
+
+<span class="cli-comment">--- PORTFAST: globalmente (todos los puertos de acceso) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree portfast default</span>            <span class="cli-comment">→ Activa en todos los puertos de acceso</span>
+
+<span class="cli-comment">--- BPDU GUARD: por interfaz ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">spanning-tree bpduguard enable</span>            <span class="cli-comment">→ BPDU Guard en un puerto</span>
+
+<span class="cli-comment">--- BPDU GUARD: globalmente ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree portfast bpduguard default</span>  <span class="cli-comment">→ En todos los puertos con PortFast</span>
+
+<span class="cli-comment">--- VERIFICACIÓN ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree summary</span>                <span class="cli-comment">→ PortFast y BPDU Guard habilitados globalmente</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show running-config | begin span</span>          <span class="cli-comment">→ Ver config STP en running</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree interface fa0/1 detail</span> <span class="cli-comment">→ Estado PortFast en un puerto</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1</span>                     <span class="cli-comment">→ Ver si está err-disabled por BPDU Guard</span></div>
+  </div>
+
+  <div class="section-title">Glosario Clave — Semana 5</div>
+  <table class="key-table">
+    <thead><tr><th>Término / Comando</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td>AAA</td><td>Authentication, Authorization, Accounting — framework de control de acceso. Quién entra, qué puede hacer, qué hizo.</td></tr>
+      <tr><td>RADIUS</td><td>Protocolo estándar AAA. UDP, combina autenticación y autorización, encripta solo la contraseña. Puertos 1812/1813.</td></tr>
+      <tr><td>TACACS+</td><td>Protocolo AAA propietario Cisco. TCP puerto 49, separa los tres componentes AAA, encripta todo el paquete.</td></tr>
+      <tr><td>802.1X</td><td>Estándar IEEE de control de acceso basado en puerto. Roles: Suplicante, Autenticador (switch), Servidor AAA.</td></tr>
+      <tr><td>Port Security</td><td>Limita MACs permitidas por puerto. Modos: shutdown, restrict, protect. Aprendizaje: manual, dinámico, sticky.</td></tr>
+      <tr><td>MAC Flooding</td><td>Inunda tabla MAC con MACs falsas → switch actúa como hub → atacante ve todo el tráfico.</td></tr>
+      <tr><td>DHCP Snooping</td><td>Filtra mensajes DHCP. Crea binding table (MAC+IP+puerto). Puertos confiables vs no confiables.</td></tr>
+      <tr><td>DAI</td><td>Dynamic ARP Inspection. Valida tramas ARP contra la binding table de DHCP Snooping. Previene ARP poisoning.</td></tr>
+      <tr><td>IPSG</td><td>IP Source Guard. Previene suplantación de IP y MAC usando la binding table de DHCP Snooping.</td></tr>
+      <tr><td>VLAN Hopping</td><td>Atacante forma trunk con el switch mediante DTP falsificado para acceder a todas las VLANs.</td></tr>
+      <tr><td>Double-Tagging</td><td>Ataque con doble etiqueta 802.1Q. Unidireccional. Requiere estar en la misma VLAN que la nativa del trunk.</td></tr>
+      <tr><td>ARP Spoofing</td><td>ARP gratuito falso asocia MAC atacante con IP gateway → intercepta todo el tráfico de la subred.</td></tr>
+      <tr><td>DHCP Starvation</td><td>Agota pool DHCP con MACs falsas → DoS. Herramienta: Gobbler. Mitigación: port-security + snooping limit rate.</td></tr>
+      <tr><td>PortFast</td><td>Omite estados Listening/Learning de STP. Puerto va directo a Forwarding. Solo en puertos de acceso.</td></tr>
+      <tr><td>BPDU Guard</td><td>Si recibe un BPDU en un puerto de acceso → err-disabled. Previene ataques de manipulación STP.</td></tr>
+      <tr><td>err-disabled</td><td>Estado de puerto apagado por violación de seguridad. Se recupera con shutdown + no shutdown.</td></tr>
+      <tr><td>Sticky MAC</td><td>Aprendizaje dinámico que guarda la MAC en running-config. Persiste con copy run start.</td></tr>
+      <tr><td>aaa new-model</td><td>Habilita AAA en el dispositivo. Reemplaza la autenticación por línea. Comando crítico, va primero.</td></tr>
+      <tr><td>Binding Table</td><td>Tabla de DHCP Snooping: MAC + IP asignada + puerto + VLAN. Base de datos para DAI e IPSG.</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- =============== LABORATORIOS =============== -->
+<div class="tab-content" id="tab-labs">
+
+  <div style="padding: 1rem 0 1.5rem;">
+    <p style="color: var(--muted); font-size: 14px; max-width: 700px;">Solución completa del lab de Packet Tracer de Semana 5 (AAA con RADIUS y TACACS+) y guías de configuración para Port Security, VLAN Hopping, DHCP Snooping, DAI y STP en el switch.</p>
+  </div>
+
+  <!-- LAB AAA -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB AAA</div>
+      <div class="lab-solution-title">Configurar AAA con RADIUS y TACACS+</div>
+      <div class="lab-solution-ref">R1 (TACACS+) · R2 (RADIUS)</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Configurar autenticación AAA en dos routers: R1 usa TACACS+ (servidor en 192.168.1.100) y R2 usa RADIUS (servidor en 192.168.1.200). Ambos con fallback local si el servidor no responde. Las líneas VTY usan el método AAA configurado.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">ROUTER R1</span> AAA con TACACS+</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R1 — Autenticación via TACACS+</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Configuración básica ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">hostname R1</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">enable secret cisco</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">username cisco secret cisco</span>              <span class="cli-comment">→ Cuenta local de respaldo</span>
+
+<span class="cli-comment">--- Habilitar AAA (PRIMERO que todo) ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">aaa new-model</span>                            <span class="cli-comment">→ ¡Activa AAA en el dispositivo!</span>
+
+<span class="cli-comment">--- Crear lista de autenticación ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">aaa authentication login Acceso_Telnet group tacacs+ local</span>
+<span class="cli-comment">→ Primero intenta TACACS+, si falla → usa usuario local (cisco/cisco)</span>
+
+<span class="cli-comment">--- Configurar servidor TACACS+ ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">tacacs-server host 192.168.1.100 key psw</span>
+<span class="cli-comment">→ IP del servidor TACACS+ y contraseña compartida "psw"</span>
+
+<span class="cli-comment">--- Configurar interfaz ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface GigabitEthernet0/0</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.1 255.255.255.0</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+
+<span class="cli-comment">--- Aplicar la lista AAA a las líneas VTY (Telnet/SSH) ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">line vty 0 15</span>
+<span class="cli-prompt">R1(config-line)#</span> <span class="cli-cmd">login authentication Acceso_Telnet</span>   <span class="cli-comment">→ Usa la lista AAA creada arriba</span>
+
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+        <div class="keypoint green" style="margin-top:0.5rem;">
+          <span class="keypoint-icon">✓</span>
+          <span>TACACS+ — TCP puerto 49 — encripta TODO el paquete — preferido para administración de dispositivos. El fallback <code>local</code> al final es crítico: si el servidor cae, aún puedes entrar con el usuario local.</span>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">ROUTER R2</span> AAA con RADIUS</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R2 — Autenticación via RADIUS</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Configuración básica ---</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">hostname R2</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">enable secret cisco</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">username cisco secret cisco</span>              <span class="cli-comment">→ Cuenta local de respaldo</span>
+
+<span class="cli-comment">--- Habilitar AAA ---</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">aaa new-model</span>
+
+<span class="cli-comment">--- Crear lista de autenticación ---</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">aaa authentication login Acceso_Telnet group radius local</span>
+<span class="cli-comment">→ Primero intenta RADIUS, si falla → usa usuario local (cisco/cisco)</span>
+
+<span class="cli-comment">--- Configurar servidor RADIUS (sintaxis de servidor con nombre) ---</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">radius server RServer</span>
+<span class="cli-prompt">R2(config-radius-server)#</span> <span class="cli-cmd">address ipv4 192.168.1.200</span>
+<span class="cli-prompt">R2(config-radius-server)#</span> <span class="cli-cmd">key psw</span>                              <span class="cli-comment">→ Contraseña compartida entre R2 y el servidor RADIUS</span>
+<span class="cli-prompt">R2(config-radius-server)#</span> <span class="cli-cmd">exit</span>
+
+<span class="cli-comment">--- Configurar interfaz ---</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">interface GigabitEthernet0/0</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.2 255.255.255.0</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+
+<span class="cli-comment">--- Aplicar la lista AAA a las líneas VTY ---</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">line vty 0 15</span>
+<span class="cli-prompt">R2(config-line)#</span> <span class="cli-cmd">login authentication Acceso_Telnet</span>
+
+<span class="cli-prompt">R2#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+        <div class="keypoint info" style="margin-top:0.5rem;">
+          <span class="keypoint-icon">ℹ</span>
+          <span>RADIUS — UDP puertos 1812/1813 — encripta solo la contraseña — combina autenticación y autorización en un paso. La "key psw" debe coincidir exactamente en el router y en el servidor RADIUS.</span>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">VERIFICACIÓN</span> Probar AAA y confirmar funcionamiento</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Verificar AAA en ambos routers</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Verificar config AAA ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show aaa servers</span>                         <span class="cli-comment">→ Ver servidores AAA configurados</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show running-config | include aaa</span>        <span class="cli-comment">→ Verificar comandos AAA en config</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show running-config | include tacacs</span>     <span class="cli-comment">→ Verificar config TACACS+</span>
+<span class="cli-prompt">R2#</span> <span class="cli-cmd">show running-config | include radius</span>     <span class="cli-comment">→ Verificar config RADIUS</span>
+
+<span class="cli-comment">--- Probar Telnet desde otro dispositivo ---</span>
+<span class="cli-out">PC> telnet 192.168.1.1     → Debe pedir credenciales del servidor TACACS+
+PC> telnet 192.168.1.2     → Debe pedir credenciales del servidor RADIUS</span>
+
+<span class="cli-comment">--- Verificar que el fallback local funciona (apagar servidor y probar) ---</span>
+<span class="cli-out">Si el servidor AAA no responde → debe aceptar usuario "cisco" contraseña "cisco"</span>
+
+<span class="cli-comment">--- Verificar usuarios locales ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show running-config | include username</span>   <span class="cli-comment">→ Debe mostrar "username cisco secret 5 ..."</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">DIFERENCIAS CLAVE</span> TACACS+ vs RADIUS — Resumen del Lab</div>
+        <table class="key-table" style="margin-top:0.5rem;">
+          <thead><tr><th>Característica</th><th>TACACS+ (R1)</th><th>RADIUS (R2)</th></tr></thead>
+          <tbody>
+            <tr><td>Protocolo transporte</td><td style="color:var(--muted)">TCP puerto 49</td><td style="color:var(--muted)">UDP puertos 1812/1813</td></tr>
+            <tr><td>Encriptación</td><td style="color:var(--muted)">Todo el paquete</td><td style="color:var(--muted)">Solo la contraseña</td></tr>
+            <tr><td>Separación AAA</td><td style="color:var(--muted)">Sí — Autent. / Autor. / Account. separados</td><td style="color:var(--muted)">No — Autent. y Author. combinados</td></tr>
+            <tr><td>Estándar</td><td style="color:var(--muted)">Propietario Cisco</td><td style="color:var(--muted)">Abierto (RFC 2865)</td></tr>
+            <tr><td>Uso recomendado</td><td style="color:var(--muted)">Administración de dispositivos de red</td><td style="color:var(--muted)">Acceso a red (VPN, Wi-Fi, dial-up)</td></tr>
+            <tr><td>Comando servidor</td><td style="color:var(--muted)"><code>tacacs-server host IP key KEY</code></td><td style="color:var(--muted)"><code>radius server NAME + address + key</code></td></tr>
+            <tr><td>Grupo en lista AAA</td><td style="color:var(--muted)"><code>group tacacs+</code></td><td style="color:var(--muted)"><code>group radius</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB PORT SECURITY -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 11.1.10</div>
+      <div class="lab-solution-title">Implementar Port Security</div>
+      <div class="lab-solution-ref">Configurar · Verificar · Recuperar</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Configurar port security en puertos de acceso del switch, verificar el comportamiento ante una violación y restaurar el puerto después del evento de seguridad.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Configurar Port Security</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S1 — Port Security con Sticky MAC</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Puerto fa0/1: máx 1 MAC, sticky, shutdown en violación ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security maximum 1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security mac-address sticky</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport port-security violation shutdown</span>
+
+<span class="cli-comment">--- Verificar antes de conectar dispositivo ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show port-security interface fa0/1</span>
+<span class="cli-out">Port Security              : Enabled
+Port Status                : Secure-up
+Violation Mode             : Shutdown
+Maximum MAC Addresses      : 1
+Total MAC Addresses        : 0      ← Aún no ha aprendido ninguna
+Sticky MAC Addresses       : 0</span>
+
+<span class="cli-comment">--- Conectar PC legítima → aprende su MAC automáticamente ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show port-security address</span>
+<span class="cli-out">                Secure Mac Address Table
+Vlan  Mac Address       Type            Ports
+----  -----------       ----            -----
+   1  0050.56XX.XXXX    SecureSticky    Fa0/1    ← MAC aprendida y "pegada"</span>
+
+<span class="cli-comment">--- Guardar para que la MAC sticky persista ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Simular Violación y Recuperar Puerto</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Conectar dispositivo no autorizado → violación → recovery</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Al conectar un dispositivo diferente, el puerto se apaga ---</span>
+<span class="cli-out">%PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by
+MAC address 0060.3E89.7654 on port FastEthernet0/1.</span>
+
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1</span>
+<span class="cli-out">FastEthernet0/1 is down, line protocol is down (err-disabled)</span>
+
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show port-security interface fa0/1</span>
+<span class="cli-out">Port Status                : Secure-shutdown   ← Puerto en estado de violación
+Violation Count            : 1                 ← Se incrementó el contador</span>
+
+<span class="cli-comment">--- Para recuperar el puerto: RECONECTAR el dispositivo CORRECTO primero ---</span>
+<span class="cli-comment">--- Luego volver a habilitar manualmente ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">shutdown</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span>                   <span class="cli-comment">→ Puerto vuelve a estado normal</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB SWITCH SECURITY COMPLETO -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 11.6.1 / 11.6.2</div>
+      <div class="lab-solution-title">Switch Security Configuration — Lab Integrador</div>
+      <div class="lab-solution-ref">Port Security · VLAN Hardening · DHCP · DAI · STP</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Lab integrador completo: proteger puertos sin usar, implementar port security, mitigar VLAN hopping, DHCP attacks, ARP attacks y STP attacks en un switch Cisco.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Asegurar puertos no utilizados</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Apagar puertos vacíos y meter en VLAN de basura</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 999</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Sin_Uso</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/3 - 24</span>         <span class="cli-comment">→ Todos los puertos no usados</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport access vlan 999</span>      <span class="cli-comment">→ VLAN papelera</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">shutdown</span>                        <span class="cli-comment">→ Apagar definitivamente</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Port Security en puertos activos</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Puertos con PCs: sticky + máx 1 + restrict</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/1 - 2</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport port-security</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport port-security maximum 1</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport port-security mac-address sticky</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport port-security violation restrict</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 3</span> Mitigar VLAN Hopping</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Trunk hardening + VLAN nativa ≠ 1</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Trunk hacia switch o router: estático + no DTP + VLAN nativa segura ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/24</span>                      <span class="cli-comment">→ Puerto uplink (trunk)</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport nonegotiate</span>               <span class="cli-comment">→ Deshabilita DTP</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 999</span>     <span class="cli-comment">→ VLAN nativa ≠ 1 y ≠ VLANs de usuarios</span>
+
+<span class="cli-comment">--- Verificar trunk ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show dtp interface fa0/24</span>              <span class="cli-comment">→ Confirmar nonegotiate</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 4</span> DHCP Snooping</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Filtrar servidores DHCP no autorizados</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip dhcp snooping</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip dhcp snooping vlan 10,20</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/24</span>                      <span class="cli-comment">→ Puerto hacia servidor DHCP legítimo</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip dhcp snooping trust</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/1 - 2</span>             <span class="cli-comment">→ Puertos de usuario</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">ip dhcp snooping limit rate 6</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip dhcp snooping</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip dhcp snooping binding</span>          <span class="cli-comment">→ Tabla binding: MAC + IP + puerto</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 5</span> DAI — Mitigar ARP Attacks</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Dynamic ARP Inspection (requiere DHCP Snooping activo)</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip arp inspection vlan 10,20</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/24</span>                      <span class="cli-comment">→ Uplink → confiable para ARP también</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip arp inspection trust</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip arp inspection validate src-mac dst-mac ip</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip arp inspection</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show ip arp inspection interfaces</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 6</span> PortFast + BPDU Guard — Mitigar STP Attacks</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Proteger contra manipulación del Spanning Tree</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Habilitación global (todos los puertos de acceso) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree portfast default</span>            <span class="cli-comment">→ PortFast en puertos de acceso</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree portfast bpduguard default</span>  <span class="cli-comment">→ BPDU Guard global</span>
+
+<span class="cli-comment">--- Verificar ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree summary</span>
+<span class="cli-out">Switch is in rapid-pvst mode
+Root bridge for: none
+Extended system ID           is enabled
+Portfast Default             is enabled        ← PortFast activo
+PortFast BPDU Guard Default  is enabled        ← BPDU Guard activo</span>
+
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span>        <span class="cli-comment">→ Guardar toda la configuración</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REFERENCIA RÁPIDA LABS -->
+  <div class="section-title">Referencia Rápida — Comandos más usados en Labs</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">Quick Reference — Semana 5 (Seguridad LAN)</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- AAA ---</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">aaa new-model</span>                                    <span class="cli-comment">→ Habilitar AAA</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">aaa authentication login LISTA group tacacs+ local</span>  <span class="cli-comment">→ Lista con TACACS+</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">aaa authentication login LISTA group radius local</span>   <span class="cli-comment">→ Lista con RADIUS</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">tacacs-server host IP key CLAVE</span>                    <span class="cli-comment">→ Servidor TACACS+</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">radius server NOMBRE</span>  /  <span class="cli-cmd">address ipv4 IP</span>  /  <span class="cli-cmd">key CLAVE</span>
+<span class="cli-prompt">R(config-line)#</span>  <span class="cli-cmd">login authentication LISTA</span>               <span class="cli-comment">→ Aplicar a VTY</span>
+
+<span class="cli-comment">--- PORT SECURITY ---</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport mode access</span>                   <span class="cli-comment">→ Obligatorio antes de port-security</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport port-security</span>                 <span class="cli-comment">→ Activar</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport port-security maximum N</span>       <span class="cli-comment">→ Máx MACs</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport port-security mac-address sticky</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport port-security violation {shutdown|restrict|protect}</span>
+<span class="cli-prompt">S#</span>  <span class="cli-cmd">show port-security</span>  /  <span class="cli-cmd">show port-security interface fa0/X</span>
+<span class="cli-prompt">S#</span>  <span class="cli-cmd">show port-security address</span>                <span class="cli-comment">→ MACs aprendidas</span>
+
+<span class="cli-comment">--- MITIGACIÓN VLAN HOPPING ---</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport mode access</span>                   <span class="cli-comment">→ Puertos usuario</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport nonegotiate</span>                   <span class="cli-comment">→ Deshabilitar DTP en trunks</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport trunk native vlan 999</span>         <span class="cli-comment">→ VLAN nativa no estándar</span>
+
+<span class="cli-comment">--- DHCP SNOOPING ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">ip dhcp snooping</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">ip dhcp snooping vlan 10,20</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">ip dhcp snooping trust</span>                   <span class="cli-comment">→ Puerto hacia servidor real</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">ip dhcp snooping limit rate 6</span>            <span class="cli-comment">→ Anti-starvation</span>
+<span class="cli-prompt">S#</span>  <span class="cli-cmd">show ip dhcp snooping</span>  /  <span class="cli-cmd">show ip dhcp snooping binding</span>
+
+<span class="cli-comment">--- DAI ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">ip arp inspection vlan 10,20</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">ip arp inspection trust</span>                  <span class="cli-comment">→ Puerto uplink confiable</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">ip arp inspection validate src-mac dst-mac ip</span>
+<span class="cli-prompt">S#</span>  <span class="cli-cmd">show ip arp inspection</span>  /  <span class="cli-cmd">show ip arp inspection interfaces</span>
+
+<span class="cli-comment">--- PORTFAST + BPDU GUARD ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">spanning-tree portfast default</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">spanning-tree portfast bpduguard default</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">spanning-tree portfast</span>                   <span class="cli-comment">→ En interfaz específica</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">spanning-tree bpduguard enable</span>           <span class="cli-comment">→ En interfaz específica</span>
+<span class="cli-prompt">S#</span>  <span class="cli-cmd">show spanning-tree summary</span>
+
+<span class="cli-comment">--- CDP / LLDP ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">no cdp run</span>           <span class="cli-comment">→ Deshabilitar CDP globalmente</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">no cdp enable</span>    <span class="cli-comment">→ Deshabilitar CDP en un puerto</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">no lldp run</span>          <span class="cli-comment">→ Deshabilitar LLDP globalmente</span></div>
+  </div>
+
+</div>
+</main>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  if (name === 'teoria') document.querySelectorAll('.nav-pill')[0].classList.add('active');
+  else document.querySelectorAll('.nav-pill')[1].classList.add('active');
+}
+
+function setSection(name) {
+  const btn = name === 'teoria'
+    ? document.querySelectorAll('.tab-btn')[0]
+    : document.querySelectorAll('.tab-btn')[1];
+  showTab(name, btn);
+}
+
+function toggleLab(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('span:last-child');
+  const isOpen = body.style.display !== 'none' && body.style.display !== '';
+  if (isOpen) {
+    body.style.display = 'none';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
+
+// Abrir todos los labs por defecto
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.lab-solution-body').forEach(b => b.style.display = 'block');
+});
+</script>
+</body>
+</html>

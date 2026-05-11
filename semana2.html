@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes & Cisco — Semana 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161921;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --accent4: #a78bfa;
+    --text: #e8eaf0;
+    --muted: #7c8494;
+    --tag-bg: #1a2535;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; font-size: 15px; line-height: 1.7; min-height: 100vh; }
+
+  nav { position: sticky; top: 0; background: rgba(13,15,20,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 100; padding: 0 2rem; }
+  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 0; height: 56px; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; margin-right: auto; letter-spacing: 0.05em; text-decoration: none; }
+  .nav-section { display: flex; align-items: center; gap: 2px; margin-right: 1rem; }
+  .nav-section span { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 8px; }
+  .nav-pill { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.2s; color: var(--muted); background: none; font-family: 'Sora', sans-serif; }
+  .nav-pill:hover { color: var(--text); border-color: var(--border); background: var(--surface); }
+  .nav-pill.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.08); }
+  .nav-weeks { display: flex; gap: 2px; }
+  .nav-week { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; font-family: 'JetBrains Mono', monospace; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.15s; color: var(--muted); }
+  .nav-week:hover { color: var(--text); border-color: var(--border); }
+  .nav-week.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.1); }
+  .nav-week.done { color: #4a7a6a; border-color: #2a4a3a; }
+  .nav-week.locked { color: #3a4050; cursor: default; }
+
+  .hero { max-width: 1100px; margin: 0 auto; padding: 3.5rem 2rem 2rem; border-bottom: 1px solid var(--border); }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3); color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px; margin-bottom: 1.2rem; }
+  .hero h1 { font-size: 2.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.8rem; background: linear-gradient(135deg, #e8eaf0 0%, #a0a8b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { color: var(--muted); font-size: 15px; max-width: 640px; margin-bottom: 1.5rem; }
+  .hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+  .stat-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  .section-tabs { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab-btn { padding: 1rem 1.5rem; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; border-top: none; border-left: none; border-right: none; background: none; font-family: 'Sora', sans-serif; transition: all 0.2s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .module-header { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.2rem; }
+  .module-header:first-child { margin-top: 0; }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .module-title { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+  .module-line { flex: 1; height: 1px; background: var(--border); }
+
+  .concepts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; transition: border-color 0.2s; }
+  .concept-card:hover { border-color: #3a4558; }
+  .concept-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .concept-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+  .concept-card .tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--tag-bg); border: 1px solid var(--border); color: var(--accent2); padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+
+  .key-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 13.5px; }
+  .key-table thead tr { border-bottom: 1px solid var(--border); }
+  .key-table th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 0 12px 10px 0; }
+  .key-table td { padding: 9px 12px 9px 0; color: var(--text); border-bottom: 1px solid rgba(42,48,64,0.5); vertical-align: top; }
+  .key-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; min-width: 200px; }
+  .key-table td:last-child { color: var(--muted); }
+
+  .cli-block { background: #0a0c10; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1.2rem; }
+  .cli-header { background: var(--surface2); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .cli-dots { display: flex; gap: 5px; }
+  .cli-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cli-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .cli-body { padding: 1rem 1.4rem; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; overflow-x: auto; }
+  .cli-prompt { color: var(--accent); }
+  .cli-cmd { color: #93c5fd; }
+  .cli-comment { color: #4a5568; }
+  .cli-out { color: var(--muted); }
+  .cli-important { color: var(--accent3); }
+
+  .keypoint { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.9rem 1.2rem; font-size: 13.5px; color: #d4a855; margin-bottom: 1rem; display: flex; gap: 10px; align-items: flex-start; }
+  .keypoint-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .keypoint.info { background: rgba(59,130,246,0.06); border-color: rgba(59,130,246,0.2); color: #7ab3f0; }
+  .keypoint.danger { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); color: #f87171; }
+
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.2rem; }
+  .compare-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .compare-card-header { padding: 0.8rem 1.2rem; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); }
+  .compare-card-header.green { color: var(--accent); background: rgba(0,212,170,0.05); }
+  .compare-card-header.blue { color: var(--accent2); background: rgba(59,130,246,0.05); }
+  .compare-card-header.purple { color: var(--accent4); background: rgba(167,139,250,0.05); }
+  .compare-card ul { list-style: none; padding: 0.8rem 1.2rem; }
+  .compare-card ul li { font-size: 13px; color: var(--muted); padding: 4px 0; border-bottom: 1px solid rgba(42,48,64,0.4); display: flex; gap: 8px; align-items: flex-start; }
+  .compare-card ul li::before { content: '→'; color: var(--border); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+  .compare-card ul li:last-child { border-bottom: none; }
+
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .summary-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+  .summary-box h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.7rem; }
+  .summary-box ul { list-style: none; padding: 0; }
+  .summary-box ul li { font-size: 13px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; }
+  .summary-box ul li::before { content: '✦'; color: var(--accent4); font-size: 9px; margin-top: 5px; flex-shrink: 0; }
+
+  /* DTP MATRIX */
+  .dtp-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 12.5px; }
+  .dtp-table th, .dtp-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: center; }
+  .dtp-table th { background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .dtp-table td.trunk { color: var(--accent); font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .dtp-table td.access { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .dtp-table td.limited { color: #ef4444; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .dtp-table td:first-child { text-align: left; color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; background: rgba(167,139,250,0.05); }
+
+  /* LAB SOLUTION CARD */
+  .lab-solution { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem; }
+  .lab-solution-header { padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid var(--border); background: var(--surface2); cursor: pointer; user-select: none; }
+  .lab-solution-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .lab-solution-title { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .lab-solution-ref { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .lab-solution-body { padding: 1.4rem; }
+  .lab-objective { font-size: 13.5px; color: var(--muted); margin-bottom: 1rem; border-left: 3px solid var(--accent4); padding-left: 0.8rem; }
+  .lab-step { margin-bottom: 1.2rem; }
+  .lab-step-title { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .lab-step-title .step-num { background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); border-radius: 3px; padding: 1px 6px; font-size: 10px; }
+
+  /* MODOS IOS */
+  .ios-modes { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 1.2rem; }
+  .ios-mode { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .ios-mode-prompt { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; min-width: 240px; }
+  .ios-mode-desc { font-size: 13px; color: var(--muted); }
+  .ios-mode-cmd { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent3); background: var(--tag-bg); border: 1px solid var(--border); padding: 1px 7px; border-radius: 3px; margin-left: 6px; }
+
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.7rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr; }
+    nav .nav-weeks { display: none; }
+    .ios-mode { flex-direction: column; gap: 4px; }
+    .ios-mode-prompt { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">◈ REDES / CISCO</a>
+    <div class="nav-section">
+      <span>Sección</span>
+      <button class="nav-pill active" onclick="setSection('teoria')">Teoría</button>
+      <button class="nav-pill" onclick="setSection('labs')">Laboratorios</button>
+    </div>
+    <div class="nav-weeks">
+      <a class="nav-week done" href="index.html" title="Semana 1 — completada">1</a>
+      <a class="nav-week active"  href="semana2.html" title="Semana 2 — actual">2</a>
+      <a class="nav-week locked"  href="semana3.html" title="Pendiente">3</a>
+      <a class="nav-week locked" href="semana4.html" title="Pendiente">4</a>
+      <a class="nav-week locked" href="semana5.html" title="Pendiente">5</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">6</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">7</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">◉ SEMANA 2 — ACTIVA</div>
+  <h1>VLANs, Trunking<br>& Inter-VLAN Routing</h1>
+  <p class="hero-sub">Conceptos de Conmutación, VLANs, Enlaces Troncales 802.1Q, DTP y Enrutamiento Inter-VLAN (Router-on-a-Stick y Capa 3). SRWE v7.0.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-dot" style="background:var(--accent4)"></div>3 módulos teóricos</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent2)"></div>VLANs 1–4094</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent3)"></div>6 labs con solución completa</div>
+  </div>
+</div>
+
+<div class="section-tabs">
+  <button class="tab-btn active" onclick="showTab('teoria', this)">📘 Teoría</button>
+  <button class="tab-btn" onclick="showTab('labs', this)">🧪 Laboratorios + Soluciones</button>
+</div>
+
+<main>
+
+<!-- =============== TEORÍA =============== -->
+<div class="tab-content active" id="tab-teoria">
+
+  <!-- MODOS IOS — REFERENCIA RÁPIDA -->
+  <div class="module-header">
+    <div class="module-num">REFERENCIA</div>
+    <div class="module-title">Modos IOS Cisco — Acceso al Switch/Router</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="ios-modes">
+    <div class="ios-mode">
+      <div class="ios-mode-prompt">Switch&gt;</div>
+      <div class="ios-mode-desc"><strong>EXEC Usuario</strong> — modo de solo lectura. Comandos básicos como <code>ping</code>, <code>show</code> limitado. <span class="ios-mode-cmd">enable</span> para subir a privilegiado.</div>
+    </div>
+    <div class="ios-mode">
+      <div class="ios-mode-prompt">Switch#</div>
+      <div class="ios-mode-desc"><strong>EXEC Privilegiado</strong> — acceso completo a show, copy, reload. <span class="ios-mode-cmd">configure terminal</span> para entrar a config global. <span class="ios-mode-cmd">disable</span> para bajar.</div>
+    </div>
+    <div class="ios-mode">
+      <div class="ios-mode-prompt">Switch(config)#</div>
+      <div class="ios-mode-desc"><strong>Configuración Global</strong> — cambios que afectan todo el dispositivo. <span class="ios-mode-cmd">interface fa0/1</span> para entrar a interfaz. <span class="ios-mode-cmd">vlan 10</span> para VLANs. <span class="ios-mode-cmd">end</span> o <span class="ios-mode-cmd">Ctrl+Z</span> para salir al privilegiado.</div>
+    </div>
+    <div class="ios-mode">
+      <div class="ios-mode-prompt">Switch(config-if)#</div>
+      <div class="ios-mode-desc"><strong>Configuración de Interfaz</strong> — configura un puerto específico. <span class="ios-mode-cmd">exit</span> regresa a config global. <span class="ios-mode-cmd">end</span> sale a privilegiado directamente.</div>
+    </div>
+    <div class="ios-mode">
+      <div class="ios-mode-prompt">Switch(config-vlan)#</div>
+      <div class="ios-mode-desc"><strong>Configuración de VLAN</strong> — se accede con <span class="ios-mode-cmd">vlan &lt;id&gt;</span> desde config global. Aquí se pone el nombre con <span class="ios-mode-cmd">name</span>.</div>
+    </div>
+    <div class="ios-mode">
+      <div class="ios-mode-prompt">Switch(config-line)#</div>
+      <div class="ios-mode-desc"><strong>Configuración de Línea</strong> — para consola (<span class="ios-mode-cmd">line con 0</span>) o VTY (<span class="ios-mode-cmd">line vty 0 15</span>). Configura contraseñas y acceso remoto.</div>
+    </div>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">Navegación entre modos IOS</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- ACCESO INICIAL ---</span>
+<span class="cli-out">Switch></span>  <span class="cli-cmd">enable</span>                   <span class="cli-comment">→ Entra a modo privilegiado (pide password si hay)</span>
+<span class="cli-out">Switch#</span>  <span class="cli-cmd">configure terminal</span>       <span class="cli-comment">→ Entra a configuración global (o: conf t)</span>
+<span class="cli-out">Switch(config)#</span>  <span class="cli-cmd">end</span>          <span class="cli-comment">→ Sale directo a privilegiado (o: Ctrl+Z)</span>
+<span class="cli-out">Switch(config)#</span>  <span class="cli-cmd">exit</span>         <span class="cli-comment">→ Sube un nivel (config-if → config → privilegiado)</span>
+
+<span class="cli-comment">--- CONTRASEÑAS BÁSICAS ---</span>
+<span class="cli-out">Switch(config)#</span>  <span class="cli-cmd">enable secret Cisco123</span>   <span class="cli-comment">→ Password modo privilegiado (encriptada)</span>
+<span class="cli-out">Switch(config)#</span>  <span class="cli-cmd">service password-encryption</span> <span class="cli-comment">→ Encripta todas las passwords en config</span>
+<span class="cli-out">Switch(config)#</span>  <span class="cli-cmd">line console 0</span>
+<span class="cli-out">Switch(config-line)#</span>  <span class="cli-cmd">password cisco</span>
+<span class="cli-out">Switch(config-line)#</span>  <span class="cli-cmd">login</span>                    <span class="cli-comment">→ Activa autenticación en consola</span>
+
+<span class="cli-comment">--- GUARDAR SIEMPRE ---</span>
+<span class="cli-out">Switch#</span>  <span class="cli-cmd">copy running-config startup-config</span>   <span class="cli-comment">→ Guarda en NVRAM (o: wr)</span>
+<span class="cli-out">Switch#</span>  <span class="cli-cmd">show running-config</span>                  <span class="cli-comment">→ Ve configuración actual en RAM</span></div>
+  </div>
+
+  <!-- MÓDULO: VLANs -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 3 · SRWE</div>
+    <div class="module-title">VLANs</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Concepto clave:</strong> Una VLAN es una red lógica dentro de un switch físico. Cada VLAN es un dominio de broadcast separado. Sin un router o switch capa 3, dispositivos en distintas VLANs NO pueden comunicarse.</span>
+  </div>
+
+  <div class="section-title">Tipos de VLAN</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🔒 VLAN 1 — Predeterminada</h3>
+      <p>Todos los puertos del switch pertenecen a VLAN 1 por defecto. También es la VLAN nativa y de administración predeterminada. <strong>No se puede eliminar ni renombrar.</strong> Mala práctica usarla para administración.</p>
+      <div class="tag">no se puede borrar</div>
+    </div>
+    <div class="concept-card">
+      <h3>📊 VLAN de Datos</h3>
+      <p>Para tráfico de usuarios: correo, web, archivos. VLAN 1 es la predeterminada porque todos los puertos se asignan a ella. Se recomienda crear VLANs separadas por departamento.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🔇 VLAN Nativa</h3>
+      <p>En enlaces troncales 802.1Q, las tramas de la VLAN nativa se envían <strong>sin etiqueta</strong>. Ambos extremos del trunk deben tener la misma VLAN nativa. Por defecto es VLAN 1.</p>
+      <div class="tag">untagged en trunk</div>
+    </div>
+    <div class="concept-card">
+      <h3>🛠 VLAN de Administración</h3>
+      <p>Usada para tráfico SSH/Telnet al dispositivo. Normalmente es el SVI del switch capa 2. <strong>No debe mezclar tráfico de usuarios finales.</strong></p>
+    </div>
+    <div class="concept-card">
+      <h3>📞 VLAN de Voz</h3>
+      <p>VoIP requiere VLAN separada: QoS garantizado, latencia &lt;150ms, ancho de banda asegurado. Los teléfonos Cisco usan CDP para aprender su VLAN de voz. El teléfono etiqueta su propio tráfico (CoS).</p>
+      <div class="tag">QoS obligatorio</div>
+    </div>
+    <div class="concept-card">
+      <h3>📏 Rangos de VLAN</h3>
+      <p><strong>Rango normal:</strong> 1–1005 (PYMEs). Guardadas en vlan.dat en flash.<br><strong>Rango extendido:</strong> 1006–4095 (proveedores). En running-config. Requiere VTP modo transparente.<br><strong>Reservadas:</strong> 1002–1005 (legacy Token Ring/FDDI).</p>
+    </div>
+  </div>
+
+  <div class="section-title">Configuración de VLANs — Comandos Clave</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Crear, asignar y verificar VLANs</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- CREAR Y NOMBRAR VLAN ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 10</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Faculty</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">exit</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 20</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Students</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">exit</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 99</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Management</span>
+
+<span class="cli-comment">--- ASIGNAR PUERTO A VLAN (puerto de acceso) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/18</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>       <span class="cli-comment">→ Fuerza modo acceso (no trunk)</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 20</span>     <span class="cli-comment">→ Asigna a VLAN 20</span>
+
+<span class="cli-comment">--- ASIGNAR VLAN DE VOZ (para teléfonos IP) ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 20</span>       <span class="cli-comment">→ VLAN de datos</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport voice vlan 150</span>        <span class="cli-comment">→ VLAN de voz</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">mls qos trust cos</span>                <span class="cli-comment">→ Confía en QoS del teléfono</span>
+
+<span class="cli-comment">--- ELIMINAR VLAN ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no vlan 20</span>                      <span class="cli-comment">→ Elimina VLAN 20</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no switchport access vlan</span>    <span class="cli-comment">→ Quita asignación → vuelve a VLAN 1</span>
+
+<span class="cli-comment">--- VERIFICACIÓN ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>                  <span class="cli-comment">→ Lista todas las VLANs y sus puertos</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan id 20</span>                  <span class="cli-comment">→ Detalles de VLAN 20</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/18 switchport</span>  <span class="cli-comment">→ VLAN asignada al puerto</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan summary</span>                 <span class="cli-comment">→ Resumen total de VLANs</span>
+
+<span class="cli-comment">--- ELIMINAR TODAS LAS VLANs (reset) ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">delete flash:vlan.dat</span>             <span class="cli-comment">→ Borra archivo VLAN, recargar después</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">reload</span></div>
+  </div>
+
+  <div class="section-title">Trunking — IEEE 802.1Q</div>
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span>Un <strong>trunk (enlace troncal)</strong> es un enlace punto a punto entre switches (o switch-router) que transporta tráfico de <strong>múltiples VLANs simultáneamente</strong>. Usa etiquetas 802.1Q de 4 bytes para identificar a qué VLAN pertenece cada trama.</span>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Configurar y verificar trunks 802.1Q</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- CONFIGURAR TRUNK ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fastethernet 0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>                    <span class="cli-comment">→ Fuerza modo trunk permanente</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>           <span class="cli-comment">→ Cambia VLAN nativa (NO usar VLAN 1)</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span> <span class="cli-comment">→ Solo estas VLANs pasan</span>
+
+<span class="cli-comment">--- VERIFICAR TRUNK ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>                     <span class="cli-comment">→ Todos los trunks activos</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1 switchport</span>           <span class="cli-comment">→ Detalles del puerto (modo, encap, VLAN nativa)</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1 trunk</span>               <span class="cli-comment">→ VLANs permitidas en ese trunk</span>
+
+<span class="cli-comment">--- RESTABLECER TRUNK A DEFAULTS ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no switchport trunk native vlan</span>  <span class="cli-comment">→ Vuelve nativa a VLAN 1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no switchport trunk allowed vlan</span>  <span class="cli-comment">→ Permite todas las VLANs</span>
+
+<span class="cli-comment">--- CONVERTIR TRUNK A ACCESO ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>           <span class="cli-comment">→ Deshabilita el trunk</span></div>
+  </div>
+
+  <div class="section-title">DTP — Dynamic Trunking Protocol</div>
+  <div class="keypoint danger">
+    <span class="keypoint-icon">⚠</span>
+    <span>DTP es <strong>propietario de Cisco</strong>. En switches Catalyst 2960/2950, el modo por defecto es <strong>dynamic auto</strong>. Cisco recomienda configurar los puertos como <strong>trunk o access estático</strong> y <strong>desactivar DTP</strong> con <code>switchport nonegotiate</code>.</span>
+  </div>
+
+  <table class="dtp-table">
+    <thead>
+      <tr>
+        <th>Lado A \ Lado B</th>
+        <th>Dynamic Auto</th>
+        <th>Dynamic Desirable</th>
+        <th>Trunk</th>
+        <th>Access</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Dynamic Auto</td><td class="access">Access</td><td class="trunk">Trunk</td><td class="trunk">Trunk</td><td class="access">Access</td></tr>
+      <tr><td>Dynamic Desirable</td><td class="trunk">Trunk</td><td class="trunk">Trunk</td><td class="trunk">Trunk</td><td class="access">Access</td></tr>
+      <tr><td>Trunk</td><td class="trunk">Trunk</td><td class="trunk">Trunk</td><td class="trunk">Trunk</td><td class="limited">⚡ Limitado</td></tr>
+      <tr><td>Access</td><td class="access">Access</td><td class="access">Access</td><td class="limited">⚡ Limitado</td><td class="access">Access</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — DTP configuración y verificación</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- MODOS DTP ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode dynamic auto</span>      <span class="cli-comment">→ Default: solo trunk si vecino lo pide</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode dynamic desirable</span>  <span class="cli-comment">→ Busca activamente formar trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>              <span class="cli-comment">→ Trunk estático (recomendado)</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>             <span class="cli-comment">→ Acceso estático (recomendado)</span>
+
+<span class="cli-comment">--- DESACTIVAR DTP (mejor práctica) ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport nonegotiate</span>              <span class="cli-comment">→ No envía tramas DTP</span>
+
+<span class="cli-comment">--- VERIFICAR DTP ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show dtp interface fastethernet 0/1</span> <span class="cli-comment">→ Modo DTP actual</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1 switchport</span>    <span class="cli-comment">→ Modo admin y operacional</span></div>
+  </div>
+
+  <!-- MÓDULO: Inter-VLAN Routing -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 4 · SRWE</div>
+    <div class="module-title">Enrutamiento Inter-VLAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span>Dispositivos en distintas VLANs necesitan un dispositivo de <strong>Capa 3</strong> para comunicarse. Hay 3 métodos: heredado (obsoleto), Router-on-a-Stick, y Switch de Capa 3 con SVIs (el más moderno y escalable).</span>
+  </div>
+
+  <div class="section-title">3 Métodos de Inter-VLAN Routing</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">Router-on-a-Stick</div>
+      <ul>
+        <li>Una sola interfaz física del router</li>
+        <li>Se divide en subinterfaces virtuales</li>
+        <li>Cada subinterfaz = una VLAN</li>
+        <li>Encapsulación 802.1Q en cada subinterfaz</li>
+        <li>El puerto del switch conectado = trunk</li>
+        <li>Solución para redes pequeñas/medianas</li>
+        <li>Límite práctico: ~50 VLANs</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header purple">Switch Capa 3 + SVIs</div>
+      <ul>
+        <li>Switch multilayer (ej: Catalyst 3650)</li>
+        <li>Una SVI por cada VLAN enrutable</li>
+        <li>Routing por hardware (ASIC) — muy rápido</li>
+        <li>Sin enlace externo switch-router</li>
+        <li>Soporta EtherChannel para más ancho de banda</li>
+        <li>Latencia mínima — todo en el mismo chasis</li>
+        <li>Requiere <code>ip routing</code> habilitado</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Router-on-a-Stick — Configuración Completa</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Subinterfaces en el router + trunk en el switch</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">=== EN EL SWITCH S1 ===</span>
+<span class="cli-comment">--- Crear VLANs ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 10</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Faculty</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 20</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Students</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 99</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Native</span>
+
+<span class="cli-comment">--- Puerto de acceso para PC en VLAN 10 ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/6</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+
+<span class="cli-comment">--- Puerto trunk hacia el router ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/5</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,99</span>
+
+<span class="cli-comment">=== EN EL ROUTER R1 ===</span>
+<span class="cli-comment">--- Habilitar la interfaz física (sin IP aquí) ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface g0/0/1</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span>                     <span class="cli-comment">→ ¡Crítico! Activa la interfaz</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">exit</span>
+
+<span class="cli-comment">--- Subinterfaz para VLAN 10 ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface g0/0/1.10</span>              <span class="cli-comment">→ .10 = número de subinterfaz (convenio = VLAN ID)</span>
+<span class="cli-prompt">R1(config-subif)#</span> <span class="cli-cmd">encapsulation dot1q 10</span>    <span class="cli-comment">→ Esta subinterfaz = VLAN 10</span>
+<span class="cli-prompt">R1(config-subif)#</span> <span class="cli-cmd">ip address 192.168.10.1 255.255.255.0</span>  <span class="cli-comment">→ Default GW para VLAN 10</span>
+
+<span class="cli-comment">--- Subinterfaz para VLAN 20 ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface g0/0/1.20</span>
+<span class="cli-prompt">R1(config-subif)#</span> <span class="cli-cmd">encapsulation dot1q 20</span>
+<span class="cli-prompt">R1(config-subif)#</span> <span class="cli-cmd">ip address 192.168.20.1 255.255.255.0</span>
+
+<span class="cli-comment">--- Subinterfaz para VLAN nativa 99 ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface g0/0/1.99</span>
+<span class="cli-prompt">R1(config-subif)#</span> <span class="cli-cmd">encapsulation dot1q 99 native</span>   <span class="cli-comment">→ Palabra "native" para VLAN nativa</span>
+<span class="cli-prompt">R1(config-subif)#</span> <span class="cli-cmd">ip address 192.168.99.1 255.255.255.0</span>
+
+<span class="cli-comment">--- Verificar routing ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip route</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip interface brief</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show interfaces g0/0/1.10</span></div>
+  </div>
+
+  <div class="section-title">Switch Capa 3 — Inter-VLAN con SVIs</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Switch multicapa (ej: Catalyst 3650) con ip routing</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">=== EN EL SWITCH DE CAPA 3 (D1) ===</span>
+<span class="cli-comment">--- Paso 1: Crear VLANs ---</span>
+<span class="cli-prompt">D1(config)#</span> <span class="cli-cmd">vlan 10</span>
+<span class="cli-prompt">D1(config-vlan)#</span> <span class="cli-cmd">name Faculty</span>
+<span class="cli-prompt">D1(config)#</span> <span class="cli-cmd">vlan 20</span>
+<span class="cli-prompt">D1(config-vlan)#</span> <span class="cli-cmd">name Students</span>
+
+<span class="cli-comment">--- Paso 2: Crear SVIs (una por VLAN) ---</span>
+<span class="cli-prompt">D1(config)#</span> <span class="cli-cmd">interface vlan 10</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">ip address 192.168.10.1 255.255.255.0</span>   <span class="cli-comment">→ Default GW VLAN 10</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">D1(config)#</span> <span class="cli-cmd">interface vlan 20</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">ip address 192.168.20.1 255.255.255.0</span>   <span class="cli-comment">→ Default GW VLAN 20</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+
+<span class="cli-comment">--- Paso 3: Puertos de acceso ---</span>
+<span class="cli-prompt">D1(config)#</span> <span class="cli-cmd">interface g1/0/6</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+
+<span class="cli-comment">--- Paso 4: HABILITAR ROUTING (¡obligatorio!) ---</span>
+<span class="cli-prompt">D1(config)#</span> <span class="cli-cmd">ip routing</span>                               <span class="cli-comment">→ Sin este comando NO hay inter-VLAN routing</span>
+
+<span class="cli-comment">--- Puerto enrutado hacia router externo ---</span>
+<span class="cli-prompt">D1(config)#</span> <span class="cli-cmd">interface g1/0/1</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">no switchport</span>                            <span class="cli-comment">→ Convierte puerto L2 en L3 (routed port)</span>
+<span class="cli-prompt">D1(config-if)#</span> <span class="cli-cmd">ip address 10.10.10.2 255.255.255.0</span>
+
+<span class="cli-comment">--- Verificar ---</span>
+<span class="cli-prompt">D1#</span> <span class="cli-cmd">show ip route</span>
+<span class="cli-prompt">D1#</span> <span class="cli-cmd">show interfaces vlan 10</span>
+<span class="cli-prompt">D1#</span> <span class="cli-cmd">show ip interface brief</span></div>
+  </div>
+
+  <div class="section-title">Troubleshooting Inter-VLAN Routing</div>
+  <table class="key-table">
+    <thead><tr><th>Problema</th><th>Cómo verificar</th><th>Cómo corregir</th></tr></thead>
+    <tbody>
+      <tr><td>VLAN no existe</td><td><code>show vlan brief</code></td><td>Crear la VLAN: <code>vlan &lt;id&gt;</code></td></tr>
+      <tr><td>Puerto en VLAN incorrecta</td><td><code>show interfaces fa0/x switchport</code></td><td><code>switchport access vlan &lt;id&gt;</code></td></tr>
+      <tr><td>Trunk caído o mal configurado</td><td><code>show interfaces trunk</code></td><td>Verificar modo trunk en ambos lados, VLAN nativa igual</td></tr>
+      <tr><td>IP de subinterfaz incorrecta</td><td><code>show ip interface brief</code></td><td>Reconfigurar subinterfaz con IP correcta</td></tr>
+      <tr><td>Encapsulación dot1q errónea</td><td><code>show interfaces g0/0/1.10</code></td><td>Verificar VLAN ID en <code>encapsulation dot1q</code></td></tr>
+      <tr><td>ip routing no habilitado (L3 switch)</td><td><code>show ip route</code></td><td><code>ip routing</code> en config global</td></tr>
+      <tr><td>PC con gateway incorrecto</td><td><code>ipconfig</code> en la PC</td><td>Cambiar default gateway al IP de SVI/subinterfaz</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Glosario Clave — Semana 2</div>
+  <table class="key-table">
+    <thead><tr><th>Término / Comando</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td>VLAN</td><td>Red lógica dentro del switch. Separa dominios de broadcast sin necesidad de hardware adicional.</td></tr>
+      <tr><td>Trunk / Enlace Troncal</td><td>Puerto que transporta tráfico etiquetado de múltiples VLANs entre switches o switch-router.</td></tr>
+      <tr><td>802.1Q</td><td>Estándar IEEE para etiquetado de VLANs en tramas Ethernet. Añade 4 bytes a la trama.</td></tr>
+      <tr><td>VLAN nativa</td><td>VLAN cuyo tráfico viaja sin etiqueta por el trunk. Debe ser la misma en ambos extremos.</td></tr>
+      <tr><td>DTP</td><td>Dynamic Trunking Protocol — protocolo Cisco para negociar trunks automáticamente.</td></tr>
+      <tr><td>Router-on-a-Stick</td><td>Router con subinterfaces 802.1Q conectado a un trunk del switch. Enruta entre VLANs.</td></tr>
+      <tr><td>SVI</td><td>Switch Virtual Interface — interfaz lógica en switch capa 3 que actúa como gateway de VLAN.</td></tr>
+      <tr><td>ip routing</td><td>Comando que habilita el routing en un switch multicapa. Sin él, no hay inter-VLAN routing.</td></tr>
+      <tr><td>no switchport</td><td>Convierte un puerto de switch L2 en puerto enrutado L3 (para conectar a otro dispositivo L3).</td></tr>
+      <tr><td>encapsulation dot1q &lt;id&gt;</td><td>Asocia una subinterfaz de router a una VLAN específica para recibir su tráfico etiquetado.</td></tr>
+      <tr><td>CoS</td><td>Class of Service — QoS de Capa 2 para priorizar tráfico de voz sobre datos.</td></tr>
+      <tr><td>VTP</td><td>VLAN Trunking Protocol — sincroniza VLANs entre switches. VLANs extendidas requieren modo transparente.</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- =============== LABORATORIOS =============== -->
+<div class="tab-content" id="tab-labs">
+
+  <div style="padding: 1rem 0 1.5rem;">
+    <p style="color: var(--muted); font-size: 14px; max-width: 700px;">Solución completa de los 6 labs de Packet Tracer de la Semana 2. Para cada lab: objetivo, topología, pasos con todos los comandos IOS necesarios y verificación final.</p>
+  </div>
+
+  <!-- LAB 1 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 3.2.8</div>
+      <div class="lab-solution-title">Investigar una Implementación de VLAN</div>
+      <div class="lab-solution-ref">Observación / análisis</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Observar cómo las VLANs limitan el tráfico de difusión. Comparar comportamiento con y sin VLANs configuradas en múltiples switches.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Observar broadcast con VLANs configuradas</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Verificar VLANs existentes</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>
+<span class="cli-out">VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/1, Fa0/2
+10   Faculty/Staff                    active    Fa0/11, Fa0/21
+20   Students                         active    Fa0/18
+30   Guest                            active    Fa0/6
+99   Management                       active
+1002 fddi-default                     act/unsup
+...</span>
+
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>
+<span class="cli-out">Port        Mode             Encapsulation  Status        Native vlan
+Fa0/1       on               802.1q         trunking      99
+Fa0/3       on               802.1q         trunking      99
+
+Port        Vlans allowed on trunk
+Fa0/1       10,20,30,99
+Fa0/3       10,20,30,99</span></div>
+        </div>
+        <div class="keypoint info" style="margin-top:0.5rem;">
+          <span class="keypoint-icon">👁</span>
+          <span>En modo simulación de Packet Tracer: envía un ping o ARP desde una PC y observa que el broadcast <strong>solo llega a dispositivos de la misma VLAN</strong>, no a otras VLANs aunque estén en el mismo switch físico.</span>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Observar broadcast SIN VLANs</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Mover PC a VLAN 1 temporalmente para comparar</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/18</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no switchport access vlan</span>    <span class="cli-comment">→ Vuelve a VLAN 1</span>
+<span class="cli-comment">→ Ahora el broadcast llega a TODOS los puertos de VLAN 1</span>
+<span class="cli-comment">→ Diferencia clave: sin VLANs, el dominio de broadcast es toda la LAN</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 2 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 3.3.12</div>
+      <div class="lab-solution-title">Configuración de VLAN</div>
+      <div class="lab-solution-ref">Crear · Asignar · Verificar</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Verificar la configuración predeterminada de VLAN, crear VLANs y asignar puertos de switch a ellas.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Verificar configuración predeterminada</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Comandos de verificación inicial</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>              <span class="cli-comment">→ Todos los puertos en VLAN 1 por defecto</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/6 switchport</span>
+<span class="cli-out">Administrative Mode: dynamic auto
+Operational Mode: static access
+Access Mode VLAN: 1 (default)</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Crear VLANs en S1 y S2</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Aplicar en S1 y repetir exactamente igual en S2</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">configure terminal</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 10</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Faculty/Staff</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">exit</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 20</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Students</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">exit</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 30</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Guest(Default)</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">exit</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 99</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Management&Native</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">end</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>               <span class="cli-comment">→ Confirmar que las VLANs existen</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 3</span> Asignar puertos a VLANs</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S1: puertos de acceso por VLAN</span></div>
+          <div class="cli-body"><span class="cli-comment">--- S1: PC1 (VLAN 10) en fa0/6 ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/6</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+
+<span class="cli-comment">--- S1: PC2 (VLAN 20) en fa0/11 ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/11</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 20</span>
+
+<span class="cli-comment">--- S1: PC3 (VLAN 30) en fa0/21 ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/21</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 30</span>
+
+<span class="cli-comment">--- S2: PC4 (VLAN 10), PC5 (VLAN 20), PC6 (VLAN 30) igual patrón ---</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface fa0/11</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+
+<span class="cli-comment">--- Verificación final ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/6 switchport</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 3 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 3.4.5</div>
+      <div class="lab-solution-title">Configurar Trunks</div>
+      <div class="lab-solution-ref">Verificar VLANs · Configurar Trunks</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Verificar las VLANs creadas y configurar los puertos de interconexión entre switches como trunks 802.1Q.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Verificar VLANs en ambos switches</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Confirmar antes de configurar trunks</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>           <span class="cli-comment">→ Ver VLANs 10, 20, 30, 99</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">show vlan brief</span>           <span class="cli-comment">→ Mismas VLANs deben existir en S2</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Configurar Trunks en S1 y S2</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S1: puerto fa0/1 (hacia S2) y fa0/5 (hacia router)</span></div>
+          <div class="cli-body"><span class="cli-comment">--- S1: trunk hacia S2 ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- S2: trunk hacia S1 (puerto fa0/1) ---</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Verificación ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>
+<span class="cli-out">Port        Mode             Encapsulation  Status        Native vlan
+Fa0/1       on               802.1q         trunking      99
+
+Port        Vlans allowed on trunk
+Fa0/1       10,20,30,99
+
+Port        Vlans allowed and active in management domain
+Fa0/1       10,20,30,99</span>
+
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1 switchport</span>   <span class="cli-comment">→ Confirmar encapsulación dot1q</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 4 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 3.4.6</div>
+      <div class="lab-solution-title">Configurar VLANs y Trunking — Modo Físico</div>
+      <div class="lab-solution-ref">Lab integrador VLAN + Trunk</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Lab completo: armar red, configurar parámetros básicos, crear VLANs, asignar puertos, configurar trunks 802.1Q y eliminar base de datos VLAN al finalizar.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 1</span> Configuración básica de dispositivos</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Aplicar en S1 y S2 (cambiar hostname)</span></div>
+          <div class="cli-body"><span class="cli-prompt">Switch#</span> <span class="cli-cmd">configure terminal</span>
+<span class="cli-prompt">Switch(config)#</span> <span class="cli-cmd">hostname S1</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no ip domain-lookup</span>                    <span class="cli-comment">→ Evita demoras por DNS</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">enable secret class</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line console 0</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">logging synchronous</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line vty 0 15</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">service password-encryption</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">banner motd # Acceso restringido — Solo personal autorizado #</span>
+
+<span class="cli-comment">--- SVI de administración ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.11 255.255.255.0</span>  <span class="cli-comment">→ S2: usar .12</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip default-gateway 192.168.1.1</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 2</span> Crear VLANs y asignar puertos</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">En S1 y S2 — crear VLANs primero, luego asignar</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Crear VLANs ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 10</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Faculty/Staff</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 20</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Students</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 30</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Guest</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 99</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Management</span>
+
+<span class="cli-comment">--- Asignar puertos en S1 ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/6</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 30</span>
+
+<span class="cli-comment">--- Asignar puertos en S2 ---</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface fa0/11</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface fa0/18</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport access vlan 20</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 3</span> Configurar trunk 802.1Q entre S1 y S2</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Trunk en fa0/1 de ambos switches</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-comment">→ Repetir exactamente en S2 interface fa0/1</span>
+
+<span class="cli-comment">--- Verificar ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>
+
+<span class="cli-comment">--- Eliminar base de datos VLAN (al final del lab) ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">delete flash:vlan.dat</span>
+<span class="cli-out">Delete filename [vlan.dat]? [Enter]
+Delete flash:vlan.dat? [confirm] [Enter]</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">erase startup-config</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">reload</span>                    <span class="cli-comment">→ Reinicia el switch limpio</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 5 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 3.5.5</div>
+      <div class="lab-solution-title">Configurar DTP</div>
+      <div class="lab-solution-ref">Trunk estático · DTP dinámico</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Configurar trunk estático (sin DTP) y trunk dinámico (con DTP). Verificar la negociación automática de enlaces troncales.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Trunk estático — deshabilitar DTP</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Mejor práctica: trunk forzado sin negociación</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>           <span class="cli-comment">→ Trunk permanente</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport nonegotiate</span>           <span class="cli-comment">→ Desactiva DTP — no envía tramas DTP</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+
+<span class="cli-comment">→ Hacer lo mismo en S2 fa0/1</span>
+
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show dtp interface fa0/1</span>
+<span class="cli-out">DTP information for FastEthernet0/1:
+  TOS/TAS/TNS:                              TRUNK/ON/TRUNK
+  TOT/TAT/TNT:                              802.1Q/802.1Q/802.1Q
+  Neighbor address 1:                       ...
+  Hello timer expiry (sec/state):           never/STOPPED    ← DTP desactivado</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Configurar y verificar DTP dinámico</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Probar combinaciones de modos DTP</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Escenario: S1 desirable + S2 auto = TRUNK ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode dynamic desirable</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode dynamic auto</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1 switchport</span>
+<span class="cli-out">Administrative Mode: dynamic desirable
+Operational Mode: trunk          ← Se formó trunk automáticamente</span>
+
+<span class="cli-comment">--- Escenario: S1 auto + S2 auto = ACCESS (no forma trunk) ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode dynamic auto</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode dynamic auto</span>
+<span class="cli-out">Operational Mode: static access  ← No hay trunk, ambos esperan al otro</span>
+
+<span class="cli-comment">--- Verificar modo DTP en cualquier momento ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show dtp interface fa0/1</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>              <span class="cli-comment">→ Si el puerto aparece aquí, es trunk</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 6 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 3.6.1</div>
+      <div class="lab-solution-title">Implementar VLANs y Trunking — Lab Integrador</div>
+      <div class="lab-solution-ref">Proyecto completo · Solución paso a paso</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Lab integrador completo: configurar VLANs, asignar puertos, trunks estáticos y dinámicos en una topología con múltiples switches. Verificar conectividad dentro de cada VLAN.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 1</span> Configurar VLANs en todos los switches</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Topología: S1–S2 (trunk) — S2–S3 (trunk)</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Aplicar en S1, S2 y S3 ---</span>
+<span class="cli-prompt">Sx(config)#</span> <span class="cli-cmd">vlan 10</span>
+<span class="cli-prompt">Sx(config-vlan)#</span> <span class="cli-cmd">name Faculty/Staff</span>
+<span class="cli-prompt">Sx(config)#</span> <span class="cli-cmd">vlan 20</span>
+<span class="cli-prompt">Sx(config-vlan)#</span> <span class="cli-cmd">name Students</span>
+<span class="cli-prompt">Sx(config)#</span> <span class="cli-cmd">vlan 30</span>
+<span class="cli-prompt">Sx(config-vlan)#</span> <span class="cli-cmd">name Guest</span>
+<span class="cli-prompt">Sx(config)#</span> <span class="cli-cmd">vlan 99</span>
+<span class="cli-prompt">Sx(config-vlan)#</span> <span class="cli-cmd">name Management</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 2</span> Asignar puertos de acceso</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S1, S2, S3 — PCs a sus VLANs</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Usar interface range para múltiples puertos ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/1 - 5</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+
+<span class="cli-comment">--- Puerto específico para cada PC según topología ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/6</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 30</span>   <span class="cli-comment">→ PC de VLAN 30</span>
+
+<span class="cli-comment">--- SVI para administración ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.11 255.255.255.0</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 3</span> Configurar trunks entre switches</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Trunk estático S1↔S2 / Trunk dinámico S2↔S3</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Trunk ESTÁTICO S1–S2 (fa0/1 en ambos) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport nonegotiate</span>          <span class="cli-comment">→ Deshabilitar DTP</span>
+<span class="cli-comment">→ Repetir en S2 fa0/1</span>
+
+<span class="cli-comment">--- Trunk DINÁMICO S2–S3 (fa0/3 en S2, fa0/1 en S3) ---</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface fa0/3</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode dynamic desirable</span>   <span class="cli-comment">→ S2 busca trunk activamente</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport mode dynamic auto</span>        <span class="cli-comment">→ S3 acepta trunk si se lo piden</span>
+<span class="cli-comment">→ Resultado: se forma trunk automáticamente (desirable + auto = trunk)</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">VERIFICACIÓN FINAL</span> Confirmar toda la configuración</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Checklist de verificación completa</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>                 <span class="cli-comment">→ VLANs 10,20,30,99 existen y tienen puertos</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>           <span class="cli-comment">→ fa0/1 aparece como trunk, VLAN nativa 99</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">show interfaces trunk</span>           <span class="cli-comment">→ fa0/1 y fa0/3 deben aparecer como trunk</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show dtp interface fa0/1</span>         <span class="cli-comment">→ Confirmar nonegotiate en trunk estático</span>
+
+<span class="cli-comment">--- Prueba de conectividad (dentro de la misma VLAN) ---</span>
+<span class="cli-out">PC-A (VLAN 10, 192.168.10.3) > ping 192.168.10.11   → Debe ser exitoso (misma VLAN)
+PC-A (VLAN 10, 192.168.10.3) > ping 192.168.20.3    → Debe FALLAR (diferente VLAN, sin router)</span>
+
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">copy running-config startup-config</span>
+<span class="cli-prompt">S3#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERENCIA RÁPIDA LABS -->
+  <div class="section-title">Referencia Rápida — Comandos más usados en Labs</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">Quick Reference — Semana 2</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- SHOW (verificación) ---</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show vlan brief</span>                         <span class="cli-comment">→ VLANs y sus puertos</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show interfaces trunk</span>                   <span class="cli-comment">→ Todos los trunks activos</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show interfaces fa0/X switchport</span>         <span class="cli-comment">→ Detalles de un puerto (modo, VLAN)</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show dtp interface fa0/X</span>                <span class="cli-comment">→ Estado DTP</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show running-config</span>                     <span class="cli-comment">→ Configuración completa actual</span>
+<span class="cli-prompt">R#</span> <span class="cli-cmd">show ip route</span>                           <span class="cli-comment">→ Tabla de rutas del router</span>
+<span class="cli-prompt">R#</span> <span class="cli-cmd">show ip interface brief</span>                 <span class="cli-comment">→ Estado de interfaces y IPs</span>
+<span class="cli-prompt">R#</span> <span class="cli-cmd">show interfaces g0/0/1.10</span>               <span class="cli-comment">→ Subinterfaz específica</span>
+
+<span class="cli-comment">--- VLANS ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">vlan 10</span>  /  <span class="cli-cmd">name XXX</span>               <span class="cli-comment">→ Crear y nombrar</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">no vlan 10</span>                          <span class="cli-comment">→ Eliminar</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport mode access</span>          <span class="cli-comment">→ Puerto de acceso</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport access vlan 10</span>       <span class="cli-comment">→ Asignar a VLAN</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">no switchport access vlan</span>       <span class="cli-comment">→ Volver a VLAN 1</span>
+
+<span class="cli-comment">--- TRUNKS ---</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport mode trunk</span>           <span class="cli-comment">→ Trunk estático</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport trunk native vlan 99</span> <span class="cli-comment">→ VLAN nativa</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport trunk allowed vlan 10,20,99</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport nonegotiate</span>          <span class="cli-comment">→ Deshabilitar DTP</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport mode dynamic desirable</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport mode dynamic auto</span>
+
+<span class="cli-comment">--- ROUTER-ON-A-STICK ---</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">interface g0/0/1.10</span>
+<span class="cli-prompt">R(config-subif)#</span>  <span class="cli-cmd">encapsulation dot1q 10</span>
+<span class="cli-prompt">R(config-subif)#</span>  <span class="cli-cmd">ip address 192.168.10.1 255.255.255.0</span>
+
+<span class="cli-comment">--- SWITCH CAPA 3 ---</span>
+<span class="cli-prompt">D(config)#</span>  <span class="cli-cmd">ip routing</span>                          <span class="cli-comment">→ ¡Obligatorio para inter-VLAN!</span>
+<span class="cli-prompt">D(config)#</span>  <span class="cli-cmd">interface vlan 10</span>  /  <span class="cli-cmd">ip address ...</span>  <span class="cli-comment">→ SVI</span>
+<span class="cli-prompt">D(config-if)#</span>  <span class="cli-cmd">no switchport</span>                   <span class="cli-comment">→ Puerto enrutado L3</span>
+
+<span class="cli-comment">--- RESET COMPLETO SWITCH ---</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">erase startup-config</span>  →  <span class="cli-cmd">delete flash:vlan.dat</span>  →  <span class="cli-cmd">reload</span></div>
+  </div>
+
+</div>
+</main>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  if (name === 'teoria') document.querySelectorAll('.nav-pill')[0].classList.add('active');
+  else document.querySelectorAll('.nav-pill')[1].classList.add('active');
+}
+
+function setSection(name) {
+  const btn = name === 'teoria'
+    ? document.querySelectorAll('.tab-btn')[0]
+    : document.querySelectorAll('.tab-btn')[1];
+  showTab(name, btn);
+}
+
+function toggleLab(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('span:last-child');
+  const isOpen = body.style.display !== 'none' && body.style.display !== '';
+  if (isOpen) {
+    body.style.display = 'none';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
+
+// Abrir todos los labs por defecto
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.lab-solution-body').forEach(b => b.style.display = 'block');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes & Cisco — Semana 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161921;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --accent4: #a78bfa;
+    --text: #e8eaf0;
+    --muted: #7c8494;
+    --tag-bg: #1a2535;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; font-size: 15px; line-height: 1.7; min-height: 100vh; }
+  nav { position: sticky; top: 0; background: rgba(13,15,20,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 100; padding: 0 2rem; }
+  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 0; height: 56px; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; margin-right: auto; letter-spacing: 0.05em; text-decoration: none; }
+  .nav-section { display: flex; align-items: center; gap: 2px; margin-right: 1rem; }
+  .nav-section span { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 8px; }
+  .nav-pill { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.2s; color: var(--muted); background: none; font-family: 'Sora', sans-serif; }
+  .nav-pill:hover { color: var(--text); border-color: var(--border); background: var(--surface); }
+  .nav-pill.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.08); }
+  .nav-weeks { display: flex; gap: 2px; }
+  .nav-week { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; font-family: 'JetBrains Mono', monospace; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.15s; color: var(--muted); }
+  .nav-week:hover { color: var(--text); border-color: var(--border); }
+  .nav-week.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.1); }
+  .nav-week.done { color: #4a7a6a; border-color: #2a4a3a; }
+  .nav-week.locked { color: #3a4050; cursor: default; }
+  .hero { max-width: 1100px; margin: 0 auto; padding: 3.5rem 2rem 2rem; border-bottom: 1px solid var(--border); }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3); color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px; margin-bottom: 1.2rem; }
+  .hero h1 { font-size: 2.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.8rem; background: linear-gradient(135deg, #e8eaf0 0%, #a0a8b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { color: var(--muted); font-size: 15px; max-width: 640px; margin-bottom: 1.5rem; }
+  .hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+  .stat-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .section-tabs { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab-btn { padding: 1rem 1.5rem; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; border-top: none; border-left: none; border-right: none; background: none; font-family: 'Sora', sans-serif; transition: all 0.2s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .module-header { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.2rem; }
+  .module-header:first-child { margin-top: 0; }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .module-title { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+  .module-line { flex: 1; height: 1px; background: var(--border); }
+  .concepts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; transition: border-color 0.2s; }
+  .concept-card:hover { border-color: #3a4558; }
+  .concept-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .concept-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+  .concept-card .tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--tag-bg); border: 1px solid var(--border); color: var(--accent2); padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+  .key-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 13.5px; }
+  .key-table thead tr { border-bottom: 1px solid var(--border); }
+  .key-table th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 0 12px 10px 0; }
+  .key-table td { padding: 9px 12px 9px 0; color: var(--text); border-bottom: 1px solid rgba(42,48,64,0.5); vertical-align: top; }
+  .key-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; min-width: 200px; }
+  .key-table td:last-child { color: var(--muted); }
+  .cli-block { background: #0a0c10; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1.2rem; }
+  .cli-header { background: var(--surface2); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .cli-dots { display: flex; gap: 5px; }
+  .cli-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cli-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .cli-body { padding: 1rem 1.4rem; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; overflow-x: auto; }
+  .cli-prompt { color: var(--accent); }
+  .cli-cmd { color: #93c5fd; }
+  .cli-comment { color: #4a5568; }
+  .cli-out { color: var(--muted); }
+  .cli-important { color: var(--accent3); }
+  .keypoint { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.9rem 1.2rem; font-size: 13.5px; color: #d4a855; margin-bottom: 1rem; display: flex; gap: 10px; align-items: flex-start; }
+  .keypoint-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .keypoint.info { background: rgba(59,130,246,0.06); border-color: rgba(59,130,246,0.2); color: #7ab3f0; }
+  .keypoint.danger { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); color: #f87171; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.2rem; }
+  .compare-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .compare-card-header { padding: 0.8rem 1.2rem; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); }
+  .compare-card-header.green { color: var(--accent); background: rgba(0,212,170,0.05); }
+  .compare-card-header.blue { color: var(--accent2); background: rgba(59,130,246,0.05); }
+  .compare-card-header.purple { color: var(--accent4); background: rgba(167,139,250,0.05); }
+  .compare-card-header.orange { color: var(--accent3); background: rgba(245,158,11,0.05); }
+  .compare-card ul { list-style: none; padding: 0.8rem 1.2rem; }
+  .compare-card ul li { font-size: 13px; color: var(--muted); padding: 4px 0; border-bottom: 1px solid rgba(42,48,64,0.4); display: flex; gap: 8px; align-items: flex-start; }
+  .compare-card ul li::before { content: '→'; color: var(--border); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+  .compare-card ul li:last-child { border-bottom: none; }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .summary-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+  .summary-box h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.7rem; }
+  .summary-box ul { list-style: none; padding: 0; }
+  .summary-box ul li { font-size: 13px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; }
+  .summary-box ul li::before { content: '✦'; color: var(--accent4); font-size: 9px; margin-top: 5px; flex-shrink: 0; }
+  /* MATRIX TABLES */
+  .matrix-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 12.5px; }
+  .matrix-table th, .matrix-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: center; }
+  .matrix-table th { background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .matrix-table td.yes { color: var(--accent); font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .matrix-table td.no { color: #ef4444; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .matrix-table td.label { text-align: left; color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; background: rgba(167,139,250,0.05); }
+  /* PORT STATES */
+  .port-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-bottom: 1.2rem; }
+  .port-state { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem 1rem; }
+  .port-state-name { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .port-state-desc { font-size: 12px; color: var(--muted); }
+  .state-blocking { color: #ef4444; border-color: rgba(239,68,68,0.2); }
+  .state-listening { color: var(--accent3); border-color: rgba(245,158,11,0.2); }
+  .state-learning { color: var(--accent2); border-color: rgba(59,130,246,0.2); }
+  .state-forwarding { color: var(--accent); border-color: rgba(0,212,170,0.2); }
+  .state-disabled { color: var(--muted); }
+  /* LAB SOLUTION CARD */
+  .lab-solution { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem; }
+  .lab-solution-header { padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid var(--border); background: var(--surface2); cursor: pointer; user-select: none; }
+  .lab-solution-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .lab-solution-title { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .lab-solution-ref { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .lab-solution-body { padding: 1.4rem; }
+  .lab-objective { font-size: 13.5px; color: var(--muted); margin-bottom: 1rem; border-left: 3px solid var(--accent4); padding-left: 0.8rem; }
+  .lab-enunciado { background: rgba(167,139,250,0.04); border: 1px solid rgba(167,139,250,0.15); border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1.2rem; }
+  .lab-enunciado h4 { font-size: 12px; font-weight: 700; color: var(--accent4); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.6rem; }
+  .lab-enunciado ul { list-style: none; padding: 0; }
+  .lab-enunciado ul li { font-size: 13px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; }
+  .lab-enunciado ul li::before { content: '◆'; color: var(--accent4); font-size: 8px; margin-top: 6px; flex-shrink: 0; }
+  .lab-step { margin-bottom: 1.2rem; }
+  .lab-step-title { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .lab-step-title .step-num { background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); border-radius: 3px; padding: 1px 6px; font-size: 10px; }
+  /* IOS MODES */
+  .ios-modes { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 1.2rem; }
+  .ios-mode { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .ios-mode-prompt { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; min-width: 240px; }
+  .ios-mode-desc { font-size: 13px; color: var(--muted); }
+  .ios-mode-cmd { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent3); background: var(--tag-bg); border: 1px solid var(--border); padding: 1px 7px; border-radius: 3px; margin-left: 6px; }
+  /* STP PROCESS STEPS */
+  .stp-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 1.2rem; }
+  .stp-step { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; position: relative; }
+  .stp-step-num { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: rgba(167,139,250,0.15); position: absolute; top: 8px; right: 12px; }
+  .stp-step h3 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+  .stp-step p { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.7rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr; }
+    nav .nav-weeks { display: none; }
+    .ios-mode { flex-direction: column; gap: 4px; }
+    .ios-mode-prompt { min-width: unset; }
+    .stp-steps { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">◈ REDES / CISCO</a>
+    <div class="nav-section">
+      <span>Sección</span>
+      <button class="nav-pill active" onclick="setSection('teoria')">Teoría</button>
+      <button class="nav-pill" onclick="setSection('labs')">Laboratorios</button>
+    </div>
+    <div class="nav-weeks">
+      <a class="nav-week done" href="index.html" title="Semana 1 — completada">1</a>
+      <a class="nav-week done" href="semana2.html" title="Semana 2 — completada">2</a>
+      <a class="nav-week active" href="semana3.html" title="Semana 3 — actual">3</a>
+      <a class="nav-week locked" href="semana4.html" title="Pendiente">4</a>
+      <a class="nav-week locked" href="semana5.html" title="Pendiente">5</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">6</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">7</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">◉ SEMANA 3 — ACTIVA</div>
+  <h1>STP & EtherChannel</h1>
+  <p class="hero-sub">Spanning Tree Protocol (STP/RSTP/PVST+), prevención de bucles de Capa 2, y agregación de enlaces EtherChannel con PAgP y LACP. SRWE Módulos 5 y 6.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-dot" style="background:var(--accent4)"></div>2 módulos teóricos</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent2)"></div>STP · RSTP · PVST+</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent3)"></div>4 labs con enunciado y solución</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent)"></div>PAgP · LACP · EtherChannel</div>
+  </div>
+</div>
+
+<div class="section-tabs">
+  <button class="tab-btn active" onclick="showTab('teoria', this)">📘 Teoría</button>
+  <button class="tab-btn" onclick="showTab('labs', this)">🧪 Laboratorios + Soluciones</button>
+</div>
+
+<main>
+<!-- =============== TEORÍA =============== -->
+<div class="tab-content active" id="tab-teoria">
+
+  <!-- MÓDULO 5: STP -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 5 · SRWE</div>
+    <div class="module-title">Conceptos STP — Spanning Tree Protocol</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Concepto clave:</strong> Las rutas redundantes en una red Ethernet L2 causan <strong>bucles de Capa 2</strong>. A diferencia de L3 (TTL en IP), Ethernet no tiene mecanismo para limitar reenvíos infinitos. STP bloquea lógicamente los puertos redundantes para crear una topología <strong>sin bucles pero con redundancia física</strong>.</span>
+  </div>
+
+  <div class="section-title">¿Por qué existe STP?</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>💥 Bucle de Capa 2</h3>
+      <p>Sin STP, una trama de difusión circula infinitamente entre switches. L2 Ethernet no tiene TTL como IPv4/IPv6. El resultado: la red colapsa en segundos.</p>
+      <div class="tag">broadcast storm</div>
+    </div>
+    <div class="concept-card">
+      <h3>🌪 Tormenta de Broadcast</h3>
+      <p>Número anormalmente alto de broadcasts que saturan la red. Causa inestabilidad en la tabla MAC, saturación de enlaces y alta CPU en switches. Una NIC defectuosa o un bucle L2 la desencadenan.</p>
+      <div class="tag">derriba la red en segundos</div>
+    </div>
+    <div class="concept-card">
+      <h3>🔀 Inestabilidad tabla MAC</h3>
+      <p>En un bucle, la misma trama llega al switch por múltiples puertos. El switch actualiza constantemente la dirección MAC origen → no sabe por dónde reenviar tramas unicast.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🌳 STP — Solución</h3>
+      <p>Spanning Tree Protocol (IEEE 802.1D) bloquea lógicamente puertos redundantes. Si falla un enlace activo, desbloquea el puerto alternativo automáticamente. Inventado por Radia Perlman (1985).</p>
+      <div class="tag">topología sin bucles</div>
+    </div>
+    <div class="concept-card">
+      <h3>🧮 STA — Algoritmo</h3>
+      <p>El <strong>Spanning Tree Algorithm</strong> calcula la topología óptima sin bucles eligiendo un Root Bridge y determinando el costo de cada ruta. Todo switch ejecuta STA intercambiando BPDUs.</p>
+      <div class="tag">Spanning Tree Algorithm</div>
+    </div>
+    <div class="concept-card">
+      <h3>📨 BPDU</h3>
+      <p><strong>Bridge Protocol Data Unit</strong> — tramas que intercambian los switches para elegir el Root Bridge y calcular rutas. Se envían cada 2 segundos (Hello Timer). Contienen el BID del switch emisor.</p>
+      <div class="tag">cada 2 segundos</div>
+    </div>
+  </div>
+
+  <div class="section-title">Proceso STP — 4 Pasos del Algoritmo</div>
+  <div class="stp-steps">
+    <div class="stp-step">
+      <div class="stp-step-num">1</div>
+      <h3>Elegir el Root Bridge</h3>
+      <p>El switch con el <strong>BID más bajo</strong> se convierte en Root Bridge. BID = Prioridad (32768 default) + Extended System ID (VLAN ID) + MAC Address. Si las prioridades son iguales, gana la MAC más baja.</p>
+    </div>
+    <div class="stp-step">
+      <div class="stp-step-num">2</div>
+      <h3>Elegir Puerto Raíz (Root Port)</h3>
+      <p>Cada switch no-raíz elige 1 Root Port: el puerto con el <strong>menor costo de ruta al Root Bridge</strong>. Costo = suma de costos de todos los puertos en la ruta. 100Mbps=19, 1Gbps=4, 10Gbps=2.</p>
+    </div>
+    <div class="stp-step">
+      <div class="stp-step-num">3</div>
+      <h3>Elegir Puerto Designado</h3>
+      <p>En cada segmento entre dos switches, el puerto con <strong>menor costo al Root Bridge</strong> es el Designated Port (en estado Forwarding). Todos los puertos del Root Bridge son designados.</p>
+    </div>
+    <div class="stp-step">
+      <div class="stp-step-num">4</div>
+      <h3>Puertos Alternativos (Bloqueados)</h3>
+      <p>El resto de puertos quedan en estado <strong>Blocking</strong>. Si un enlace activo falla, STP recalcula y desbloquea el puerto alternativo necesario.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Bridge ID (BID) — Cómo se elige el Root Bridge</div>
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span><strong>BID = Prioridad de puente (4 bits) + Extended System ID/VLAN (12 bits) + Dirección MAC (48 bits).</strong> Prioridad predeterminada: <code>32768</code>. El BID más bajo gana. Para forzar un Root Bridge, bajar la prioridad: múltiplos de 4096 (ej: 4096, 8192, 0). Si las prioridades son iguales, la MAC más baja decide.</span>
+  </div>
+
+  <div class="section-title">Costos de Puerto STP por Velocidad</div>
+  <table class="key-table">
+    <thead><tr><th>Velocidad de enlace</th><th>Costo STP (802.1D-1998)</th><th>Costo RSTP (802.1w)</th></tr></thead>
+    <tbody>
+      <tr><td>10 Gbps</td><td>2</td><td>2.000</td></tr>
+      <tr><td>1 Gbps</td><td>4</td><td>20.000</td></tr>
+      <tr><td>100 Mbps</td><td>19</td><td>200.000</td></tr>
+      <tr><td>10 Mbps</td><td>100</td><td>2.000.000</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Desempates cuando hay igual costo de ruta al Root Bridge</div>
+  <div class="summary-box">
+    <h4>Criterios de desempate (en orden)</h4>
+    <ul>
+      <li>1° — BID del switch <strong>remitente</strong> más bajo (prioridad + MAC del vecino)</li>
+      <li>2° — Prioridad de puerto del remitente más baja (default: 128, rango 0–240 en múltiplos de 16)</li>
+      <li>3° — ID de puerto del remitente más bajo (número del puerto físico, ej: F0/1 &lt; F0/2)</li>
+    </ul>
+  </div>
+
+  <div class="section-title">Estados de Puerto STP</div>
+  <div class="port-states">
+    <div class="port-state state-blocking">
+      <div class="port-state-name">🔴 Blocking</div>
+      <div class="port-state-desc">Solo recibe BPDUs. No aprende MACs. No reenvía datos. Duración: hasta 20s (Max Age).</div>
+    </div>
+    <div class="port-state state-listening">
+      <div class="port-state-name">🟡 Listening</div>
+      <div class="port-state-desc">Envía y recibe BPDUs. No aprende MACs ni reenvía datos. Duración: 15s (Forward Delay).</div>
+    </div>
+    <div class="port-state state-learning">
+      <div class="port-state-name">🔵 Learning</div>
+      <div class="port-state-desc">Envía/recibe BPDUs. Aprende MACs. NO reenvía datos todavía. Duración: 15s (Forward Delay).</div>
+    </div>
+    <div class="port-state state-forwarding">
+      <div class="port-state-name">🟢 Forwarding</div>
+      <div class="port-state-desc">Estado operativo normal. Envía/recibe BPDUs. Aprende MACs. Reenvía datos.</div>
+    </div>
+    <div class="port-state state-disabled">
+      <div class="port-state-name">⚫ Disabled</div>
+      <div class="port-state-desc">Puerto administrativamente desactivado (<code>shutdown</code>). No participa en STP.</div>
+    </div>
+  </div>
+
+  <div class="keypoint danger">
+    <span class="keypoint-icon">⏱</span>
+    <span><strong>Convergencia STP clásica tarda ~50 segundos:</strong> Max Age (20s) + Listening (15s) + Learning (15s). Esto es un problema para clientes DHCP y servicios en tiempo real. Por eso existe RSTP.</span>
+  </div>
+
+  <div class="section-title">Temporizadores STP</div>
+  <table class="key-table">
+    <thead><tr><th>Temporizador</th><th>Valor default</th><th>Rango</th><th>Función</th></tr></thead>
+    <tbody>
+      <tr><td>Hello Timer</td><td>2 segundos</td><td>1–10 s</td><td>Intervalo entre BPDUs enviadas por el Root Bridge</td></tr>
+      <tr><td>Forward Delay</td><td>15 segundos</td><td>4–30 s</td><td>Tiempo en estado Listening y en estado Learning (15s cada uno)</td></tr>
+      <tr><td>Max Age</td><td>20 segundos</td><td>6–40 s</td><td>Tiempo máximo que un switch guarda info de BPDU antes de reconfigurar</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Evolución: STP → RSTP → PVST+</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🌳 STP (802.1D-1998)</h3>
+      <p>Original. Una instancia para toda la red (CST). Convergencia lenta (~50s). Ya no se recomienda en redes modernas.</p>
+      <div class="tag">obsoleto en diseño moderno</div>
+    </div>
+    <div class="concept-card">
+      <h3>⚡ RSTP (802.1w)</h3>
+      <p>Rapid Spanning Tree. Convergencia en milisegundos. Solo 3 estados: Discarding (=Blocking+Listening), Learning, Forwarding. 2 roles adicionales: Alternate Port y Backup Port.</p>
+      <div class="tag">convergencia &lt; 1 segundo</div>
+    </div>
+    <div class="concept-card">
+      <h3>🔀 PVST+ (Cisco)</h3>
+      <p>Per-VLAN Spanning Tree Plus. Una instancia STP <strong>por cada VLAN</strong>. Permite Root Bridges distintos por VLAN → balanceo de carga. Soporta PortFast, BPDU Guard, Root Guard.</p>
+      <div class="tag">una instancia por VLAN</div>
+    </div>
+    <div class="concept-card">
+      <h3>🚀 Rapid PVST+ (Cisco)</h3>
+      <p>Mejora de Cisco sobre RSTP. Una instancia RSTP por VLAN. <strong>Default en switches Cisco IOS 15.0+</strong>. Es la implementación más usada en producción.</p>
+      <div class="tag">default en Cisco IOS 15+</div>
+    </div>
+    <div class="concept-card">
+      <h3>🏢 MSTP (802.1s)</h3>
+      <p>Multiple Spanning Tree. Asigna múltiples VLANs a una misma instancia STP. Reduce overhead. Útil en redes con cientos de VLANs. Implementación Cisco: MST (hasta 16 instancias RSTP).</p>
+      <div class="tag">múltiples VLANs / instancia</div>
+    </div>
+    <div class="concept-card">
+      <h3>🛡 PortFast + BPDU Guard</h3>
+      <p><strong>PortFast:</strong> puerto pasa directo a Forwarding (sin esperar 30s). Solo en puertos de acceso con dispositivos finales (PCs, servidores). <strong>BPDU Guard:</strong> si ese puerto recibe una BPDU, lo pone en <code>errdisabled</code> automáticamente.</p>
+      <div class="tag">solo en puertos de acceso</div>
+    </div>
+  </div>
+
+  <div class="section-title">Configuración STP — Comandos Clave</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — STP, RSTP, PortFast, BPDU Guard</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- VER ESTADO STP ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree</span>                    <span class="cli-comment">→ Estado completo STP (Root, puertos, roles)</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree vlan 10</span>            <span class="cli-comment">→ STP para una VLAN específica</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree summary</span>            <span class="cli-comment">→ Resumen: modo, VLANs activas</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree active</span>             <span class="cli-comment">→ Solo VLANs con STP activo</span>
+<span class="cli-comment">--- CONFIGURAR ROOT BRIDGE MANUALMENTE ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree vlan 10 priority 4096</span>  <span class="cli-comment">→ Baja prioridad = más probable Root (múltiplos de 4096)</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree vlan 10 root primary</span>   <span class="cli-comment">→ Atajo: Cisco pone prioridad 24576 automáticamente</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree vlan 10 root secondary</span> <span class="cli-comment">→ Pone prioridad 28672 (respaldo del Root)</span>
+<span class="cli-comment">--- CAMBIAR MODO STP (global) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree mode pvst</span>               <span class="cli-comment">→ PVST+ (STP por VLAN)</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree mode rapid-pvst</span>         <span class="cli-comment">→ Rapid PVST+ (RSTP por VLAN) — RECOMENDADO</span>
+<span class="cli-comment">--- COSTO DE PUERTO (para influir ruta al Root) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">spanning-tree vlan 10 cost 10</span>        <span class="cli-comment">→ Reduce costo → más probable Root Port</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no spanning-tree vlan 10 cost</span>        <span class="cli-comment">→ Restaurar costo por defecto</span>
+<span class="cli-comment">--- PRIORIDAD DE PUERTO ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">spanning-tree vlan 10 port-priority 64</span>  <span class="cli-comment">→ Baja prioridad = preferido (múltiplos de 16)</span>
+<span class="cli-comment">--- PORTFAST y BPDU GUARD ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">spanning-tree portfast</span>                <span class="cli-comment">→ Salta Listening/Learning (solo puertos de acceso)</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">spanning-tree bpduguard enable</span>        <span class="cli-comment">→ Desactiva puerto si recibe BPDU (errdisabled)</span>
+<span class="cli-comment">--- PORTFAST global (para todos los puertos de acceso) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree portfast default</span>        <span class="cli-comment">→ Habilita PortFast en todos los puertos de acceso</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree portfast bpduguard default</span>  <span class="cli-comment">→ BPDU Guard global</span>
+<span class="cli-comment">--- RECUPERAR PUERTO errdisabled ---</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">shutdown</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span>                           <span class="cli-comment">→ Reinicia el puerto manualmente</span></div>
+  </div>
+
+  <div class="section-title">RSTP — Diferencias clave vs STP clásico</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header orange">STP Clásico (802.1D)</div>
+      <ul>
+        <li>5 estados: Blocking, Listening, Learning, Forwarding, Disabled</li>
+        <li>Convergencia: ~30–50 segundos</li>
+        <li>Roles de puerto: Root, Designated, Non-Designated (bloqueado)</li>
+        <li>Recálculo solo cuando falla un enlace</li>
+        <li>Pasivo en detección de fallos (espera timers)</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header green">RSTP (802.1w / Rapid PVST+)</div>
+      <ul>
+        <li>3 estados: Discarding, Learning, Forwarding</li>
+        <li>Convergencia: milisegundos a pocos segundos</li>
+        <li>Roles: Root, Designated, <strong>Alternate</strong>, <strong>Backup</strong></li>
+        <li>Alternate Port puede pasar a Forwarding inmediatamente</li>
+        <li>Activo: negocia con vecinos directamente (Proposal/Agreement)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MÓDULO 6: EtherChannel -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 6 · SRWE</div>
+    <div class="module-title">EtherChannel — Agregación de Enlaces</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Concepto clave:</strong> EtherChannel agrupa varios enlaces físicos Ethernet en un <strong>único enlace lógico (Port Channel)</strong>. STP lo ve como un solo enlace → no bloquea puertos redundantes. Proporciona mayor ancho de banda, tolerancia a fallos y balanceo de carga.</span>
+  </div>
+
+  <div class="section-title">¿Por qué EtherChannel?</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🚫 Problema sin EtherChannel</h3>
+      <p>Si conectas 4 cables entre dos switches para más ancho de banda, STP bloquea 3 de ellos (los ve como rutas redundantes que crean bucles). Solo un enlace queda activo.</p>
+      <div class="tag">STP bloquea enlaces extras</div>
+    </div>
+    <div class="concept-card">
+      <h3>✅ Solución: EtherChannel</h3>
+      <p>EtherChannel agrupa los 4 puertos en 1 interfaz lógica (Port-Channel). STP ve <strong>1 solo enlace</strong> → no bloquea nada. El ancho de banda efectivo se multiplica (hasta 8 puertos × velocidad).</p>
+      <div class="tag">hasta 8 puertos / grupo</div>
+    </div>
+    <div class="concept-card">
+      <h3>📊 Balanceo de carga</h3>
+      <p>EtherChannel distribuye el tráfico entre los enlaces físicos usando un algoritmo de hash (MAC origen, MAC destino, IP, puerto). Configurable con <code>port-channel load-balance</code>.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🔧 Configuración centralizada</h3>
+      <p>Los cambios se hacen en la interfaz <code>port-channel X</code>. Se propagan automáticamente a todos los puertos físicos del grupo. Consistencia garantizada.</p>
+      <div class="tag">config en port-channel</div>
+    </div>
+    <div class="concept-card">
+      <h3>♻️ Tolerancia a fallos</h3>
+      <p>Si cae un enlace físico dentro del EtherChannel, el tráfico migra automáticamente a los demás. STP no necesita recalcular (el canal lógico sigue activo).</p>
+    </div>
+    <div class="concept-card">
+      <h3>⚠️ Restricciones</h3>
+      <p>No mezclar tipos (FastEthernet + GigabitEthernet). Todos los puertos deben tener <strong>misma velocidad, dúplex, VLAN nativa y VLANs permitidas</strong>. Catalyst 2960: máx 6 EtherChannels.</p>
+      <div class="tag">misma configuración obligatoria</div>
+    </div>
+  </div>
+
+  <div class="section-title">Protocolos de Negociación EtherChannel</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header blue">PAgP — Port Aggregation Protocol</div>
+      <ul>
+        <li>Propietario de Cisco (solo entre dispositivos Cisco)</li>
+        <li>Modo <strong>desirable</strong>: inicia negociación activamente</li>
+        <li>Modo <strong>auto</strong>: espera pasivamente (no inicia)</li>
+        <li>Modo <strong>on</strong>: EtherChannel sin negociación (ambos lados deben ser <code>on</code>)</li>
+        <li>Paquetes PAgP cada 30 segundos (supervisión)</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header green">LACP — Link Aggregation Control Protocol</div>
+      <ul>
+        <li>Estándar IEEE 802.3ad — funciona entre distintos fabricantes</li>
+        <li>Modo <strong>active</strong>: inicia negociación activamente</li>
+        <li>Modo <strong>passive</strong>: espera pasivamente (no inicia)</li>
+        <li>Modo <strong>on</strong>: EtherChannel sin negociación</li>
+        <li>Hasta 16 puertos en grupo (8 activos + 8 en espera)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Tabla de Negociación — Modos PAgP y LACP</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header blue">PAgP — Combinaciones</div>
+      <table class="matrix-table" style="margin:0.8rem 0 0;">
+        <thead><tr><th>S1</th><th>S2</th><th>Canal</th></tr></thead>
+        <tbody>
+          <tr><td class="label">on</td><td>on</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">on</td><td>desirable/auto</td><td class="no">NO ✗</td></tr>
+          <tr><td class="label">desirable</td><td>desirable</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">desirable</td><td>auto</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">auto</td><td>desirable</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">auto</td><td>auto</td><td class="no">NO ✗</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header green">LACP — Combinaciones</div>
+      <table class="matrix-table" style="margin:0.8rem 0 0;">
+        <thead><tr><th>S1</th><th>S2</th><th>Canal</th></tr></thead>
+        <tbody>
+          <tr><td class="label">on</td><td>on</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">on</td><td>active/passive</td><td class="no">NO ✗</td></tr>
+          <tr><td class="label">active</td><td>active</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">active</td><td>passive</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">passive</td><td>active</td><td class="yes">SÍ ✓</td></tr>
+          <tr><td class="label">passive</td><td>passive</td><td class="no">NO ✗</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="keypoint info">
+    <span class="keypoint-icon">💡</span>
+    <span><strong>Regla de oro:</strong> Dos modos pasivos (<code>auto + auto</code> o <code>passive + passive</code>) nunca forman un canal porque ninguno inicia la negociación. Siempre necesitas al menos un lado activo (<code>desirable</code> o <code>active</code>).</span>
+  </div>
+
+  <div class="section-title">Configuración EtherChannel — LACP y PAgP</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — EtherChannel con LACP (recomendado) y PAgP</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">=== CONFIGURACIÓN CON LACP (estándar IEEE) ===</span>
+<span class="cli-comment">--- Paso 1: Seleccionar las interfaces del grupo ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/1 - 2</span>    <span class="cli-comment">→ Agrupa fa0/1 y fa0/2</span>
+<span class="cli-comment">--- Paso 2: Crear el Port-Channel con LACP ---</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 1 mode active</span>             <span class="cli-comment">→ LACP activo (inicia negociación)</span>
+<span class="cli-comment">--- Paso 3: Configurar el Port-Channel como trunk ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface port-channel 1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-comment">→ En S2: mismo channel-group 1 mode passive (o active)</span>
+<span class="cli-comment">=== CONFIGURACIÓN CON PAgP (propietario Cisco) ===</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/3 - 4</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 2 mode desirable</span>          <span class="cli-comment">→ PAgP desirable (activo)</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface range fastethernet 0/3 - 4</span>
+<span class="cli-prompt">S2(config-if-range)#</span> <span class="cli-cmd">channel-group 2 mode auto</span>               <span class="cli-comment">→ PAgP auto (pasivo, acepta)</span>
+<span class="cli-comment">=== MODO ON (sin negociación, ambos lados) ===</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 3 mode on</span>                  <span class="cli-comment">→ Fuerza EtherChannel sin protocolo</span>
+<span class="cli-comment">→ S2 también debe ser modo on</span>
+<span class="cli-comment">=== ETHERCHANNEL DE ACCESO (no trunk) ===</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/5 - 6</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 4 mode active</span></div>
+  </div>
+
+  <div class="section-title">Verificación y Troubleshooting EtherChannel</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Verificar EtherChannel</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- COMANDOS DE VERIFICACIÓN ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-out">Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      f - failed to allocate aggregator
+Number of channel-groups in use: 1
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)         LACP      Fa0/1(P)   Fa0/2(P)          ← SU = Layer2, Up</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel port-channel</span>      <span class="cli-comment">→ Detalles de cada port-channel</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces port-channel 1</span>      <span class="cli-comment">→ Estado de la interfaz lógica</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces fa0/1 etherchannel</span>  <span class="cli-comment">→ Rol del puerto físico en EtherChannel</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show running-config | begin port-channel</span>  <span class="cli-comment">→ Config del port-channel</span>
+<span class="cli-comment">--- SOLUCIÓN DE PROBLEMAS COMUNES ---</span>
+<span class="cli-comment">Problema: EtherChannel aparece como (D) Down o (I) stand-alone</span>
+<span class="cli-comment">1. Verificar que todos los puertos tengan misma velocidad y dúplex</span>
+<span class="cli-comment">2. Verificar que todos los puertos estén en la misma VLAN (acceso) o mismo trunk</span>
+<span class="cli-comment">3. Verificar que la VLAN nativa sea igual en ambos extremos</span>
+<span class="cli-comment">4. Verificar que el rango de VLANs permitidas sea idéntico en ambos extremos</span>
+<span class="cli-comment">5. Verificar que los modos de negociación sean compatibles (no passive+passive)</span>
+<span class="cli-comment">--- RESET Y RECONFIGURACIÓN ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no interface port-channel 1</span>          <span class="cli-comment">→ Elimina el port-channel</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fa0/1 - 2</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">no channel-group 1</span>              <span class="cli-comment">→ Desvincula puertos del grupo</span>
+<span class="cli-comment">⚠️ IMPORTANTE: cambios en EtherChannel existente pueden causar errores STP</span>
+<span class="cli-comment">   Mejor eliminar y reconfigurar el channel-group completo</span></div>
+  </div>
+
+  <div class="section-title">Glosario Clave — Semana 3</div>
+  <table class="key-table">
+    <thead><tr><th>Término / Comando</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td>STP (802.1D)</td><td>Spanning Tree Protocol — previene bucles L2 bloqueando puertos redundantes.</td></tr>
+      <tr><td>RSTP (802.1w)</td><td>Rapid STP — convergencia en milisegundos. Solo 3 estados de puerto.</td></tr>
+      <tr><td>PVST+</td><td>Per-VLAN STP — una instancia STP independiente por cada VLAN.</td></tr>
+      <tr><td>Rapid PVST+</td><td>Default en Cisco IOS 15+. RSTP por VLAN. Más rápido y eficiente.</td></tr>
+      <tr><td>Root Bridge</td><td>Switch elegido como punto de referencia. Tiene el BID más bajo.</td></tr>
+      <tr><td>BID</td><td>Bridge ID = Prioridad + Extended System ID (VLAN) + Dirección MAC.</td></tr>
+      <tr><td>BPDU</td><td>Bridge Protocol Data Unit — tramas que intercambian switches para STP.</td></tr>
+      <tr><td>Root Port</td><td>Puerto con menor costo al Root Bridge. Un por switch no-raíz.</td></tr>
+      <tr><td>Designated Port</td><td>Puerto con menor costo al Root en cada segmento. En estado Forwarding.</td></tr>
+      <tr><td>Alternate Port</td><td>RSTP: puerto alternativo al Root Port. Puede activarse sin espera.</td></tr>
+      <tr><td>PortFast</td><td>Salta estados Listening/Learning. Solo en puertos de acceso con dispositivos finales.</td></tr>
+      <tr><td>BPDU Guard</td><td>Pone el puerto en errdisabled si recibe una BPDU. Protege PortFast.</td></tr>
+      <tr><td>EtherChannel</td><td>Agrupa puertos físicos en un enlace lógico. STP lo ve como 1 enlace.</td></tr>
+      <tr><td>Port-Channel</td><td>Interfaz virtual resultante de un EtherChannel. Se configura aquí.</td></tr>
+      <tr><td>PAgP desirable</td><td>Modo activo PAgP — inicia negociación. Propietario Cisco.</td></tr>
+      <tr><td>PAgP auto</td><td>Modo pasivo PAgP — responde pero no inicia. Auto+Auto = no canal.</td></tr>
+      <tr><td>LACP active</td><td>Modo activo LACP — inicia negociación. Estándar IEEE 802.3ad.</td></tr>
+      <tr><td>LACP passive</td><td>Modo pasivo LACP — responde pero no inicia. Passive+Passive = no canal.</td></tr>
+      <tr><td>channel-group X mode Y</td><td>Asigna una interfaz a un grupo EtherChannel con el modo especificado.</td></tr>
+      <tr><td>interface port-channel X</td><td>Accede a la interfaz lógica del EtherChannel para configurarla.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Troubleshooting STP</div>
+  <table class="key-table">
+    <thead><tr><th>Problema</th><th>Cómo verificar</th><th>Cómo corregir</th></tr></thead>
+    <tbody>
+      <tr><td>Root Bridge incorrecto</td><td><code>show spanning-tree</code> → ver Root ID</td><td><code>spanning-tree vlan X root primary</code> o bajar prioridad</td></tr>
+      <tr><td>Puerto bloqueado cuando no debería</td><td><code>show spanning-tree vlan X</code></td><td>Ajustar costo o prioridad del puerto</td></tr>
+      <tr><td>Convergencia lenta</td><td>Timers altos</td><td>Migrar a <code>spanning-tree mode rapid-pvst</code></td></tr>
+      <tr><td>Puerto en errdisabled por BPDU Guard</td><td><code>show interfaces fa0/X status</code></td><td><code>shutdown</code> + <code>no shutdown</code> (fix la causa)</td></tr>
+      <tr><td>Broadcast storm (bucle)</td><td>Alta CPU en switches, tabla MAC inestable</td><td>Verificar STP habilitado, deshabilitar puertos redundantes temporalmente</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- =============== LABORATORIOS =============== -->
+<div class="tab-content" id="tab-labs">
+  <div style="padding: 1rem 0 1.5rem;">
+    <p style="color: var(--muted); font-size: 14px; max-width: 700px;">4 laboratorios de la Semana 3: 1 sobre STP y 3 sobre EtherChannel. Cada lab incluye el enunciado oficial, objetivos y solución completa con todos los comandos IOS.</p>
+  </div>
+
+  <!-- LAB 1 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 5.1.9</div>
+      <div class="lab-solution-title">Investigar la Prevención de Bucles STP</div>
+      <div class="lab-solution-ref">Observación / Análisis STP</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-enunciado">
+        <h4>📋 Enunciado Oficial</h4>
+        <ul>
+          <li>Cree y configure una red simple de tres switches con STP habilitado.</li>
+          <li>Observe el funcionamiento de STP: identificar Root Bridge, Root Ports y puertos bloqueados.</li>
+          <li>Desactive STP y observe qué ocurre (tormenta de broadcast).</li>
+          <li>Vuelva a activar STP y observe cómo se recupera la red.</li>
+        </ul>
+      </div>
+      <div class="lab-objective">Objetivo: Comprender cómo STP previene bucles en una topología con redundancia física. Observar la elección del Root Bridge y el bloqueo de puertos alternativos.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Configurar la topología y verificar STP</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">En cada switch — config básica y verificación STP</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Configuración básica en S1, S2, S3 ---</span>
+<span class="cli-prompt">Switch(config)#</span> <span class="cli-cmd">hostname S1</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no ip domain-lookup</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">enable secret class</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line console 0</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">logging synchronous</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">service password-encryption</span>
+<span class="cli-comment">--- Verificar STP en todos los switches ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree</span>
+<span class="cli-out">VLAN0001
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32769
+             Address     0001.9766.6D26         ← MAC del Root Bridge
+             This bridge is the root           ← S1 es el Root (menor MAC)
+  Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
+             Address     0001.9766.6D26
+  Interface           Role Sts Cost      Prio.Nbr Type
+  ------------------- ---- --- --------- -------- --------------------------------
+  Fa0/1               Desg FWD 19        128.1    P2p
+  Fa0/2               Desg FWD 19        128.2    P2p</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">show spanning-tree</span>
+<span class="cli-out">  Root ID    Priority    32769
+             Address     0001.9766.6D26         ← Sabe quién es el Root
+             Cost        19                     ← Costo de ruta al Root
+             Port        1(FastEthernet0/1)      ← Este es el Root Port de S2
+  Interface           Role Sts Cost      ...
+  Fa0/1               Root FWD 19        ...   ← Root Port: hacia el Root Bridge
+  Fa0/2               Altn BLK 19        ...   ← Puerto alternativo BLOQUEADO</span></div>
+        </div>
+        <div class="keypoint info" style="margin-top:0.5rem;">
+          <span class="keypoint-icon">👁</span>
+          <span>Observa que el Root Bridge tiene todos sus puertos como <strong>Designated (Desg)</strong>. Los demás switches tienen exactamente 1 <strong>Root Port</strong> (hacia el Root) y el resto alternativo o designado. Hay exactamente 1 puerto en <strong>BLK</strong> (bloqueado) en la topología de 3 switches.</span>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Desactivar STP y observar el bucle</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">⚠️ Solo en modo simulación Packet Tracer — no en producción</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Desactivar STP en VLAN 1 en todos los switches ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no spanning-tree vlan 1</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">no spanning-tree vlan 1</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">no spanning-tree vlan 1</span>
+<span class="cli-comment">→ Resultado: los puertos que estaban bloqueados ahora reenvían</span>
+<span class="cli-comment">→ Se forma un bucle L2: las tramas de broadcast circulan sin fin</span>
+<span class="cli-comment">→ En Packet Tracer: usar modo simulación para ver la tormenta de broadcast</span>
+<span class="cli-comment">→ Observar: tabla MAC cambia constantemente, alta utilización de interfaces</span>
+<span class="cli-comment">--- Reactivar STP ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">spanning-tree vlan 1</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">spanning-tree vlan 1</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">spanning-tree vlan 1</span>
+<span class="cli-comment">→ Esperar convergencia (~30-50s con STP clásico)</span>
+<span class="cli-comment">→ STP vuelve a bloquear los puertos redundantes → red estable</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree</span>                   <span class="cli-comment">→ Verificar que vuelve al estado previo</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">VERIFICACIÓN</span> Preguntas clave del lab</div>
+        <div class="summary-box">
+          <h4>Respuestas esperadas en el lab</h4>
+          <ul>
+            <li>¿Cuál switch es el Root Bridge? → El que tenga la dirección MAC <strong>más baja</strong> (si todas las prioridades son iguales a 32769)</li>
+            <li>¿Cuántos puertos bloqueados hay? → En una topología de 3 switches en triángulo: exactamente <strong>1 puerto bloqueado</strong></li>
+            <li>¿Qué pasa al desactivar STP? → Tormenta de broadcast — tramas circulan infinitamente — red inoperable</li>
+            <li>¿Por qué la tormenta para al reactivar STP? → STP bloquea el puerto redundante que cerraba el bucle</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 2 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 6.2.4</div>
+      <div class="lab-solution-title">Configurar EtherChannel</div>
+      <div class="lab-solution-ref">PAgP · LACP · EtherChannel redundante</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-enunciado">
+        <h4>📋 Enunciado Oficial</h4>
+        <ul>
+          <li>Configurar los parámetros básicos de los switches.</li>
+          <li>Configurar un EtherChannel con <strong>PAgP de Cisco</strong> entre S1 y S2.</li>
+          <li>Configurar un EtherChannel <strong>LACP 802.3ad</strong> entre S1 y S3.</li>
+          <li>Configurar un enlace EtherChannel redundante entre S2 y S3.</li>
+          <li>Verificar que todos los EtherChannels están operativos.</li>
+        </ul>
+      </div>
+      <div class="lab-objective">Objetivo: Implementar EtherChannel usando ambos protocolos (PAgP y LACP) en una topología de tres switches. Verificar la operación correcta y el balanceo de carga.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 1</span> Configuración básica en todos los switches</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Aplicar en S1, S2, S3 (cambiar hostname)</span></div>
+          <div class="cli-body"><span class="cli-prompt">Switch#</span> <span class="cli-cmd">configure terminal</span>
+<span class="cli-prompt">Switch(config)#</span> <span class="cli-cmd">hostname S1</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no ip domain-lookup</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">enable secret class</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line console 0</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">logging synchronous</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line vty 0 15</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">service password-encryption</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">banner motd # Acceso autorizado solamente #</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 2</span> EtherChannel con PAgP entre S1 y S2 (Port-Channel 1)</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S1 ↔ S2 — PAgP desirable/auto</span></div>
+          <div class="cli-body"><span class="cli-comment">=== EN S1 ===</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/3 - 4</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 1 mode desirable</span>      <span class="cli-comment">→ PAgP activo</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface port-channel 1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">=== EN S2 ===</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface range fastethernet 0/3 - 4</span>
+<span class="cli-prompt">S2(config-if-range)#</span> <span class="cli-cmd">channel-group 1 mode auto</span>           <span class="cli-comment">→ PAgP pasivo (acepta)</span>
+<span class="cli-prompt">S2(config-if-range)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface port-channel 1</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">--- Verificar ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-out">Group  Port-channel  Protocol    Ports
+1      Po1(SU)         PAgP      Fa0/3(P)   Fa0/4(P)    ← SU=Layer2 Up, P=Bundled</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 3</span> EtherChannel con LACP entre S1 y S3 (Port-Channel 2)</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S1 ↔ S3 — LACP active/passive</span></div>
+          <div class="cli-body"><span class="cli-comment">=== EN S1 ===</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/1 - 2</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 2 mode active</span>         <span class="cli-comment">→ LACP activo</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface port-channel 2</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">=== EN S3 ===</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">interface range fastethernet 0/1 - 2</span>
+<span class="cli-prompt">S3(config-if-range)#</span> <span class="cli-cmd">channel-group 2 mode passive</span>        <span class="cli-comment">→ LACP pasivo (acepta)</span>
+<span class="cli-prompt">S3(config-if-range)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">interface port-channel 2</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">--- Verificar ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-out">Group  Port-channel  Protocol    Ports
+1      Po1(SU)         PAgP      Fa0/3(P)   Fa0/4(P)
+2      Po2(SU)         LACP      Fa0/1(P)   Fa0/2(P)   ← Canal LACP operativo</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 4</span> EtherChannel redundante entre S2 y S3 (Port-Channel 3)</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S2 ↔ S3 — LACP active/active</span></div>
+          <div class="cli-body"><span class="cli-comment">=== EN S2 ===</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface range fastethernet 0/1 - 2</span>
+<span class="cli-prompt">S2(config-if-range)#</span> <span class="cli-cmd">channel-group 3 mode active</span>
+<span class="cli-prompt">S2(config-if-range)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface port-channel 3</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">=== EN S3 ===</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">interface range fastethernet 0/3 - 4</span>
+<span class="cli-prompt">S3(config-if-range)#</span> <span class="cli-cmd">channel-group 3 mode active</span>
+<span class="cli-prompt">S3(config-if-range)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">interface port-channel 3</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">--- Verificación final en todos los switches ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-prompt">S3#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree</span>             <span class="cli-comment">→ STP ve Po1 y Po2 como un único enlace cada uno</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 3 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 6.3.4</div>
+      <div class="lab-solution-title">Solucionar Problemas de EtherChannel</div>
+      <div class="lab-solution-ref">Troubleshooting EtherChannel</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-enunciado">
+        <h4>📋 Enunciado Oficial</h4>
+        <ul>
+          <li>Examinar la capa física y corregir los problemas del modo de puerto de switch.</li>
+          <li>Identificar y corregir los problemas de asignación del canal de puertos (modos incompatibles).</li>
+          <li>Identificar y corregir problemas de configuración de VLAN en EtherChannel.</li>
+          <li>Verificar que EtherChannel esté operativo después de cada corrección.</li>
+        </ul>
+      </div>
+      <div class="lab-objective">Objetivo: Detectar y corregir configuraciones incorrectas de EtherChannel. La topología tiene errores pre-configurados que debes encontrar y solucionar.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 1</span> Verificar el estado actual y detectar problemas</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Diagnóstico inicial en cada switch</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-out">Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SD)         PAgP      Fa0/1(D)   Fa0/2(D)       ← SD = Down ⚠️</span>
+<span class="cli-comment">→ D = Down, SD = SU esperada. El canal no está formado.</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show run | begin interface FastEthernet0/1</span>
+<span class="cli-out">interface FastEthernet0/1
+ channel-group 1 mode auto         ← S1 está en AUTO (pasivo)</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">show run | begin interface FastEthernet0/1</span>
+<span class="cli-out">interface FastEthernet0/1
+ channel-group 1 mode auto         ← S2 también en AUTO (pasivo)</span>
+<span class="cli-comment">→ PROBLEMA: auto + auto = NO se forma canal (ambos esperan al otro)</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces port-channel 1</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>         <span class="cli-comment">→ Verificar configuración de trunk</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 2</span> Corregir modos incompatibles (auto + auto → desirable + auto)</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Corrección en S1 — cambiar a desirable</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Eliminar y reconfigurar el canal (no modificar directamente) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no interface port-channel 1</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/1 - 2</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">no channel-group 1</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 1 mode desirable</span>   <span class="cli-comment">→ Cambia a activo</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface port-channel 1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">--- S2 se queda en auto (acepta el desirable de S1) ---</span>
+<span class="cli-comment">--- Verificar que se formó el canal ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-out">1      Po1(SU)         PAgP      Fa0/1(P)   Fa0/2(P)    ← SU = operativo ✓</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 3</span> Verificar y corregir problemas de VLAN en el trunk</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Comparar VLANs permitidas en ambos extremos</span></div>
+          <div class="cli-body"><span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces port-channel 1 trunk</span>
+<span class="cli-out">Port        Vlans allowed on trunk
+Po1         1,2,20</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">show interfaces port-channel 1 trunk</span>
+<span class="cli-out">Port        Vlans allowed on trunk
+Po1         1,2                    ← ⚠️ Falta VLAN 20 en S2</span>
+<span class="cli-comment">--- Corregir: agregar VLAN 20 en S2 ---</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface port-channel 1</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 1,2,20</span>
+<span class="cli-comment">--- Verificación final completa ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>          <span class="cli-comment">→ Todos los canales SU con P en puertos</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel port-channel</span>      <span class="cli-comment">→ Detalles de cada canal</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree</span>                 <span class="cli-comment">→ STP ve Po1 como único enlace lógico</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h4>Checklist de Problemas Comunes en EtherChannel</h4>
+        <ul>
+          <li><strong>auto + auto / passive + passive</strong> → Ninguno inicia → no se forma canal</li>
+          <li><strong>Modos incompatibles on + active/passive</strong> → No se forma canal</li>
+          <li><strong>VLAN nativa diferente</strong> en ambos extremos → Canal no sube correctamente</li>
+          <li><strong>VLANs permitidas distintas</strong> en ambos lados → Puertos no se unen al canal</li>
+          <li><strong>Velocidad o dúplex diferente</strong> → Las interfaces no pueden agregarse</li>
+          <li><strong>Trunk configurado en puertos individuales</strong> (no en port-channel) → Inconsistencia</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 4 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 6.4.1</div>
+      <div class="lab-solution-title">Implementar EtherChannel — Lab Integrador</div>
+      <div class="lab-solution-ref">Proyecto completo · VLANs + Trunks + EtherChannel</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-enunciado">
+        <h4>📋 Enunciado Oficial</h4>
+        <ul>
+          <li><strong>Parte 1:</strong> Armar la red y configurar los parámetros básicos de los dispositivos.</li>
+          <li><strong>Parte 2:</strong> Crear redes VLAN y asignar puertos de switch.</li>
+          <li><strong>Parte 3:</strong> Configurar troncales 802.1Q entre los switches.</li>
+          <li><strong>Parte 4:</strong> Implementar y verificar un EtherChannel entre los switches.</li>
+        </ul>
+      </div>
+      <div class="lab-objective">Objetivo: Lab completo que integra VLANs, trunks 802.1Q y EtherChannel en una topología real de múltiples switches. Es el lab más completo de la semana.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Configuración básica de dispositivos</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">S1, S2, S3 — configuración base idéntica</span></div>
+          <div class="cli-body"><span class="cli-prompt">Switch(config)#</span> <span class="cli-cmd">hostname S1</span>               <span class="cli-comment">→ Cambiar a S2/S3 según corresponda</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">no ip domain-lookup</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">enable secret class</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line console 0</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">logging synchronous</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">line vty 0 15</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">S1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">service password-encryption</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">banner motd # S1 — Acceso restringido #</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Crear VLANs y asignar puertos</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Aplicar en S1, S2, S3 — crear VLANs y asignar puertos de acceso</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Crear VLANs (en todos los switches) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 10</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Faculty</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 20</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Students</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 30</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Guest</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">vlan 99</span>
+<span class="cli-prompt">S1(config-vlan)#</span> <span class="cli-cmd">name Management</span>
+<span class="cli-comment">--- Asignar puertos de acceso en S1 ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/6</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode access</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport access vlan 10</span>
+<span class="cli-comment">--- SVI de administración ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.11 255.255.255.0</span>   <span class="cli-comment">→ S2:.12 / S3:.13</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">ip default-gateway 192.168.1.1</span>
+<span class="cli-comment">--- Verificar VLANs ---</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 3</span> Configurar Trunks 802.1Q</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Trunk en los puertos que no son EtherChannel</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Nota: los puertos que formarán EtherChannel se configurarán en la Parte 4 ---</span>
+<span class="cli-comment">--- Configurar VLAN nativa en todos los port-channels (Parte 4) ---</span>
+<span class="cli-comment">--- Aquí: si hay puertos trunk adicionales (no EtherChannel) ---</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface fa0/5</span>              <span class="cli-comment">→ Si hay trunk independiente al router</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 4</span> Implementar EtherChannel entre switches</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">EtherChannel S1↔S2 (LACP) y S1↔S3 (PAgP) — núcleo de la red</span></div>
+          <div class="cli-body"><span class="cli-comment">=== S1 ↔ S2 — LACP (Port-Channel 1) ===</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/1 - 2</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 1 mode active</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface port-channel 1</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-comment">--- S2: misma configuración con active (o passive) ---</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface range fastethernet 0/1 - 2</span>
+<span class="cli-prompt">S2(config-if-range)#</span> <span class="cli-cmd">channel-group 1 mode active</span>
+<span class="cli-prompt">S2(config)#</span> <span class="cli-cmd">interface port-channel 1</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S2(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-comment">=== S1 ↔ S3 — PAgP (Port-Channel 2) ===</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface range fastethernet 0/3 - 4</span>
+<span class="cli-prompt">S1(config-if-range)#</span> <span class="cli-cmd">channel-group 2 mode desirable</span>
+<span class="cli-prompt">S1(config)#</span> <span class="cli-cmd">interface port-channel 2</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S1(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-comment">--- S3: modo auto ---</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">interface range fastethernet 0/3 - 4</span>
+<span class="cli-prompt">S3(config-if-range)#</span> <span class="cli-cmd">channel-group 2 mode auto</span>
+<span class="cli-prompt">S3(config)#</span> <span class="cli-cmd">interface port-channel 2</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport mode trunk</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport trunk native vlan 99</span>
+<span class="cli-prompt">S3(config-if)#</span> <span class="cli-cmd">switchport trunk allowed vlan 10,20,30,99</span>
+<span class="cli-comment">=== VERIFICACIÓN FINAL COMPLETA ===</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show etherchannel summary</span>
+<span class="cli-out">Group  Port-channel  Protocol    Ports
+1      Po1(SU)         LACP      Fa0/1(P)   Fa0/2(P)    ← S1↔S2 operativo
+2      Po2(SU)         PAgP      Fa0/3(P)   Fa0/4(P)    ← S1↔S3 operativo</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show spanning-tree</span>       <span class="cli-comment">→ STP ve Po1 y Po2 como enlaces únicos</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show vlan brief</span>          <span class="cli-comment">→ VLANs 10,20,30,99 activas</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">show interfaces trunk</span>    <span class="cli-comment">→ Po1 y Po2 como trunks</span>
+<span class="cli-comment">--- Prueba de conectividad ---</span>
+<span class="cli-out">PC-A (VLAN 10) > ping 192.168.10.X   → Éxito (misma VLAN por EtherChannel)
+PC-A (VLAN 10) > ping 192.168.20.X   → Falla (diferente VLAN, sin router)</span>
+<span class="cli-prompt">S1#</span> <span class="cli-cmd">copy running-config startup-config</span>
+<span class="cli-prompt">S2#</span> <span class="cli-cmd">copy running-config startup-config</span>
+<span class="cli-prompt">S3#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERENCIA RÁPIDA LABS -->
+  <div class="section-title">Referencia Rápida — Comandos más usados en Labs Semana 3</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">Quick Reference — Semana 3: STP + EtherChannel</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- STP (SHOW) ---</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show spanning-tree</span>                           <span class="cli-comment">→ Estado STP completo (Root, puertos, roles)</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show spanning-tree vlan 10</span>                   <span class="cli-comment">→ STP para VLAN específica</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show spanning-tree summary</span>                   <span class="cli-comment">→ Modo STP y VLANs activas</span>
+<span class="cli-comment">--- STP (CONFIG) ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">spanning-tree mode rapid-pvst</span>            <span class="cli-comment">→ Activar Rapid PVST+</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">spanning-tree vlan 10 root primary</span>       <span class="cli-comment">→ Forzar Root Bridge</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">spanning-tree vlan 10 priority 4096</span>      <span class="cli-comment">→ Bajar prioridad manualmente</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">spanning-tree vlan 10 cost 10</span>         <span class="cli-comment">→ Reducir costo de puerto</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">spanning-tree portfast</span>                <span class="cli-comment">→ Bypass listening/learning (solo acceso)</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">spanning-tree bpduguard enable</span>        <span class="cli-comment">→ Errdisabled si recibe BPDU</span>
+<span class="cli-comment">--- ETHERCHANNEL (SHOW) ---</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show etherchannel summary</span>                    <span class="cli-comment">→ Estado de todos los EtherChannels</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show etherchannel port-channel</span>               <span class="cli-comment">→ Detalles por canal</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show interfaces port-channel 1</span>               <span class="cli-comment">→ Estado de la interfaz lógica</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">show interfaces fa0/1 etherchannel</span>           <span class="cli-comment">→ Rol del puerto en EtherChannel</span>
+<span class="cli-comment">--- ETHERCHANNEL (CONFIG) ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">interface range fa0/1 - 2</span>                <span class="cli-comment">→ Seleccionar rango de puertos</span>
+<span class="cli-prompt">S(config-if-range)#</span>  <span class="cli-cmd">channel-group 1 mode active</span>    <span class="cli-comment">→ LACP activo</span>
+<span class="cli-prompt">S(config-if-range)#</span>  <span class="cli-cmd">channel-group 1 mode passive</span>   <span class="cli-comment">→ LACP pasivo</span>
+<span class="cli-prompt">S(config-if-range)#</span>  <span class="cli-cmd">channel-group 1 mode desirable</span> <span class="cli-comment">→ PAgP activo</span>
+<span class="cli-prompt">S(config-if-range)#</span>  <span class="cli-cmd">channel-group 1 mode auto</span>      <span class="cli-comment">→ PAgP pasivo</span>
+<span class="cli-prompt">S(config-if-range)#</span>  <span class="cli-cmd">channel-group 1 mode on</span>        <span class="cli-comment">→ Sin protocolo (ambos deben ser on)</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">interface port-channel 1</span>                 <span class="cli-comment">→ Configurar el canal lógico</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport mode trunk</span>                 <span class="cli-comment">→ Trunk en el port-channel</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport trunk native vlan 99</span>       <span class="cli-comment">→ VLAN nativa</span>
+<span class="cli-prompt">S(config-if)#</span>  <span class="cli-cmd">switchport trunk allowed vlan 10,20,99</span>
+<span class="cli-comment">--- RESET ETHERCHANNEL ---</span>
+<span class="cli-prompt">S(config)#</span>  <span class="cli-cmd">no interface port-channel 1</span>             <span class="cli-comment">→ Eliminar canal lógico</span>
+<span class="cli-prompt">S(config-if-range)#</span>  <span class="cli-cmd">no channel-group 1</span>             <span class="cli-comment">→ Desvincular puertos físicos</span>
+<span class="cli-comment">--- RESET SWITCH ---</span>
+<span class="cli-prompt">S#</span> <span class="cli-cmd">erase startup-config</span>  →  <span class="cli-cmd">delete flash:vlan.dat</span>  →  <span class="cli-cmd">reload</span></div>
+  </div>
+</div>
+</main>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  if (name === 'teoria') document.querySelectorAll('.nav-pill')[0].classList.add('active');
+  else document.querySelectorAll('.nav-pill')[1].classList.add('active');
+}
+function setSection(name) {
+  const btn = name === 'teoria'
+    ? document.querySelectorAll('.tab-btn')[0]
+    : document.querySelectorAll('.tab-btn')[1];
+  showTab(name, btn);
+}
+function toggleLab(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('span:last-child');
+  const isOpen = body.style.display !== 'none' && body.style.display !== '';
+  if (isOpen) {
+    body.style.display = 'none';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.lab-solution-body').forEach(b => b.style.display = 'block');
+});
+</script>
+</body>
+</html>

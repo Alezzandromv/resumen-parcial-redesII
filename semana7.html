@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes & Cisco — Semana 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161921;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --accent4: #a78bfa;
+    --text: #e8eaf0;
+    --muted: #7c8494;
+    --tag-bg: #1a2535;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; font-size: 15px; line-height: 1.7; min-height: 100vh; }
+
+  nav { position: sticky; top: 0; background: rgba(13,15,20,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 100; padding: 0 2rem; }
+  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 0; height: 56px; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; margin-right: auto; letter-spacing: 0.05em; text-decoration: none; }
+  .nav-section { display: flex; align-items: center; gap: 2px; margin-right: 1rem; }
+  .nav-section span { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 8px; }
+  .nav-pill { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.2s; color: var(--muted); background: none; font-family: 'Sora', sans-serif; }
+  .nav-pill:hover { color: var(--text); border-color: var(--border); background: var(--surface); }
+  .nav-pill.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.08); }
+  .nav-weeks { display: flex; gap: 2px; }
+  .nav-week { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; font-family: 'JetBrains Mono', monospace; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.15s; color: var(--muted); }
+  .nav-week:hover { color: var(--text); border-color: var(--border); }
+  .nav-week.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.1); }
+  .nav-week.done { color: #4a7a6a; border-color: #2a4a3a; }
+  .nav-week.locked { color: #3a4050; cursor: default; }
+
+  .hero { max-width: 1100px; margin: 0 auto; padding: 3.5rem 2rem 2rem; border-bottom: 1px solid var(--border); }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3); color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px; margin-bottom: 1.2rem; }
+  .hero h1 { font-size: 2.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.8rem; background: linear-gradient(135deg, #e8eaf0 0%, #a0a8b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { color: var(--muted); font-size: 15px; max-width: 640px; margin-bottom: 1.5rem; }
+  .hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+  .stat-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  .section-tabs { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab-btn { padding: 1rem 1.5rem; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; border-top: none; border-left: none; border-right: none; background: none; font-family: 'Sora', sans-serif; transition: all 0.2s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .module-header { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.2rem; }
+  .module-header:first-child { margin-top: 0; }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .module-title { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+  .module-line { flex: 1; height: 1px; background: var(--border); }
+
+  .concepts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; transition: border-color 0.2s; }
+  .concept-card:hover { border-color: #3a4558; }
+  .concept-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .concept-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+  .concept-card .tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--tag-bg); border: 1px solid var(--border); color: var(--accent2); padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+
+  .key-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 13.5px; }
+  .key-table thead tr { border-bottom: 1px solid var(--border); }
+  .key-table th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 0 12px 10px 0; }
+  .key-table td { padding: 9px 12px 9px 0; color: var(--text); border-bottom: 1px solid rgba(42,48,64,0.5); vertical-align: top; }
+  .key-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; min-width: 180px; }
+  .key-table td:last-child { color: var(--muted); }
+
+  .cli-block { background: #0a0c10; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1.2rem; }
+  .cli-header { background: var(--surface2); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .cli-dots { display: flex; gap: 5px; }
+  .cli-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cli-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .cli-body { padding: 1rem 1.4rem; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; overflow-x: auto; }
+  .cli-prompt { color: var(--accent); }
+  .cli-cmd { color: #93c5fd; }
+  .cli-comment { color: #4a5568; }
+  .cli-out { color: var(--muted); }
+  .cli-important { color: var(--accent3); }
+
+  .keypoint { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.9rem 1.2rem; font-size: 13.5px; color: #d4a855; margin-bottom: 1rem; display: flex; gap: 10px; align-items: flex-start; }
+  .keypoint-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .keypoint.info { background: rgba(59,130,246,0.06); border-color: rgba(59,130,246,0.2); color: #7ab3f0; }
+  .keypoint.danger { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); color: #f87171; }
+
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.2rem; }
+  .compare-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .compare-card-header { padding: 0.8rem 1.2rem; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); }
+  .compare-card-header.green { color: var(--accent); background: rgba(0,212,170,0.05); }
+  .compare-card-header.blue { color: var(--accent2); background: rgba(59,130,246,0.05); }
+  .compare-card-header.purple { color: var(--accent4); background: rgba(167,139,250,0.05); }
+  .compare-card-header.orange { color: var(--accent3); background: rgba(245,158,11,0.05); }
+  .compare-card ul { list-style: none; padding: 0.8rem 1.2rem; }
+  .compare-card ul li { font-size: 13px; color: var(--muted); padding: 4px 0; border-bottom: 1px solid rgba(42,48,64,0.4); display: flex; gap: 8px; align-items: flex-start; }
+  .compare-card ul li::before { content: '→'; color: var(--border); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+  .compare-card ul li:last-child { border-bottom: none; }
+
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .summary-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+  .summary-box h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.7rem; }
+  .summary-box ul { list-style: none; padding: 0; }
+  .summary-box ul li { font-size: 13px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; }
+  .summary-box ul li::before { content: '✦'; color: var(--accent4); font-size: 9px; margin-top: 5px; flex-shrink: 0; }
+
+  /* STEPS */
+  .steps-list { list-style: none; padding: 0; margin-bottom: 1.2rem; }
+  .steps-list li { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(42,48,64,0.4); font-size: 13.5px; color: var(--muted); }
+  .steps-list li:last-child { border-bottom: none; }
+  .step-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--accent); background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.2); border-radius: 4px; padding: 2px 8px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+
+  /* LAB SOLUTION CARD */
+  .lab-solution { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem; }
+  .lab-solution-header { padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid var(--border); background: var(--surface2); cursor: pointer; user-select: none; }
+  .lab-solution-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .lab-solution-title { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .lab-solution-ref { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .lab-solution-body { padding: 1.4rem; }
+  .lab-objective { font-size: 13.5px; color: var(--muted); margin-bottom: 1rem; border-left: 3px solid var(--accent4); padding-left: 0.8rem; }
+  .lab-step { margin-bottom: 1.2rem; }
+  .lab-step-title { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .lab-step-title .step-num { background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); border-radius: 3px; padding: 1px 6px; font-size: 10px; }
+
+  /* ESTANDARES TABLE */
+  .std-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 12.5px; }
+  .std-table th, .std-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+  .std-table th { background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .std-table td { color: var(--muted); }
+  .std-table td:first-child { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .std-table td:nth-child(2) { color: var(--accent3); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .std-table td:nth-child(3) { color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.7rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr; }
+    nav .nav-weeks { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">◈ REDES / CISCO</a>
+    <div class="nav-section">
+      <span>Sección</span>
+      <button class="nav-pill active" onclick="setSection('teoria')">Teoría</button>
+      <button class="nav-pill" onclick="setSection('labs')">Laboratorios</button>
+    </div>
+    <div class="nav-weeks">
+      <a class="nav-week done" href="semana1.html" title="Semana 1">1</a>
+      <a class="nav-week done" href="semana2.html" title="Semana 2">2</a>
+      <a class="nav-week done" href="semana3.html" title="Semana 3">3</a>
+      <a class="nav-week done" href="semana4.html" title="Semana 4">4</a>
+      <a class="nav-week done" href="semana5.html" title="Semana 5">5</a>
+      <a class="nav-week done" href="semana7.html" title="Semana 6">6</a>
+      <a class="nav-week active" href="semana7.html" title="Semana 7 — actual">7</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">◉ SEMANA 7 — ACTIVA</div>
+  <h1>WLAN: Conceptos<br>& Configuración</h1>
+  <p class="hero-sub">Introducción a redes inalámbricas, estándares 802.11, componentes WLAN, CAPWAP, seguridad (WPA2/WPA3) y configuración de WLC. Módulos 12 y 13 — SRWE v7.0.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-dot" style="background:var(--accent4)"></div>2 módulos teóricos</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent2)"></div>Estándares 802.11a/b/g/n/ac/ax</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent3)"></div>WPA2-PSK y WPA2-Enterprise</div>
+  </div>
+</div>
+
+<div class="section-tabs">
+  <button class="tab-btn active" onclick="showTab('teoria', this)">📡 Teoría</button>
+  <button class="tab-btn" onclick="showTab('labs', this)">🧪 Laboratorio + Solución</button>
+</div>
+
+<main>
+
+<!-- =============== TEORÍA =============== -->
+<div class="tab-content active" id="tab-teoria">
+
+  <!-- MÓDULO 12 — Conceptos WLAN -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 12 · SRWE</div>
+    <div class="module-title">Conceptos de WLAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Concepto clave:</strong> Una WLAN (LAN Inalámbrica) permite conectividad de red sin cables usando ondas de radio en frecuencias de 2.4 GHz y 5 GHz. Se basa en estándares IEEE 802.11 y permite movilidad en hogares, oficinas y campus.</span>
+  </div>
+
+  <div class="section-title">Tipos de redes inalámbricas</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>📶 WPAN</h3>
+      <p><strong>Red Inalámbrica de Área Personal.</strong> Corto alcance (6–9 metros). Estándar IEEE 802.15 a 2.4 GHz. Ejemplos: Bluetooth y Zigbee. Ideal para conectar periféricos.</p>
+      <div class="tag">~9 metros</div>
+    </div>
+    <div class="concept-card">
+      <h3>📡 WLAN</h3>
+      <p><strong>LAN Inalámbrica.</strong> Redes medianas hasta ~90 metros. Estándares IEEE 802.11 en 2.4 GHz y 5 GHz. La tecnología más común en hogares, oficinas y campus universitarios.</p>
+      <div class="tag">~90 metros</div>
+    </div>
+    <div class="concept-card">
+      <h3>🏙 WMAN</h3>
+      <p><strong>Red Inalámbrica de Área Metropolitana.</strong> Cubre una ciudad o distrito. Usa frecuencias con licencia específica. Ejemplo: WiMAX (IEEE 802.16) hasta 50 km.</p>
+      <div class="tag">ciudad entera</div>
+    </div>
+    <div class="concept-card">
+      <h3>🌍 WWAN</h3>
+      <p><strong>WAN Inalámbrica.</strong> Área geográfica extensa para comunicación nacional o global. Usa frecuencias con licencia. Incluye redes celulares GSM y CDMA.</p>
+      <div class="tag">cobertura nacional</div>
+    </div>
+    <div class="concept-card">
+      <h3>🦷 Bluetooth</h3>
+      <p>Estándar IEEE WPAN hasta 100 m. <strong>BLE</strong> (Baja Energía): topología de malla para IoT. <strong>BR/EDR</strong> (Velocidad Básica/Mejorada): punto a punto, optimizado para audio.</p>
+    </div>
+    <div class="concept-card">
+      <h3>📡 WiMAX</h3>
+      <p>IEEE 802.16 — alternativa a internet de banda ancha por cable. Alcance hasta 50 km. Usado donde cable y DSL no están disponibles. Opera con frecuencias con licencia.</p>
+      <div class="tag">hasta 50 km</div>
+    </div>
+  </div>
+
+  <div class="section-title">Estándares IEEE 802.11 — tabla completa</div>
+  <table class="std-table">
+    <thead>
+      <tr><th>Estándar</th><th>Frecuencia</th><th>Velocidad máxima</th><th>Notas clave</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>802.11</td><td>2.4 GHz</td><td>2 Mb/s</td><td>El original. Sin compatibilidad hacia nuevos estándares.</td></tr>
+      <tr><td>802.11a</td><td>5 GHz</td><td>54 Mb/s</td><td>No interoperable con 802.11b ni 802.11g.</td></tr>
+      <tr><td>802.11b</td><td>2.4 GHz</td><td>11 Mb/s</td><td>Mayor alcance que 802.11a; mejor penetración en edificios.</td></tr>
+      <tr><td>802.11g</td><td>2.4 GHz</td><td>54 Mb/s</td><td>Compatible hacia atrás con 802.11b.</td></tr>
+      <tr><td>802.11n</td><td>2.4 y 5 GHz</td><td>150–600 Mb/s</td><td>Requiere múltiples antenas (tecnología MIMO).</td></tr>
+      <tr><td>802.11ac</td><td>5 GHz</td><td>450 Mb/s – 1.3 Gb/s</td><td>Hasta 8 antenas MIMO. Wi-Fi 5.</td></tr>
+      <tr><td>802.11ax</td><td>2.4 y 5 GHz</td><td>>1 Gb/s</td><td>High-Efficiency Wireless (HEW). Wi-Fi 6. También puede usar 1–7 GHz.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span><strong>Frecuencias:</strong> La banda de <strong>2.4 GHz</strong> tiene mayor alcance y penetración pero más interferencia (micróndas, bluetooth). La banda de <strong>5 GHz</strong> es más rápida y menos congestionada pero tiene menor alcance.</span>
+  </div>
+
+  <div class="section-title">Organizaciones de estándares inalámbricos</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header blue">ITU-R (UIT)</div>
+      <ul>
+        <li>Regula la asignación del espectro radioeléctrico a nivel global</li>
+        <li>Coordina órbitas satelitales internacionales</li>
+        <li>Dependencia de la ONU para telecomunicaciones</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header green">IEEE</div>
+      <ul>
+        <li>Especifica cómo se modula una frecuencia de radio</li>
+        <li>Mantiene la familia IEEE 802 (LAN/MAN)</li>
+        <li>Define los estándares 802.11 para WLAN</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header purple">Wi-Fi Alliance</div>
+      <ul>
+        <li>Asociación de proveedores tecnológicos</li>
+        <li>Promueve la interoperabilidad de productos 802.11</li>
+        <li>Certifica dispositivos con la marca "Wi-Fi Certified"</li>
+        <li>Define WPA, WPA2, WPA3 como estándares de seguridad</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header orange">Banda Celular / Satelital</div>
+      <ul>
+        <li>Celular: GSM (reconocimiento internacional) y CDMA (EE.UU.)</li>
+        <li>Satelital: antena parabólica hacia satélite geoestacionario</li>
+        <li>Satelital: requiere línea de visión clara (sin obstrucciones)</li>
+        <li>Satelital: usado en zonas rurales sin acceso a cable o DSL</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MÓDULO 12 — Componentes WLAN -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 12 · SRWE</div>
+    <div class="module-title">Componentes de la WLAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Componentes principales</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>💻 NIC Inalámbrica</h3>
+      <p>Tarjeta de red integrada en laptops, tablets y smartphones. Incorpora transmisor/receptor de radio. Si el dispositivo no tiene NIC integrada, puede usarse un <strong>adaptador USB inalámbrico</strong>.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🏠 Router Inalámbrico Doméstico</h3>
+      <p>Dispositivo combinado que actúa como: <strong>Punto de acceso</strong> (acceso inalámbrico), <strong>Switch</strong> (interconecta dispositivos con cable) y <strong>Router</strong> (gateway hacia otras redes e Internet).</p>
+    </div>
+    <div class="concept-card">
+      <h3>📶 Punto de Acceso (AP)</h3>
+      <p>Los clientes usan su NIC inalámbrica para descubrir APs cercanos. Luego se asocian y autentican con el AP. Después de autenticarse, los usuarios acceden a los recursos de red.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🤖 AP Autónomo</h3>
+      <p>Dispositivo independiente configurado mediante CLI o GUI. Cada AP actúa independientemente y el administrador lo configura y gestiona <strong>manualmente</strong> uno por uno.</p>
+      <div class="tag">configuración manual</div>
+    </div>
+    <div class="concept-card">
+      <h3>⚡ AP Ligero (LAP)</h3>
+      <p>También llamado <strong>AP basado en controlador</strong>. Usa el protocolo LWAPP para comunicarse con un controlador WLAN (WLC). Cada LAP es configurado y administrado <strong>automáticamente</strong> por el WLC.</p>
+      <div class="tag">administrado por WLC</div>
+    </div>
+    <div class="concept-card">
+      <h3>📡 Antenas Inalámbricas</h3>
+      <p><strong>Omnidireccional:</strong> cobertura 360°, ideal para oficinas.<br><strong>Direccional:</strong> enfoca la señal en una dirección (Yagi, parabólica).<br><strong>MIMO:</strong> múltiples antenas (hasta 8) para más ancho de banda.</p>
+    </div>
+  </div>
+
+  <!-- MÓDULO 12 — Funcionamiento -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 12 · SRWE</div>
+    <div class="module-title">Funcionamiento de la WLAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Modos de topología 802.11</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🔗 Modo Ad Hoc</h3>
+      <p>Conecta clientes directamente entre sí (peer-to-peer) <strong>sin necesidad de un AP</strong>. Útil para intercambio directo entre dispositivos cercanos.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🏗 Modo Infraestructura</h3>
+      <p>Conecta clientes a la red <strong>a través de un AP</strong>. Es el modo más común. El AP gestiona el acceso y la comunicación entre dispositivos.</p>
+    </div>
+    <div class="concept-card">
+      <h3>📱 Tethering (Anclaje)</h3>
+      <p>Variación de ad hoc: un smartphone o tablet con datos móviles crea un <strong>punto de acceso personal</strong> para compartir su conexión de Internet.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🔵 BSS (Conjunto de Servicios Básicos)</h3>
+      <p>Un único AP que interconecta todos los clientes inalámbricos asociados. <strong>Clientes en diferentes BSS no pueden comunicarse directamente</strong> entre sí.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🌐 ESS (Conjunto de Servicios Extendidos)</h3>
+      <p>Unión de dos o más BSS interconectados por un sistema de distribución cableado. Los clientes pueden moverse entre BSS dentro del ESS manteniendo conectividad (roaming).</p>
+      <div class="tag">múltiples APs</div>
+    </div>
+  </div>
+
+  <div class="section-title">CSMA/CA — Control de acceso al medio</div>
+  <div class="keypoint danger">
+    <span class="keypoint-icon">⚠</span>
+    <span>Las WLAN son <strong>semidúplex</strong> — un cliente NO puede transmitir y escuchar al mismo tiempo, por lo que no puede detectar colisiones como en Ethernet. Por eso se usa <strong>CSMA/CA</strong> (evitación de colisiones) en lugar de CSMA/CD (detección).</span>
+  </div>
+
+  <ol class="steps-list">
+    <li><span class="step-badge">PASO 1</span> El cliente <strong>escucha el canal</strong> para verificar que no haya otro tráfico (canal inactivo).</li>
+    <li><span class="step-badge">PASO 2</span> Envía un mensaje <strong>RTS (Ready to Send)</strong> al AP para solicitar acceso dedicado.</li>
+    <li><span class="step-badge">PASO 3</span> Recibe un mensaje <strong>CTS (Clear to Send)</strong> del AP que otorga permiso de transmitir.</li>
+    <li><span class="step-badge">PASO 4</span> Si no llega el CTS, espera un <strong>tiempo aleatorio</strong> antes de reiniciar el proceso.</li>
+    <li><span class="step-badge">PASO 5</span> <strong>Transmite los datos.</strong></li>
+    <li><span class="step-badge">PASO 6</span> Si no recibe <strong>reconocimiento (ACK)</strong>, asume colisión y reinicia el proceso.</li>
+  </ol>
+
+  <div class="section-title">Asociación cliente-AP: parámetros necesarios</div>
+  <table class="key-table">
+    <thead><tr><th>Parámetro</th><th>Descripción</th></tr></thead>
+    <tbody>
+      <tr><td>SSID</td><td>Nombre de la red inalámbrica. El cliente necesita conocerlo para conectarse.</td></tr>
+      <tr><td>Contraseña</td><td>Necesaria para autenticarse en el AP (salvo redes abiertas).</td></tr>
+      <tr><td>Modo de red</td><td>Estándar 802.11 en uso (a/b/g/n/ac/ax). Deben ser compatibles.</td></tr>
+      <tr><td>Modo de seguridad</td><td>WEP, WPA, WPA2 Personal, WPA2 Enterprise, WPA3, etc.</td></tr>
+      <tr><td>Canal</td><td>Bandas de frecuencia en uso. Importante para evitar solapamiento.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Modo pasivo vs. modo activo de descubrimiento</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">Modo Pasivo</div>
+      <ul>
+        <li>El AP anuncia activamente su servicio</li>
+        <li>Envía periódicamente <strong>tramas beacon</strong> (difusión)</li>
+        <li>Las beacon contienen: SSID, estándares soportados y seguridad</li>
+        <li>El cliente solo escucha y se conecta al AP que encuentra</li>
+        <li>El SSID es visible (no oculto)</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header purple">Modo Activo</div>
+      <ul>
+        <li>El cliente toma la iniciativa de buscar</li>
+        <li>Envía <strong>solicitudes de sondeo (probe requests)</strong> en varios canales</li>
+        <li>El cliente debe conocer el SSID previamente</li>
+        <li>Necesario cuando el SSID está oculto (beacon deshabilitado)</li>
+        <li>El AP responde con sus capacidades</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CAPWAP -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 12 · SRWE</div>
+    <div class="module-title">CAPWAP — Control y Aprovisionamiento de APs</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span><strong>CAPWAP</strong> es un protocolo estándar IEEE que permite que un <strong>WLC (Wireless LAN Controller)</strong> administre múltiples APs y WLANs desde un único punto. Encapsula el tráfico entre AP y WLC usando túneles UDP.</span>
+  </div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🔌 Puertos CAPWAP</h3>
+      <p>Usa puertos <strong>UDP 5246</strong> (canal de control) y <strong>UDP 5247</strong> (canal de datos). Opera sobre IPv4 (protocolo IP 17) e IPv6 (protocolo IP 136).</p>
+      <div class="tag">UDP 5246 / 5247</div>
+    </div>
+    <div class="concept-card">
+      <h3>🔒 DTLS</h3>
+      <p><strong>Datagram Transport Layer Security.</strong> Proporciona seguridad entre AP y WLC. Habilitado por defecto para el canal de control. El cifrado de datos requiere licencia DTLS instalada en el WLC.</p>
+      <div class="tag">seguridad AP↔WLC</div>
+    </div>
+    <div class="concept-card">
+      <h3>📡 FlexConnect</h3>
+      <p>Permite configurar y controlar APs a través de un enlace WAN. <strong>Modo conectado:</strong> WLC accesible, gestiona todo. <strong>Modo independiente:</strong> WLC inalcanzable, el AP asume funciones locales.</p>
+      <div class="tag">AP remoto por WAN</div>
+    </div>
+  </div>
+
+  <div class="section-title">Arquitectura MAC dividida (Split MAC)</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">Funciones del AP (en el AP físico)</div>
+      <ul>
+        <li>Beacons y respuestas a probe requests</li>
+        <li>Reconocimientos de paquetes y retransmisiones</li>
+        <li>Cola de frames y priorización de paquetes</li>
+        <li>Cifrado y descifrado de datos a nivel MAC</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header purple">Funciones del WLC (centralizadas)</div>
+      <ul>
+        <li>Autenticación de clientes</li>
+        <li>Asociación y re-asociación de clientes en roaming</li>
+        <li>Traducción de frames a otros protocolos</li>
+        <li>Terminación del tráfico 802.11 en interfaz cableada</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- GESTIÓN DE CANALES -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 12 · SRWE</div>
+    <div class="module-title">Gestión de Canales</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Técnicas para evitar saturación de canales</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>📊 DSSS</h3>
+      <p><strong>Direct-Sequence Spread Spectrum.</strong> Extiende la señal sobre una banda de frecuencia más amplia. Usado por dispositivos <strong>802.11b</strong> para evitar interferencias en la banda de 2.4 GHz.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🔀 FHSS</h3>
+      <p><strong>Frequency-Hopping Spread Spectrum.</strong> La señal salta rápidamente entre canales de frecuencia. Emisor y receptor deben estar sincronizados. Usado por el estándar <strong>802.11 original</strong>.</p>
+    </div>
+    <div class="concept-card">
+      <h3>📡 OFDM</h3>
+      <p><strong>Orthogonal Frequency-Division Multiplexing.</strong> Un canal usa múltiples subcanales en frecuencias adyacentes. Usado por <strong>802.11a/g/n/ac</strong>. Muy eficiente en velocidad de datos.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Selección de canales — buenas prácticas</div>
+  <div class="summary-box">
+    <h4>Banda de 2.4 GHz (802.11b/g/n)</h4>
+    <ul>
+      <li>Cada canal tiene un ancho de banda de 22 MHz, separados por 5 MHz entre sí.</li>
+      <li><strong>Canales no superpuestos recomendados: 1, 6 y 11</strong> — son los únicos que no se solapan.</li>
+      <li>Usar canales solapados causa interferencia co-canal y degrada el rendimiento de ambas redes.</li>
+    </ul>
+  </div>
+  <div class="summary-box">
+    <h4>Banda de 5 GHz (802.11a/n/ac)</h4>
+    <ul>
+      <li>Dispone de 24 canales, cada uno separado del siguiente por 20 MHz.</li>
+      <li><strong>Canales no superpuestos ejemplo: 36, 48 y 60.</strong></li>
+      <li>Mucho menos congestionada que la banda de 2.4 GHz — ideal para multimedia y streaming.</li>
+    </ul>
+  </div>
+
+  <!-- AMENAZAS Y SEGURIDAD -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 12 · SRWE</div>
+    <div class="module-title">Amenazas y Seguridad en WLAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Principales amenazas inalámbricas</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>👁 Interceptación de datos</h3>
+      <p>La señal de radio viaja en el espacio libre. Cualquier dispositivo dentro del alcance puede intentar capturar el tráfico. Se mitiga con <strong>cifrado fuerte (WPA2/WPA3)</strong>.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🚫 Ataque DoS</h3>
+      <p>Puede originarse por dispositivos mal configurados, interferencia accidental o ataques maliciosos. Mitigación: fortalecer dispositivos, contraseñas seguras y backups actualizados.</p>
+    </div>
+    <div class="concept-card">
+      <h3>📻 AP Falso (Rogue AP)</h3>
+      <p>AP no autorizado conectado a la red corporativa. Puede capturar MACs, paquetes, acceder a recursos o lanzar ataques. Detección: WLC con políticas de APs no autorizados + monitoreo del espectro.</p>
+      <div class="tag">mayor amenaza interna</div>
+    </div>
+    <div class="concept-card">
+      <h3>🕵 Ataque MITM</h3>
+      <p><strong>Man-in-the-Middle:</strong> el atacante se coloca entre dos entidades legítimas. El ataque de "AP intruso" usa el mismo SSID que el AP legítimo para engañar a los clientes. Requiere autenticación de todos los dispositivos para defenderse.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Mecanismos de seguridad inalámbrica</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🔒 Ocultamiento de SSID</h3>
+      <p>Deshabilita la trama beacon del SSID. Los clientes deben configurarse <strong>manualmente</strong> con el nombre de red. Medida básica — no es seguridad robusta, solo dificulta el descubrimiento.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🏷 Filtrado de MAC</h3>
+      <p>El administrador permite o deniega acceso por dirección MAC física. Simple de implementar pero <strong>fácil de eludir</strong> (MAC spoofing). Útil como capa adicional de control, no como única medida.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🌐 Autenticación Abierta</h3>
+      <p>No requiere contraseña. Se usa en Wi-Fi público (aeropuertos, cafeterías). El cliente es responsable de su propia seguridad (p. ej., usar VPN). El AP no autentica al cliente.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Evolución de la seguridad: WEP → WPA3</div>
+  <table class="key-table">
+    <thead><tr><th>Protocolo</th><th>Descripción y estado</th></tr></thead>
+    <tbody>
+      <tr><td>WEP</td><td><strong>Obsoleto — nunca usar.</strong> Usaba RC4 con clave estática. Fácilmente descifrable en minutos. Primera especificación 802.11 de seguridad.</td></tr>
+      <tr><td>WPA</td><td>Mejora de WEP usando cifrado <strong>TKIP</strong> (cambia la clave por cada paquete). Mucho más seguro que WEP pero actualmente deprecado.</td></tr>
+      <tr><td>WPA2</td><td>Usa <strong>AES (Estándar de Cifrado Avanzado)</strong> — actualmente el más usado. Dos modos: Personal (PSK) y Enterprise (RADIUS + 802.1X).</td></tr>
+      <tr><td>WPA3</td><td><strong>Recomendado cuando está disponible.</strong> SAE reemplaza PSK (resiste fuerza bruta). Cifrado oportunista OWE para redes abiertas. Suite criptográfica de 192 bits en Enterprise. Protocolo DPP para IoT.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">WPA2 Personal vs. WPA2 Enterprise</div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header green">WPA2 Personal (PSK)</div>
+      <ul>
+        <li>Para hogares y oficinas pequeñas (SOHO)</li>
+        <li>Se usa una <strong>clave precompartida (PSK)</strong></li>
+        <li>El cliente se autentica con el AP usando la contraseña compartida</li>
+        <li>No requiere servidor de autenticación dedicado</li>
+        <li>Cifrado: AES/CCMP</li>
+        <li>Configuración simple y directa</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header purple">WPA2 Enterprise (802.1X)</div>
+      <ul>
+        <li>Para redes empresariales con múltiples usuarios</li>
+        <li>Requiere servidor <strong>RADIUS</strong> para autenticación</li>
+        <li>Cada usuario tiene sus propias credenciales (usuario/contraseña)</li>
+        <li>RADIUS usa puertos UDP 1812 (auth) y 1813 (accounting)</li>
+        <li>Autenticación centralizada via protocolo 802.1X / EAP</li>
+        <li>Acceso de usuario rastreable y auditable</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>Protocolos de cifrado:</strong> <strong>TKIP</strong> (usado por WPA) — cifra la carga útil de capa 2. <strong>AES/CCMP</strong> (usado por WPA2) — permite al destino verificar si los bits cifrados o no cifrados han sido alterados. WPA2 con AES es el estándar actual.</span>
+  </div>
+
+  <!-- MÓDULO 13 — Configuración WLAN -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 13 · SRWE</div>
+    <div class="module-title">Configuración de WLAN — Sitio Remoto (Router Doméstico)</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span>Los routers inalámbricos domésticos incluyen en un solo dispositivo: <strong>AP</strong> (acceso inalámbrico), <strong>switch</strong> (puertos cableados), <strong>router</strong> (gateway a Internet), <strong>DHCP server</strong>, <strong>NAT</strong> y soporte de <strong>QoS</strong>.</span>
+  </div>
+
+  <div class="section-title">Pasos de configuración básica — router inalámbrico</div>
+  <ol class="steps-list">
+    <li><span class="step-badge">PASO 1</span>Acceder a la GUI: abrir navegador web e ingresar la IP predeterminada del router (ej: 192.168.1.1). Usuario/contraseña por defecto suele ser <code>admin / admin</code>.</li>
+    <li><span class="step-badge">PASO 2</span><strong>Cambiar contraseña de administrador</strong> — primera prioridad por seguridad. Las credenciales por defecto son públicas en Internet.</li>
+    <li><span class="step-badge">PASO 3</span>Cambiar las direcciones IPv4 predeterminadas del DHCP si es necesario. Renovar la IP con <code>ipconfig /renew</code> en la PC.</li>
+    <li><span class="step-badge">PASO 4</span>Configurar parámetros WLAN: <strong>Modo de red</strong> (estándar 802.11), <strong>SSID</strong> (nombre de red), <strong>Canal</strong> (evitar solapamiento), <strong>Modo de seguridad</strong> (WPA2) y <strong>Passphrase</strong>.</li>
+    <li><span class="step-badge">PASO 5</span>Configurar <strong>NAT</strong>: el router traduce IPs privadas de la LAN a la IP pública del ISP para acceso a Internet.</li>
+    <li><span class="step-badge">PASO 6</span>Configurar <strong>QoS</strong> si es necesario: priorizar voz y video sobre correo y navegación web.</li>
+  </ol>
+
+  <div class="section-title">NAT, QoS y Reenvío de Puerto</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🔄 NAT (Traducción de Direcciones)</h3>
+      <p>El router convierte IPs privadas (LAN) en la IP pública del ISP. Permite que múltiples dispositivos compartan una sola IP pública rastreando números de puerto de cada sesión.</p>
+      <div class="tag">IPv4 privada → pública</div>
+    </div>
+    <div class="concept-card">
+      <h3>🎯 QoS (Calidad de Servicio)</h3>
+      <p>Garantiza que tráfico sensible al tiempo (voz, video) tenga <strong>prioridad</strong> sobre tráfico no urgente (correo, web). También puede priorizarse por puertos específicos.</p>
+    </div>
+    <div class="concept-card">
+      <h3>🚪 Reenvío de Puerto</h3>
+      <p><strong>Port Forwarding:</strong> abre puertos específicos para aplicaciones que necesitan acceso desde el exterior. <strong>Port Triggering:</strong> reenvío temporal activado por tráfico de salida en un rango de puertos designado.</p>
+    </div>
+    <div class="concept-card">
+      <h3>📶 Red de Malla (WMN)</h3>
+      <p>Para extender cobertura más allá de ~45 m (interior) o ~90 m (exterior): agregar APs con la <strong>misma configuración pero diferente canal</strong>. Los fabricantes simplifican esto via apps de smartphone.</p>
+    </div>
+  </div>
+
+  <!-- MÓDULO 13 — WLC -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 13 · SRWE</div>
+    <div class="module-title">Configuración de WLAN con WLC</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span>El <strong>WLC (Wireless LAN Controller)</strong> centraliza la gestión de múltiples APs. Los puertos del WLC son trunk L2 que pueden llevar tráfico de múltiples VLANs hacia un switch para distribuirlo a los APs. Cada AP puede soportar varias WLANs simultáneamente.</span>
+  </div>
+
+  <div class="section-title">Pasos para configurar una WLAN en el WLC</div>
+  <ol class="steps-list">
+    <li><span class="step-badge">PASO 1</span>Acceder a la GUI del WLC vía navegador web e ingresar con credenciales configuradas en el setup inicial.</li>
+    <li><span class="step-badge">PASO 2</span><strong>Crear la WLAN:</strong> ir a la pestaña WLAN y crear nueva red con nombre/SSID. Ej: "Wireless_LAN".</li>
+    <li><span class="step-badge">PASO 3</span><strong>Aplicar y habilitar:</strong> activar la WLAN y configurar sus ajustes generales (estado: Enabled).</li>
+    <li><span class="step-badge">PASO 4</span><strong>Seleccionar la interfaz:</strong> elegir qué interfaz virtual transportará el tráfico de esta WLAN.</li>
+    <li><span class="step-badge">PASO 5</span><strong>Asegurar la WLAN:</strong> en pestaña Security, configurar WPA2-PSK o WPA2-Enterprise según necesidad.</li>
+    <li><span class="step-badge">PASO 6</span><strong>Verificar y monitorear:</strong> confirmar que la WLAN aparece activa y monitorear clientes conectados.</li>
+  </ol>
+
+  <div class="section-title">Configuración WPA2 Enterprise en WLC — pasos adicionales</div>
+  <ol class="steps-list">
+    <li><span class="step-badge">SNMP</span>En MANAGEMENT &gt; SNMP &gt; Trap Receivers: configurar IP del servidor SNMP y nombre de comunidad. El WLC enviará todos los logs al servidor.</li>
+    <li><span class="step-badge">RADIUS</span>En SECURITY &gt; RADIUS &gt; Authentication: añadir IP del servidor RADIUS y llave compartida. El WLC usará RADIUS para AAA (autenticación, autorización y contabilidad).</li>
+    <li><span class="step-badge">VLAN</span>En CONTROLLER &gt; Interfaces &gt; New: crear interfaz VLAN (ej: vlan5, VLAN ID 5). Configurar IP, puerto físico, gateway y dirección DHCP.</li>
+    <li><span class="step-badge">DHCP</span>En Servidor DHCP interno &gt; DHCP Scope &gt; New: crear scope, asignar rango de IPs, gateway y habilitar.</li>
+    <li><span class="step-badge">WLAN</span>Crear nueva WLAN, asignarla a la interfaz VLAN, verificar AES y 802.1X como defaults. Seleccionar el servidor RADIUS en pestaña AAA.</li>
+  </ol>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 13 · SRWE</div>
+    <div class="module-title">Solución de Problemas de WLAN</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="section-title">Metodología — 6 pasos</div>
+  <ol class="steps-list">
+    <li><span class="step-badge">1 · Identificar</span>Identificar el problema. Hablar con el usuario para entender qué falla y cuándo ocurre.</li>
+    <li><span class="step-badge">2 · Teorizar</span>Establecer una teoría de causas probables. Listar las más comunes y ordenarlas por probabilidad.</li>
+    <li><span class="step-badge">3 · Probar</span>Poner a prueba la teoría para determinar la causa exacta. Aplicar procedimientos rápidos de diagnóstico.</li>
+    <li><span class="step-badge">4 · Plan de acción</span>Determinar la causa exacta y establecer un plan de acción. Implementar la solución.</li>
+    <li><span class="step-badge">5 · Verificar</span>Verificar la funcionalidad completa del sistema e implementar medidas preventivas.</li>
+    <li><span class="step-badge">6 · Documentar</span>Registrar hallazgos, acciones y resultados para referencia futura.</li>
+  </ol>
+
+  <div class="section-title">Problemas comunes y soluciones</div>
+  <table class="key-table">
+    <thead><tr><th>Problema</th><th>Verificación / Solución</th></tr></thead>
+    <tbody>
+      <tr><td>Cliente no se conecta</td><td>Verificar con <code>ipconfig</code>. Comprobar modo de seguridad y cifrado configurados en el cliente.</td></tr>
+      <tr><td>Sin dirección IP</td><td>Verificar que el DHCP está activo. Intentar IP estática. Revisar alcance DHCP en WLC.</td></tr>
+      <tr><td>Conexión lenta</td><td>Verificar si el cliente está fuera del área de cobertura (BSA). Revisar interferencia en 2.4 GHz.</td></tr>
+      <tr><td>Toda la WLAN lenta</td><td>Actualizar clientes antiguos (802.11b/g). Dividir tráfico entre banda 2.4 GHz y 5 GHz.</td></tr>
+      <tr><td>Problemas de alcance</td><td>Reubicar AP lejos de obstáculos (muebles, electrodomésticos). Agregar extensor de rango o segundo AP.</td></tr>
+      <tr><td>AP no aparece en WLC</td><td>Verificar conectividad CAPWAP. Revisar configuración de VLAN y trunk entre AP-switch-WLC.</td></tr>
+      <tr><td>Autenticación falla (Enterprise)</td><td>Verificar IP y llave compartida del servidor RADIUS. Confirmar credenciales del usuario en el servidor.</td></tr>
+      <tr><td>Firmware desactualizado</td><td>Revisar el sitio web del fabricante periódicamente. En WLC: WIRELESS &gt; Access Points &gt; Global Configuration.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Glosario Clave — Semana 7</div>
+  <table class="key-table">
+    <thead><tr><th>Término</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td>WLAN</td><td>Red de Área Local Inalámbrica. Usa ondas de radio 802.11 en lugar de cables.</td></tr>
+      <tr><td>AP</td><td>Access Point — punto de acceso inalámbrico. Conecta clientes inalámbricos a la red cableada.</td></tr>
+      <tr><td>WLC</td><td>Wireless LAN Controller — controlador centralizado que gestiona múltiples APs ligeros (LAPs).</td></tr>
+      <tr><td>LAP</td><td>Lightweight Access Point — AP gestionado por un WLC, sin configuración local propia.</td></tr>
+      <tr><td>SSID</td><td>Service Set Identifier — nombre de la red inalámbrica que identifica a qué WLAN conectarse.</td></tr>
+      <tr><td>CAPWAP</td><td>Control and Provisioning of Wireless Access Points — protocolo para gestión AP↔WLC vía UDP.</td></tr>
+      <tr><td>DTLS</td><td>Datagram TLS — seguridad en el canal de control entre AP y WLC.</td></tr>
+      <tr><td>BSS</td><td>Basic Service Set — área de cobertura de un solo AP. Un "celda" inalámbrica.</td></tr>
+      <tr><td>ESS</td><td>Extended Service Set — múltiples BSS interconectados. Permite roaming entre APs.</td></tr>
+      <tr><td>CSMA/CA</td><td>Carrier Sense Multiple Access / Collision Avoidance — método de acceso al medio en WLAN.</td></tr>
+      <tr><td>MIMO</td><td>Multiple Input Multiple Output — múltiples antenas para aumentar velocidad y cobertura.</td></tr>
+      <tr><td>WPA2-PSK</td><td>Wi-Fi Protected Access 2 con clave precompartida. Para hogares y SOHO.</td></tr>
+      <tr><td>WPA2-Enterprise</td><td>WPA2 con autenticación RADIUS y 802.1X. Para empresas con usuarios individuales.</td></tr>
+      <tr><td>RADIUS</td><td>Servidor de autenticación AAA. Puertos UDP 1812 (auth) y 1813 (accounting).</td></tr>
+      <tr><td>NAT</td><td>Network Address Translation — traduce IPs privadas a una IP pública para el Internet.</td></tr>
+      <tr><td>FlexConnect</td><td>Modo de AP que permite operar localmente cuando el WLC no es accesible.</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- =============== LABORATORIO =============== -->
+<div class="tab-content" id="tab-labs">
+
+  <div style="padding: 1rem 0 1.5rem;">
+    <p style="color: var(--muted); font-size: 14px; max-width: 700px;">Solución completa del laboratorio de Packet Tracer de la Semana 7. Configuración de red inalámbrica doméstica con router y configuración de WLAN con WLC usando WPA2-PSK y WPA2-Enterprise.</p>
+  </div>
+
+  <!-- LAB 1 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 13.1.10</div>
+      <div class="lab-solution-title">Configurar una Red Inalámbrica (Router Doméstico)</div>
+      <div class="lab-solution-ref">Packet Tracer · Modo Físico</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Conectar y configurar un router inalámbrico doméstico, asignar SSID y seguridad WPA2-PSK, conectar dispositivos cableados e inalámbricos, y agregar un AP adicional para ampliar cobertura.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Acceder al router inalámbrico y cambiar contraseña</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Configuración básica del router — vía GUI (navegador)</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Acceder al panel del router ---</span>
+<span class="cli-out">1. Abrir navegador web en la PC conectada al router</span>
+<span class="cli-out">2. Ingresar la IP predeterminada del router (ej: 192.168.0.1 o 192.168.1.1)</span>
+<span class="cli-out">3. Usuario: admin  |  Contraseña: admin  (valores por defecto)</span>
+
+<span class="cli-comment">--- PRIMER PASO CRÍTICO: cambiar credenciales ---</span>
+<span class="cli-out">Administration > Management Password</span>
+<span class="cli-out">  Nueva contraseña: Cisco123!   (o la que indique el lab)</span>
+<span class="cli-out">  Confirmar > Save Settings</span>
+
+<span class="cli-comment">--- Cambiar configuración de LAN (si se pide) ---</span>
+<span class="cli-out">Setup > Basic Setup</span>
+<span class="cli-out">  Router IP: 192.168.1.1  (nueva dirección de administración)</span>
+<span class="cli-out">  DHCP Start IP: 192.168.1.100</span>
+<span class="cli-out">  Maximum Users: 50</span>
+<span class="cli-out">  Save Settings → el navegador pierde conexión → reconectar con nueva IP</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Configurar la red inalámbrica (SSID y seguridad)</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Wireless > Basic Wireless Settings y Wireless Security</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Configuración inalámbrica básica ---</span>
+<span class="cli-out">Wireless > Basic Wireless Settings</span>
+<span class="cli-out">  Network Mode: Mixed (o el que indique el lab, ej: N-Only)</span>
+<span class="cli-out">  Network Name (SSID): HomeNetwork   (o el nombre que indique el lab)</span>
+<span class="cli-out">  Radio Band: Auto (o 2.4 GHz / 5 GHz según el lab)</span>
+<span class="cli-out">  Channel: 6   ← canal no superpuesto recomendado en 2.4 GHz</span>
+<span class="cli-out">  SSID Broadcast: Enabled</span>
+<span class="cli-out">  Save Settings</span>
+
+<span class="cli-comment">--- Configurar seguridad WPA2-PSK ---</span>
+<span class="cli-out">Wireless > Wireless Security</span>
+<span class="cli-out">  Security Mode: WPA2 Personal</span>
+<span class="cli-out">  Encryption: AES</span>
+<span class="cli-out">  Passphrase: Cisco123!   (o la que indique el lab)</span>
+<span class="cli-out">  Save Settings</span>
+
+<span class="cli-comment">--- Verificar en la PC inalámbrica ---</span>
+<span class="cli-out">PC > Desktop > PC Wireless > Connect</span>
+<span class="cli-out">Seleccionar SSID "HomeNetwork" > ingresar passphrase > Connect</span>
+<span class="cli-out">Desktop > IP Configuration > verificar IP DHCP asignada</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 3</span> Conectar dispositivo cableado y verificar conectividad</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Verificación de conectividad en Packet Tracer</span></div>
+          <div class="cli-body"><span class="cli-comment">--- PC cableada: verificar DHCP ---</span>
+<span class="cli-out">PC > Desktop > IP Configuration > DHCP</span>
+<span class="cli-out">Debe recibir IP en el rango configurado (ej: 192.168.1.100)</span>
+<span class="cli-out">Gateway: 192.168.1.1  (IP del router)</span>
+
+<span class="cli-comment">--- Pruebas de ping ---</span>
+<span class="cli-out">PC cableada > Desktop > Command Prompt</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping 192.168.1.1</span>       <span class="cli-comment">→ Ping al router (debe ser exitoso)</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping [IP del dispositivo inalámbrico]</span>  <span class="cli-comment">→ Conectividad entre redes</span>
+
+<span class="cli-comment">--- Actualizar configuración predeterminada del router ---</span>
+<span class="cli-out">Administration > Factory Defaults   ← si el lab pide restaurar</span>
+<span class="cli-out">Firmware Upgrade: cargar nueva versión de firmware si se proporciona</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 4</span> Agregar un AP adicional para ampliar cobertura</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Configurar segundo AP con mismo SSID pero diferente canal</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Conectar el AP adicional al switch de la red ---</span>
+<span class="cli-out">AP > GUI o Config tab en Packet Tracer</span>
+<span class="cli-out">  SSID: HomeNetwork    ← mismo SSID que el router principal</span>
+<span class="cli-out">  Channel: 11          ← DIFERENTE canal para evitar interferencia</span>
+<span class="cli-out">                         (router en canal 6, AP en canal 11)</span>
+<span class="cli-out">  Security: WPA2-PSK</span>
+<span class="cli-out">  Passphrase: Cisco123!  ← misma contraseña</span>
+
+<span class="cli-comment">--- Principio clave: red de malla (WMN) ---</span>
+<span class="cli-out">Mismo SSID → los clientes roaman automáticamente entre APs</span>
+<span class="cli-out">Diferente canal → evita interferencia co-canal entre APs</span>
+<span class="cli-out">Canales no superpuestos 2.4 GHz: usar 1, 6 y 11</span></div>
+        </div>
+        <div class="keypoint info" style="margin-top:0.5rem;">
+          <span class="keypoint-icon">✅</span>
+          <span><strong>Verificación final:</strong> un dispositivo inalámbrico en el extremo de la red (cerca del AP adicional) debe conectarse con el mismo SSID y obtener IP DHCP del router principal. Prueba de ping hacia el gateway debe ser exitosa.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 2 — WLC WPA2-PSK -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 13.2.7</div>
+      <div class="lab-solution-title">Configurar una WLAN Básica en el WLC (WPA2-PSK)</div>
+      <div class="lab-solution-ref">WLC · AP Ligero · WLAN segura</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Acceder al WLC, crear una nueva WLAN con nombre/SSID, asegurarla con WPA2-PSK usando AES, conectar un host inalámbrico y verificar conectividad.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 1</span> Acceder al WLC y revisar panel de resumen</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Acceso GUI del Cisco WLC 3504</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Acceder al WLC vía GUI ---</span>
+<span class="cli-out">Desde PC-A: abrir navegador > https://[IP del WLC]  ej: https://192.168.200.254</span>
+<span class="cli-out">Ingresar credenciales configuradas durante el setup inicial</span>
+<span class="cli-out">Hacer clic en "Advanced" (esquina superior derecha) → vista completa</span>
+
+<span class="cli-comment">--- Verificar estado de la red ---</span>
+<span class="cli-out">Pestaña MONITOR > Summary</span>
+<span class="cli-out">  WLANs configuradas: 0 (inicialmente)</span>
+<span class="cli-out">  APs asociados: 1 (AP1 debe estar visible)</span>
+<span class="cli-out">  Clientes activos: 0</span>
+
+<span class="cli-comment">--- Ver información del AP ---</span>
+<span class="cli-out">Menú izquierdo > Access Points</span>
+<span class="cli-out">  AP1 IP: 192.168.200.3</span>
+<span class="cli-out">  Conectado al switch en puerto FastEthernet 0/1 (via CDP)</span>
+<span class="cli-out">  Modelo: Cisco Aironet 1815i</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 2</span> Crear y asegurar la WLAN</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">WLANs > Create New</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Paso 1: Crear la WLAN ---</span>
+<span class="cli-out">Pestaña WLANs > menú desplegable "Create New" > Go</span>
+<span class="cli-out">  Type: WLAN</span>
+<span class="cli-out">  Profile Name: Wireless_LAN</span>
+<span class="cli-out">  SSID: Wireless_LAN</span>
+<span class="cli-out">  ID: 1</span>
+<span class="cli-out">  Clic en Apply</span>
+
+<span class="cli-comment">--- Paso 2-3: Habilitar y seleccionar interfaz ---</span>
+<span class="cli-out">General tab:</span>
+<span class="cli-out">  Status: Enabled  ← activar la WLAN</span>
+<span class="cli-out">  Interface/Interface Group: management  ← interfaz de administración</span>
+
+<span class="cli-comment">--- Paso 4: Asegurar la WLAN con WPA2-PSK ---</span>
+<span class="cli-out">Pestaña Security > Layer 2:</span>
+<span class="cli-out">  Layer 2 Security: WPA+WPA2</span>
+<span class="cli-out">  WPA2 Policy: habilitado</span>
+<span class="cli-out">  WPA2 Encryption: AES</span>
+<span class="cli-out">  Auth Key Mgmt: PSK</span>
+<span class="cli-out">  PSK Format: ASCII</span>
+<span class="cli-out">  PSK: Cisco123!   (o la indicada en el lab)</span>
+<span class="cli-out">  Apply > OK</span>
+
+<span class="cli-comment">--- Paso 5-6: Verificar y monitorear ---</span>
+<span class="cli-out">Menú WLANs → debe aparecer "Wireless_LAN" con estado Enabled</span>
+<span class="cli-out">Pestaña MONITOR → confirmar cliente conectado después de asociar la laptop</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 3</span> Conectar la laptop inalámbrica y verificar</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Laptop > PC Wireless > conectar a Wireless_LAN</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Conectar laptop inalámbrica ---</span>
+<span class="cli-out">Laptop > Desktop > PC Wireless</span>
+<span class="cli-out">Pestaña Connect > Refresh</span>
+<span class="cli-out">Seleccionar "Wireless_LAN" > Connect</span>
+<span class="cli-out">Ingresar Pre-shared Key: Cisco123!</span>
+<span class="cli-out">Connect → esperar asociación</span>
+
+<span class="cli-comment">--- Verificar IP asignada ---</span>
+<span class="cli-out">Laptop > Desktop > IP Configuration > DHCP</span>
+<span class="cli-out">Debe recibir IP en la red de administración del WLC</span>
+
+<span class="cli-comment">--- Prueba de conectividad ---</span>
+<span class="cli-out">Laptop > Desktop > Command Prompt</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping 192.168.200.1</span>    <span class="cli-comment">→ ping al router R1 (debe ser exitoso)</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping 172.16.1.254</span>    <span class="cli-comment">→ ping a PC-A (red cableada)</span>
+
+<span class="cli-comment">--- En WLC: confirmar cliente ---</span>
+<span class="cli-out">WLC > Clients (menú izquierdo)</span>
+<span class="cli-out">Debe aparecer la MAC de la laptop con estado "Associated"</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 3 — WPA2 Enterprise -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 13.3.12</div>
+      <div class="lab-solution-title">Configurar WLAN WPA2-Enterprise en el WLC</div>
+      <div class="lab-solution-ref">RADIUS · SNMP · VLAN · DHCP Scope</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Configurar en el WLC: interfaz VLAN nueva, scope DHCP, servidor SNMP, servidor RADIUS y una WLAN WPA2-Enterprise que usa RADIUS para autenticar usuarios.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Configurar servidor SNMP en el WLC</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">MANAGEMENT > SNMP > Trap Receivers</span></div>
+          <div class="cli-body"><span class="cli-out">WLC GUI > pestaña MANAGEMENT</span>
+<span class="cli-out">  > SNMP (expandir)</span>
+<span class="cli-out">  > Trap Receivers</span>
+<span class="cli-out">  > New...</span>
+<span class="cli-out">    Community Name: public   (nombre de comunidad SNMP)</span>
+<span class="cli-out">    IP Address: [IP de PC-A]  ej: 172.16.1.254</span>
+<span class="cli-out">  > Apply</span>
+<span class="cli-comment">→ El WLC ahora enviará logs SNMP a PC-A</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Configurar servidor RADIUS en el WLC</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">SECURITY > RADIUS > Authentication > New</span></div>
+          <div class="cli-body"><span class="cli-out">WLC GUI > pestaña SECURITY</span>
+<span class="cli-out">  > RADIUS</span>
+<span class="cli-out">  > Authentication</span>
+<span class="cli-out">  > New...</span>
+<span class="cli-out">    Server IP Address: [IP de PC-A con servidor RADIUS]</span>
+<span class="cli-out">    Shared Secret: Cisco123!  (llave compartida WLC↔RADIUS)</span>
+<span class="cli-out">    Port Number: 1812          (puerto de autenticación RADIUS)</span>
+<span class="cli-out">  > Apply</span>
+<span class="cli-comment">→ Verificar que PC-A aparece en la lista de servidores RADIUS</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 3</span> Crear interfaz VLAN 5 en el WLC</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">CONTROLLER > Interfaces > New</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Paso 1: Crear nueva interfaz ---</span>
+<span class="cli-out">CONTROLLER > Interfaces > New...</span>
+<span class="cli-out">  Interface Name: vlan5</span>
+<span class="cli-out">  VLAN ID: 5</span>
+<span class="cli-out">  Apply</span>
+
+<span class="cli-comment">--- Paso 2-3: Configurar IP y puerto ---</span>
+<span class="cli-out">Página de edición de interfaz vlan5:</span>
+<span class="cli-out">  Port Number: 1          (puerto físico WLC — interfaz G1)</span>
+<span class="cli-out">  IP Address: 192.168.5.254</span>
+<span class="cli-out">  Netmask: 255.255.255.0</span>
+<span class="cli-out">  Gateway: 192.168.5.1    (router R1 tiene subinterfaz para VLAN 5)</span>
+
+<span class="cli-comment">--- Paso 4: Configurar DHCP primario ---</span>
+<span class="cli-out">  Primary DHCP Server: 192.168.5.1  (el router actúa como servidor DHCP)</span>
+<span class="cli-out">  Apply > OK (aceptar advertencia)</span>
+
+<span class="cli-comment">--- Paso 5: Verificar ---</span>
+<span class="cli-out">CONTROLLER > Interfaces</span>
+<span class="cli-out">Debe aparecer "vlan5" con IP 192.168.5.254 en la lista</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 4</span> Crear DHCP Scope en el WLC</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">CONTROLLER > Internal DHCP Server > DHCP Scope</span></div>
+          <div class="cli-body"><span class="cli-out">CONTROLLER > Internal DHCP Server > DHCP Scope > New...</span>
+<span class="cli-out">  Scope Name: Wireless_Management</span>
+<span class="cli-out">  Apply</span>
+
+<span class="cli-comment">--- Configurar el scope ---</span>
+<span class="cli-out">Hacer clic en "Wireless_Management" para editar:</span>
+<span class="cli-out">  Pool Start Address: 192.168.200.240</span>
+<span class="cli-out">  Pool End Address: 192.168.200.249</span>
+<span class="cli-out">  Default Routers: 192.168.200.1</span>
+<span class="cli-out">  Status: Enabled</span>
+<span class="cli-out">  Apply</span>
+<span class="cli-comment">→ Verificar que el scope aparece como "Enabled" en la lista</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 5</span> Crear WLAN WPA2-Enterprise</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">WLANs > Create New > asignar VLAN 5 y servidor RADIUS</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Paso 1-2: Crear y nombrar la WLAN ---</span>
+<span class="cli-out">WLANs > Create New > Go</span>
+<span class="cli-out">  Profile Name: Enterprise_WLAN</span>
+<span class="cli-out">  SSID: Enterprise_WLAN</span>
+<span class="cli-out">  ID: 5</span>
+<span class="cli-out">  Apply</span>
+
+<span class="cli-comment">--- Paso 3: Habilitar y asignar a VLAN 5 ---</span>
+<span class="cli-out">General tab:</span>
+<span class="cli-out">  Status: Enabled</span>
+<span class="cli-out">  Interface/Interface Group: vlan5   ← interfaz creada antes</span>
+<span class="cli-out">  Apply > OK</span>
+
+<span class="cli-comment">--- Paso 4: Verificar defaults AES y 802.1X ---</span>
+<span class="cli-out">Security tab:</span>
+<span class="cli-out">  Layer 2 Security: WPA+WPA2  (default)</span>
+<span class="cli-out">  WPA2 Encryption: AES        (default — correcto)</span>
+<span class="cli-out">  Auth Key Mgmt: 802.1X       (default — correcto para Enterprise)</span>
+
+<span class="cli-comment">--- Paso 5: Configurar servidor RADIUS ---</span>
+<span class="cli-out">Security tab > AAA Servers:</span>
+<span class="cli-out">  Authentication Server 1: [seleccionar PC-A de la lista desplegable]</span>
+<span class="cli-out">  Apply</span>
+
+<span class="cli-comment">--- Paso 6: Verificar WLAN activa ---</span>
+<span class="cli-out">WLANs (menú izquierdo)</span>
+<span class="cli-out">Deben aparecer ambas WLANs: Wireless_LAN (ID 1) y Enterprise_WLAN (ID 5)</span>
+<span class="cli-out">Ambas con Status: Enabled</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">VERIFICACIÓN</span> Conectar host a WPA2-Enterprise y verificar</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Laptop inalámbrica — conectar a Enterprise_WLAN</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Conectar a la WLAN Enterprise ---</span>
+<span class="cli-out">Laptop > Desktop > PC Wireless > Connect > Refresh</span>
+<span class="cli-out">Seleccionar "Enterprise_WLAN"</span>
+<span class="cli-out">  Authentication: WPA2-Enterprise</span>
+<span class="cli-out">  Username: [usuario configurado en el servidor RADIUS]</span>
+<span class="cli-out">  Password: [contraseña del usuario en RADIUS]</span>
+<span class="cli-out">  Connect</span>
+
+<span class="cli-comment">--- Verificar conectividad ---</span>
+<span class="cli-out">Laptop > Desktop > IP Configuration > DHCP</span>
+<span class="cli-out">Debe recibir IP en la red 192.168.5.0/24</span>
+
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping 192.168.5.1</span>      <span class="cli-comment">→ gateway VLAN 5</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping 172.16.1.254</span>    <span class="cli-comment">→ PC-A en red cableada</span>
+
+<span class="cli-comment">--- Confirmar en WLC ---</span>
+<span class="cli-out">WLC > Clients → debe aparecer el nuevo cliente con estado "Associated"</span>
+<span class="cli-out">WLC > Monitor > Summary → actualización de clientes activos</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 4 — Troubleshooting -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 13.4.5</div>
+      <div class="lab-solution-title">Solución de Problemas de WLAN</div>
+      <div class="lab-solution-ref">Troubleshooting doméstico y empresarial</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-objective">Identificar y corregir problemas de conectividad en una red WLAN doméstica y en una red WLAN empresarial gestionada por WLC, usando el proceso de solución de problemas de 6 pasos.</div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">RED DOMÉSTICA</span> Checklist de diagnóstico</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Proceso de eliminación — red doméstica</span></div>
+          <div class="cli-body"><span class="cli-comment">--- PASO 1: Verificar conectividad básica del cliente ---</span>
+<span class="cli-out">PC > Desktop > Command Prompt</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ipconfig</span>
+<span class="cli-out">  ¿Tiene IP válida? Si es 169.x.x.x → problema de DHCP</span>
+<span class="cli-out">  ¿Tiene gateway? → si falta, no puede salir a Internet</span>
+
+<span class="cli-comment">--- PASO 2: Ping progresivo ---</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping 127.0.0.1</span>         <span class="cli-comment">→ loopback — verifica NIC local</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping [IP del gateway]</span>   <span class="cli-comment">→ verifica acceso al router</span>
+<span class="cli-prompt">C:\></span> <span class="cli-cmd">ping [IP otro dispositivo]</span> <span class="cli-comment">→ verifica LAN</span>
+
+<span class="cli-comment">--- PASO 3: Verificar configuración inalámbrica ---</span>
+<span class="cli-out">¿SSID correcto seleccionado?</span>
+<span class="cli-out">¿Contraseña correcta ingresada?</span>
+<span class="cli-out">¿Modo de seguridad compatible? (WPA2 en cliente y router)</span>
+<span class="cli-out">¿Señal suficiente? ¿Dispositivo dentro del rango del AP?</span>
+
+<span class="cli-comment">--- Errores comunes a buscar en el router ---</span>
+<span class="cli-out">Router GUI > Wireless > SSID: ¿coincide con lo que ve el cliente?</span>
+<span class="cli-out">Router GUI > Wireless Security: ¿WPA2? ¿contraseña correcta?</span>
+<span class="cli-out">Router GUI > Setup > DHCP: ¿habilitado? ¿rango correcto?</span>
+<span class="cli-out">Router GUI > Status: ¿interfaz WAN tiene IP del ISP?</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">RED EMPRESARIAL</span> Checklist de diagnóstico WLC</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Diagnóstico WLC — fallas comunes y correcciones</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Verificar estado de la WLAN en WLC ---</span>
+<span class="cli-out">WLC > WLANs → ¿la WLAN aparece como Enabled?</span>
+<span class="cli-out">WLC > WLANs > [nombre] > General → Status: Enabled</span>
+<span class="cli-out">WLC > WLANs > [nombre] > General → Interface: ¿correcta?</span>
+
+<span class="cli-comment">--- Verificar seguridad configurada ---</span>
+<span class="cli-out">WLC > WLANs > [nombre] > Security</span>
+<span class="cli-out">  ¿WPA2 habilitado? ¿AES seleccionado?</span>
+<span class="cli-out">  ¿PSK correcto? (para WPA2-Personal)</span>
+<span class="cli-out">  ¿Servidor RADIUS seleccionado? (para WPA2-Enterprise)</span>
+
+<span class="cli-comment">--- Verificar AP asociado ---</span>
+<span class="cli-out">WLC > Access Points → ¿AP aparece en la lista?</span>
+<span class="cli-out">Si no aparece: verificar conectividad física AP→switch→WLC</span>
+<span class="cli-out">Verificar VLAN y trunk entre switch y WLC</span>
+
+<span class="cli-comment">--- Verificar RADIUS (WPA2-Enterprise) ---</span>
+<span class="cli-out">WLC > Security > RADIUS > Authentication</span>
+<span class="cli-out">  ¿IP del servidor RADIUS correcta?</span>
+<span class="cli-out">  ¿Llave compartida correcta?</span>
+<span class="cli-out">  ¿Puerto UDP 1812 accesible?</span>
+
+<span class="cli-comment">--- Verificar DHCP ---</span>
+<span class="cli-out">WLC > Controller > Internal DHCP Server > DHCP Scope</span>
+<span class="cli-out">  ¿Scope habilitado? ¿Rango de IPs correcto? ¿Gateway correcto?</span>
+
+<span class="cli-comment">--- Verificar firmware ---</span>
+<span class="cli-out">WLC > Wireless > Access Points > Global Configuration</span>
+<span class="cli-out">  Verificar versión de firmware de los APs</span>
+<span class="cli-out">  Actualizar si hay una versión más reciente disponible</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERENCIA RÁPIDA -->
+  <div class="section-title">Referencia Rápida — Conceptos clave para el lab</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">Quick Reference — Semana 7 WLAN</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- ESTÁNDARES 802.11 ---</span>
+<span class="cli-out">802.11b/g/n → 2.4 GHz | Canales no superpuestos: 1, 6, 11</span>
+<span class="cli-out">802.11a/n/ac → 5 GHz   | Canales no superpuestos: 36, 48, 60</span>
+<span class="cli-out">802.11ax (Wi-Fi 6) → 2.4 GHz + 5 GHz (también 1-7 GHz)</span>
+
+<span class="cli-comment">--- SEGURIDAD WLAN ---</span>
+<span class="cli-out">WEP      → OBSOLETO, nunca usar</span>
+<span class="cli-out">WPA      → TKIP, deprecado</span>
+<span class="cli-out">WPA2-PSK → AES/CCMP | Para hogares y SOHO</span>
+<span class="cli-out">WPA2-Ent → AES + RADIUS + 802.1X | Para empresas</span>
+<span class="cli-out">WPA3     → SAE (Personal) + 192-bit (Enterprise) | Recomendado</span>
+
+<span class="cli-comment">--- CAPWAP / WLC ---</span>
+<span class="cli-out">CAPWAP puertos: UDP 5246 (control) y UDP 5247 (datos)</span>
+<span class="cli-out">DTLS: cifra canal de control AP↔WLC (habilitado por defecto)</span>
+<span class="cli-out">LAP: AP ligero, gestionado por WLC (sin config local)</span>
+<span class="cli-out">RADIUS puertos: UDP 1812 (auth) y UDP 1813 (accounting)</span>
+
+<span class="cli-comment">--- ROUTER DOMÉSTICO (GUI) ---</span>
+<span class="cli-out">Setup > Basic Setup        → IP LAN, DHCP, gateway WAN</span>
+<span class="cli-out">Wireless > Basic Wireless  → SSID, canal, modo de red</span>
+<span class="cli-out">Wireless > Security        → WPA2, AES, passphrase</span>
+<span class="cli-out">Administration > Management→ contraseña de admin</span>
+<span class="cli-out">Status                     → IP WAN del ISP</span>
+
+<span class="cli-comment">--- WLC (GUI) ---</span>
+<span class="cli-out">MONITOR > Summary          → vista general APs y clientes</span>
+<span class="cli-out">WLANs > Create New         → crear nueva WLAN</span>
+<span class="cli-out">CONTROLLER > Interfaces    → crear interfaz VLAN</span>
+<span class="cli-out">CONTROLLER > DHCP Scope    → crear rango DHCP</span>
+<span class="cli-out">SECURITY > RADIUS > Auth   → añadir servidor RADIUS</span>
+<span class="cli-out">MANAGEMENT > SNMP > Traps  → añadir receptor SNMP</span>
+
+<span class="cli-comment">--- CANALES NO SUPERPUESTOS (regla de oro) ---</span>
+<span class="cli-out">2.4 GHz: usar SOLO canales 1, 6 y 11 cuando haya múltiples APs</span>
+<span class="cli-out">5 GHz: 24 canales disponibles, separados por 20 MHz</span>
+<span class="cli-out">Red de malla (WMN): mismo SSID + diferente canal = roaming sin interf.</span></div>
+  </div>
+
+</div>
+</main>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  if (name === 'teoria') document.querySelectorAll('.nav-pill')[0].classList.add('active');
+  else document.querySelectorAll('.nav-pill')[1].classList.add('active');
+}
+
+function setSection(name) {
+  const btn = name === 'teoria'
+    ? document.querySelectorAll('.tab-btn')[0]
+    : document.querySelectorAll('.tab-btn')[1];
+  showTab(name, btn);
+}
+
+function toggleLab(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('span:last-child');
+  const isOpen = body.style.display !== 'none' && body.style.display !== '';
+  if (isOpen) {
+    body.style.display = 'none';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.lab-solution-body').forEach(b => b.style.display = 'block');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes & Cisco — Semana 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161921;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --accent4: #a78bfa;
+    --text: #e8eaf0;
+    --muted: #7c8494;
+    --tag-bg: #1a2535;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; font-size: 15px; line-height: 1.7; min-height: 100vh; }
+  nav { position: sticky; top: 0; background: rgba(13,15,20,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 100; padding: 0 2rem; }
+  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 0; height: 56px; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; margin-right: auto; letter-spacing: 0.05em; text-decoration: none; }
+  .nav-section { display: flex; align-items: center; gap: 2px; margin-right: 1rem; }
+  .nav-section span { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 8px; }
+  .nav-pill { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.2s; color: var(--muted); background: none; font-family: 'Sora', sans-serif; }
+  .nav-pill:hover { color: var(--text); border-color: var(--border); background: var(--surface); }
+  .nav-pill.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.08); }
+  .nav-weeks { display: flex; gap: 2px; }
+  .nav-week { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; font-family: 'JetBrains Mono', monospace; cursor: pointer; border: 1px solid transparent; text-decoration: none; transition: all 0.15s; color: var(--muted); }
+  .nav-week:hover { color: var(--text); border-color: var(--border); }
+  .nav-week.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,170,0.1); }
+  .nav-week.done { color: #4a7a6a; border-color: #2a4a3a; }
+  .nav-week.locked { color: #3a4050; cursor: default; }
+  .hero { max-width: 1100px; margin: 0 auto; padding: 3.5rem 2rem 2rem; border-bottom: 1px solid var(--border); }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3); color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px; margin-bottom: 1.2rem; }
+  .hero h1 { font-size: 2.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.8rem; background: linear-gradient(135deg, #e8eaf0 0%, #a0a8b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { color: var(--muted); font-size: 15px; max-width: 640px; margin-bottom: 1.5rem; }
+  .hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+  .stat-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .section-tabs { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab-btn { padding: 1rem 1.5rem; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; border-top: none; border-left: none; border-right: none; background: none; font-family: 'Sora', sans-serif; transition: all 0.2s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .module-header { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.2rem; }
+  .module-header:first-child { margin-top: 0; }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .module-title { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+  .module-line { flex: 1; height: 1px; background: var(--border); }
+  .concepts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; transition: border-color 0.2s; }
+  .concept-card:hover { border-color: #3a4558; }
+  .concept-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .concept-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+  .concept-card .tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--tag-bg); border: 1px solid var(--border); color: var(--accent2); padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+  .key-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 13.5px; }
+  .key-table thead tr { border-bottom: 1px solid var(--border); }
+  .key-table th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 0 12px 10px 0; }
+  .key-table td { padding: 9px 12px 9px 0; color: var(--text); border-bottom: 1px solid rgba(42,48,64,0.5); vertical-align: top; }
+  .key-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; min-width: 220px; }
+  .key-table td:last-child { color: var(--muted); }
+  .cli-block { background: #0a0c10; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1.2rem; }
+  .cli-header { background: var(--surface2); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .cli-dots { display: flex; gap: 5px; }
+  .cli-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cli-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .cli-body { padding: 1rem 1.4rem; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; overflow-x: auto; }
+  .cli-prompt { color: var(--accent); }
+  .cli-cmd { color: #93c5fd; }
+  .cli-comment { color: #4a5568; }
+  .cli-out { color: var(--muted); }
+  .cli-important { color: var(--accent3); }
+  .keypoint { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.9rem 1.2rem; font-size: 13.5px; color: #d4a855; margin-bottom: 1rem; display: flex; gap: 10px; align-items: flex-start; }
+  .keypoint-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .keypoint.info { background: rgba(59,130,246,0.06); border-color: rgba(59,130,246,0.2); color: #7ab3f0; }
+  .keypoint.danger { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); color: #f87171; }
+  .keypoint.success { background: rgba(0,212,170,0.06); border-color: rgba(0,212,170,0.2); color: #00d4aa; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.2rem; }
+  .compare-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .compare-card-header { padding: 0.8rem 1.2rem; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); }
+  .compare-card-header.green { color: var(--accent); background: rgba(0,212,170,0.05); }
+  .compare-card-header.blue { color: var(--accent2); background: rgba(59,130,246,0.05); }
+  .compare-card-header.purple { color: var(--accent4); background: rgba(167,139,250,0.05); }
+  .compare-card-header.orange { color: var(--accent3); background: rgba(245,158,11,0.05); }
+  .compare-card ul { list-style: none; padding: 0.8rem 1.2rem; }
+  .compare-card ul li { font-size: 13px; color: var(--muted); padding: 4px 0; border-bottom: 1px solid rgba(42,48,64,0.4); display: flex; gap: 8px; align-items: flex-start; }
+  .compare-card ul li::before { content: '→'; color: var(--border); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+  .compare-card ul li:last-child { border-bottom: none; }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  /* FLOW DIAGRAM */
+  .flow-steps { display: flex; gap: 0; margin-bottom: 1.2rem; overflow-x: auto; }
+  .flow-step { flex: 1; min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; position: relative; }
+  .flow-step::after { content: '→'; position: absolute; right: -16px; top: 50%; transform: translateY(-50%); color: var(--accent3); font-size: 18px; font-weight: 700; z-index: 1; }
+  .flow-step:last-child::after { display: none; }
+  .flow-step-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--accent4); margin-bottom: 4px; }
+  .flow-step-name { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent3); margin-bottom: 4px; }
+  .flow-step-desc { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+  .flow-gap { width: 20px; flex-shrink: 0; }
+  /* HSRP STATES */
+  .states-flow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.2rem; }
+  .state-badge { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; }
+  .state-badge-name { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent4); }
+  .state-badge-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  /* FHRP TABLE */
+  .fhrp-table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 12.5px; }
+  .fhrp-table th, .fhrp-table td { padding: 9px 12px; border: 1px solid var(--border); }
+  .fhrp-table th { background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; text-align: left; }
+  .fhrp-table td:first-child { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent3); background: rgba(245,158,11,0.04); }
+  .fhrp-table td { color: var(--muted); vertical-align: top; }
+  .fhrp-table .badge-cisco { color: #3b82f6; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); font-size: 10px; padding: 1px 6px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; margin-left: 6px; }
+  .fhrp-table .badge-open { color: var(--accent); background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.2); font-size: 10px; padding: 1px 6px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; margin-left: 6px; }
+  /* LAB SOLUTION CARD */
+  .lab-solution { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem; }
+  .lab-solution-header { padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid var(--border); background: var(--surface2); cursor: pointer; user-select: none; }
+  .lab-solution-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--accent4); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+  .lab-solution-title { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .lab-solution-ref { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .lab-solution-body { padding: 1.4rem; }
+  .lab-objective { font-size: 13.5px; color: var(--muted); margin-bottom: 1.2rem; border-left: 3px solid var(--accent4); padding-left: 0.8rem; line-height: 1.7; }
+  .lab-enunciado { background: rgba(167,139,250,0.05); border: 1px solid rgba(167,139,250,0.15); border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1.2rem; }
+  .lab-enunciado h4 { font-size: 12px; font-weight: 700; color: var(--accent4); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.6rem; }
+  .lab-enunciado ul { list-style: none; padding: 0; }
+  .lab-enunciado ul li { font-size: 13px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; }
+  .lab-enunciado ul li::before { content: '▸'; color: var(--accent4); flex-shrink: 0; }
+  .lab-step { margin-bottom: 1.2rem; }
+  .lab-step-title { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .lab-step-title .step-num { background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); border-radius: 3px; padding: 1px 6px; font-size: 10px; }
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.7rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr; }
+    nav .nav-weeks { display: none; }
+    .flow-steps { flex-direction: column; }
+    .flow-step::after { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">◈ REDES / CISCO</a>
+    <div class="nav-section">
+      <span>Sección</span>
+      <button class="nav-pill active" onclick="setSection('teoria')">Teoría</button>
+      <button class="nav-pill" onclick="setSection('labs')">Laboratorios</button>
+    </div>
+    <div class="nav-weeks">
+      <a class="nav-week done" href="index.html" title="Semana 1 — completada">1</a>
+      <a class="nav-week done" href="semana2.html" title="Semana 2 — completada">2</a>
+      <a class="nav-week done" href="semana3.html" title="Semana 3 — completada">3</a>
+      <a class="nav-week active" href="semana4.html" title="Semana 4 — actual">4</a>
+      <a class="nav-week locked" href="semana5.html" title="Pendiente">5</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">6</a>
+      <a class="nav-week locked" href="semana7.html" title="Pendiente">7</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">◉ SEMANA 4 — ACTIVA</div>
+  <h1>DHCPv4 &<br>FHRP / HSRP</h1>
+  <p class="hero-sub">Asignación dinámica de direcciones IP (DHCPv4), configuración de servidores y relay DHCP. Redundancia de gateway con FHRP y Hot Standby Router Protocol (HSRP). SRWE v7.0 — Módulos 7 y 9.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-dot" style="background:var(--accent4)"></div>2 módulos teóricos</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent2)"></div>DHCP + FHRP/HSRP</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--accent3)"></div>3 labs con solución completa</div>
+  </div>
+</div>
+
+<div class="section-tabs">
+  <button class="tab-btn active" onclick="showTab('teoria', this)">📘 Teoría</button>
+  <button class="tab-btn" onclick="showTab('labs', this)">🧪 Laboratorios + Soluciones</button>
+</div>
+
+<main>
+
+<!-- =============== TEORÍA =============== -->
+<div class="tab-content active" id="tab-teoria">
+
+  <!-- ===== MÓDULO 7: DHCPv4 ===== -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 7 · SRWE</div>
+    <div class="module-title">DHCPv4 — Asignación Dinámica de Direcciones IP</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>¿Qué es DHCP?</strong> En lugar de configurar manualmente la IP de cada computadora, DHCP hace que el router (o servidor) la asigne automáticamente. El cliente "pide prestada" una dirección por un tiempo determinado llamado <strong>arrendamiento (lease)</strong>. Cuando el arrendamiento vence, el cliente la renueva o pide una nueva.</span>
+  </div>
+
+  <div class="section-title">¿Cómo funciona? — El proceso de 4 pasos (DORA)</div>
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span>Cuando una PC se conecta a la red por primera vez, realiza estos 4 pasos para obtener una dirección IP. Imagina que tu PC está "recién llegada" y necesita que le asignen un lugar (IP) en la red.</span>
+  </div>
+
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-step-num">PASO 1</div>
+      <div class="flow-step-name">DHCPDISCOVER</div>
+      <div class="flow-step-desc">La PC grita a toda la red: <em>"¡Hay algún servidor DHCP? Necesito una IP!"</em> — Envía un broadcast porque aún no sabe la IP del servidor.</div>
+    </div>
+    <div class="flow-gap"></div>
+    <div class="flow-step">
+      <div class="flow-step-num">PASO 2</div>
+      <div class="flow-step-name">DHCPOFFER</div>
+      <div class="flow-step-desc">El servidor responde: <em>"¡Aquí estoy! Te ofrezco esta IP: 192.168.1.10"</em> — Le propone una dirección disponible de su pool.</div>
+    </div>
+    <div class="flow-gap"></div>
+    <div class="flow-step">
+      <div class="flow-step-num">PASO 3</div>
+      <div class="flow-step-name">DHCPREQUEST</div>
+      <div class="flow-step-desc">La PC confirma: <em>"¡Acepto la IP que me ofreció el servidor X!"</em> — Lo manda a broadcast para que otros servidores también sepan cuál eligió.</div>
+    </div>
+    <div class="flow-gap"></div>
+    <div class="flow-step">
+      <div class="flow-step-num">PASO 4</div>
+      <div class="flow-step-name">DHCPACK</div>
+      <div class="flow-step-desc">El servidor confirma: <em>"¡Trato hecho! La IP es tuya por X días"</em> — Envía la IP, máscara, gateway y DNS definitivos.</div>
+    </div>
+  </div>
+
+  <div class="keypoint success">
+    <span class="keypoint-icon">🔄</span>
+    <span><strong>Renovar el arrendamiento:</strong> Antes de que venza el tiempo del "préstamo" de IP, la PC solo necesita 2 pasos: envía un DHCPREQUEST directamente al servidor, y el servidor responde con un DHCPACK. Sin el proceso de 4 pasos porque ya se conocen.</span>
+  </div>
+
+  <div class="section-title">Tipos de VLANs — qué información entrega DHCP</div>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🌐 Dirección IP</h3>
+      <p>La dirección que identifica a la PC en la red. Ejemplo: 192.168.10.15. Sin esta, la PC no puede comunicarse con nadie en la red.</p>
+      <div class="tag">obligatorio</div>
+    </div>
+    <div class="concept-card">
+      <h3>🎭 Máscara de subred</h3>
+      <p>Define qué parte de la IP es la "red" y qué parte identifica al dispositivo. Ejemplo: 255.255.255.0 (o /24). El DHCP siempre la entrega junto a la IP.</p>
+      <div class="tag">obligatorio</div>
+    </div>
+    <div class="concept-card">
+      <h3>🚪 Default Gateway</h3>
+      <p>La "puerta de salida" hacia otras redes e internet. Normalmente es la IP del router. Sin gateway, la PC solo puede hablar con dispositivos de su misma red local.</p>
+      <div class="tag">default-router</div>
+    </div>
+    <div class="concept-card">
+      <h3>🔍 Servidor DNS</h3>
+      <p>El "directorio telefónico" que convierte nombres de dominio (google.com) en IPs. DHCP puede configurar uno o más servidores DNS automáticamente.</p>
+      <div class="tag">dns-server</div>
+    </div>
+    <div class="concept-card">
+      <h3>⏱ Tiempo de arrendamiento</h3>
+      <p>Cuánto tiempo "presta" la IP al cliente. Por defecto suele ser de 24 horas a 1 semana. Al vencer, el cliente renueva o pide una nueva IP.</p>
+      <div class="tag">lease days/hours</div>
+    </div>
+    <div class="concept-card">
+      <h3>🏷 Nombre de dominio</h3>
+      <p>El dominio de la organización, por ejemplo "empresa.local". Permite resolver nombres dentro de la red interna sin escribir la IP completa.</p>
+      <div class="tag">domain-name</div>
+    </div>
+  </div>
+
+  <div class="section-title">Configurar DHCP en un Router Cisco (IOS)</div>
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span>Un router Cisco puede actuar como servidor DHCP directamente, sin necesidad de un servidor dedicado. Esto es ideal para oficinas pequeñas (SOHO). La configuración tiene 3 pasos clave: <strong>excluir IPs reservadas → crear el pool → configurar el pool</strong>.</span>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Configurar servidor DHCPv4 completo</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">=====================================================</span>
+<span class="cli-comment">PASO 1: Excluir IPs que NO deben asignarse dinámicamente</span>
+<span class="cli-comment">  → Siempre excluye las IPs del router, servidores,</span>
+<span class="cli-comment">    impresoras y cualquier dispositivo con IP fija</span>
+<span class="cli-comment">=====================================================</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp excluded-address 192.168.10.1 192.168.10.9</span>
+<span class="cli-comment">          → Excluye el rango .1 a .9 (para router, gateways, etc.)</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp excluded-address 192.168.10.254</span>
+<span class="cli-comment">          → También se puede excluir una sola IP</span>
+
+<span class="cli-comment">=====================================================</span>
+<span class="cli-comment">PASO 2: Crear y nombrar el pool (grupo de IPs disponibles)</span>
+<span class="cli-comment">=====================================================</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp pool LAN-OFICINA</span>
+<span class="cli-comment">          → Entra al modo de configuración DHCP</span>
+
+<span class="cli-comment">=====================================================</span>
+<span class="cli-comment">PASO 3: Configurar el pool con la info que recibirán los clientes</span>
+<span class="cli-comment">=====================================================</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">network 192.168.10.0 255.255.255.0</span>
+<span class="cli-comment">              → Define el rango de red del que se tomarán IPs</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">default-router 192.168.10.1</span>
+<span class="cli-comment">              → Gateway que recibirán los clientes (IP del router)</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">dns-server 8.8.8.8 8.8.4.4</span>
+<span class="cli-comment">              → Servidores DNS (aquí usamos Google como ejemplo)</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">domain-name empresa.local</span>
+<span class="cli-comment">              → Dominio interno de la empresa (opcional)</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">lease 2</span>
+<span class="cli-comment">              → Arrendamiento de 2 días (por defecto es 1 día)</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Un segundo pool para otra VLAN/subred en el mismo router ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp excluded-address 192.168.20.1 192.168.20.9</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp pool LAN-VENTAS</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">network 192.168.20.0 255.255.255.0</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">default-router 192.168.20.1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">dns-server 8.8.8.8</span></div>
+  </div>
+
+  <div class="section-title">Verificar que DHCP funciona correctamente</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Comandos de verificación DHCP</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- Ver la config DHCP activa en el router ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show running-config | section dhcp</span>
+<span class="cli-comment">   → Filtra solo las líneas relacionadas con DHCP</span>
+<span class="cli-comment">   → Útil para confirmar que el pool quedó bien configurado</span>
+
+<span class="cli-comment">--- Ver qué IPs ya fueron asignadas y a qué MAC ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip dhcp binding</span>
+<span class="cli-out">IP address       Client-ID/              Lease expiration        Type
+                 Hardware address
+192.168.10.10    0100.5056.ab12.34       Mar 12 2026 12:00 AM    Automatic
+192.168.10.11    0100.5056.ab56.78       Mar 12 2026 12:00 AM    Automatic</span>
+<span class="cli-comment">   → Muestra: IP asignada, MAC del cliente y cuándo vence</span>
+
+<span class="cli-comment">--- Ver estadísticas (cuántos mensajes DHCP han pasado) ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip dhcp server statistics</span>
+<span class="cli-out">Memory usage         22118
+Address pools        2
+Database agents      0
+Automatic bindings   2
+Manual bindings      0
+Expired bindings     0
+...
+Messages             Received   Sent
+BOOTREQUEST          0          0
+DHCPDISCOVER         4          0    ← cuántos Discovery recibió
+DHCPOFFER            0          4    ← cuántas Offers envió
+DHCPREQUEST          4          0
+DHCPACK              0          4    ← cuántas confirmaciones envió</span>
+<span class="cli-comment">   → Si Discover y ACK tienen números, DHCP está funcionando</span>
+
+<span class="cli-comment">--- Habilitar / deshabilitar el servicio DHCP ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">no service dhcp</span>   <span class="cli-comment">→ Deshabilita DHCP</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">service dhcp</span>      <span class="cli-comment">→ Vuelve a habilitar (está ON por defecto)</span></div>
+  </div>
+
+  <div class="section-title">El gran problema: ¿qué pasa si el servidor DHCP está en otra red?</div>
+
+  <div class="keypoint danger">
+    <span class="keypoint-icon">⚠</span>
+    <span><strong>Problema:</strong> El DHCPDISCOVER es un <strong>broadcast</strong>. Los routers, por diseño, <strong>NO reenvían broadcasts</strong> entre redes. Si el servidor DHCP está en otra subred, los clientes nunca lo encontrarán. Solución: <strong>DHCP Relay Agent</strong> con el comando <code>ip helper-address</code>.</span>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header orange">Sin Relay — El problema</div>
+      <ul>
+        <li>PC en red 192.168.10.0 envía broadcast DHCPDISCOVER</li>
+        <li>El router R1 recibe el broadcast en su interfaz local</li>
+        <li>R1 descarta el broadcast — no lo reenvía al servidor DHCP</li>
+        <li>El servidor DHCP está en 192.168.11.0 y nunca lo recibe</li>
+        <li>La PC no obtiene IP → sin conectividad</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header green">Con Relay — La solución</div>
+      <ul>
+        <li>Se configura <code>ip helper-address</code> en la interfaz del router</li>
+        <li>R1 recibe el broadcast DHCPDISCOVER de la PC</li>
+        <li>R1 lo convierte en unicast y lo reenvía al servidor DHCP</li>
+        <li>El servidor DHCP responde y R1 retransmite la respuesta</li>
+        <li>La PC obtiene su IP correctamente ✓</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Configurar DHCP Relay (ip helper-address)</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">Situación: PCs en 192.168.10.0/24, servidor DHCP en 192.168.11.6</span>
+<span class="cli-comment">Se configura en la interfaz que DA LA CARA a los clientes DHCP</span>
+
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/0</span>
+<span class="cli-comment">          → Esta es la interfaz conectada a los clientes (LAN)</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">ip helper-address 192.168.11.6</span>
+<span class="cli-comment">           → Dirección IP del servidor DHCP real</span>
+<span class="cli-comment">           → Ahora R1 retransmitirá los DHCPDISCOVER al servidor</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Verificar que el helper-address está configurado ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip interface g0/0/0</span>
+<span class="cli-out">GigabitEthernet0/0/0 is up, line protocol is up
+  ...
+  Helper address is 192.168.11.6    ← confirma que está activo</span>
+
+<span class="cli-comment">--- NOTA: ip helper-address también retransmite estos servicios UDP: ---</span>
+<span class="cli-comment">  Puerto 37  → Tiempo          Puerto 67 → DHCP/BOOTP servidor</span>
+<span class="cli-comment">  Puerto 53  → DNS             Puerto 68 → DHCP/BOOTP cliente</span>
+<span class="cli-comment">  Puerto 49  → TACACS          Puerto 69 → TFTP</span>
+<span class="cli-comment">  Puerto 137 → NetBIOS nombres  Puerto 138 → NetBIOS datagramas</span></div>
+  </div>
+
+  <div class="section-title">Configurar un Router como Cliente DHCP</div>
+  <div class="keypoint info">
+    <span class="keypoint-icon">ℹ</span>
+    <span>En redes domésticas y SOHO, el router en sí necesita obtener su IP de Internet del ISP. En este caso el router actúa como <strong>cliente DHCP</strong>, no como servidor. Es un solo comando en la interfaz que apunta al ISP.</span>
+  </div>
+
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Router que pide IP al ISP via DHCP</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">La interfaz WAN del router (la que apunta al ISP) pide IP por DHCP</span>
+
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/1</span>
+<span class="cli-comment">          → Interfaz WAN (conectada al módem del ISP)</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">ip address dhcp</span>
+<span class="cli-comment">           → El router pedirá su IP al ISP como un cliente DHCP normal</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+
+<span class="cli-comment">--- Verificar que el ISP asignó una IP ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip interface g0/0/1</span>
+<span class="cli-out">GigabitEthernet0/0/1 is up, line protocol is up
+  Internet address is 209.165.201.12/27    ← IP asignada por el ISP
+  Broadcast address is 209.165.201.31
+  ...</span></div>
+  </div>
+
+  <!-- ===== MÓDULO 9: FHRP / HSRP ===== -->
+  <div class="module-header">
+    <div class="module-num">MÓDULO 9 · SRWE</div>
+    <div class="module-title">FHRP / HSRP — Redundancia de Gateway (No perder la salida a Internet)</div>
+    <div class="module-line"></div>
+  </div>
+
+  <div class="keypoint">
+    <span class="keypoint-icon">⚡</span>
+    <span><strong>El problema que resuelven:</strong> Cada PC tiene configurado <em>un solo</em> gateway predeterminado (el router). Si ese router falla, <strong>toda la red pierde acceso a Internet</strong>... incluso si hay otro router conectado. FHRP/HSRP crean un "router virtual" que combina dos routers reales en uno lógico.</span>
+  </div>
+
+  <div class="section-title">La solución: El Router Virtual</div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header orange">Sin FHRP — Punto único de falla</div>
+      <ul>
+        <li>Todas las PCs tienen gateway = 192.168.1.1 (Router A)</li>
+        <li>El Router A falla ✗</li>
+        <li>Hay un Router B disponible pero las PCs no saben de él</li>
+        <li>Las PCs siguen enviando al gateway .1 que no responde</li>
+        <li>Toda la red pierde conectividad externa hasta que alguien reconfigure cada PC</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header green">Con FHRP — Alta disponibilidad</div>
+      <ul>
+        <li>Los Routers A y B se configuran como grupo HSRP</li>
+        <li>Comparten una IP virtual (VIP): 192.168.1.254</li>
+        <li>Las PCs tienen gateway = 192.168.1.254 (el router virtual)</li>
+        <li>Router A es el activo, Router B es el standby (reserva)</li>
+        <li>Si A falla → B asume el rol automáticamente sin tocar nada ✓</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Opciones FHRP disponibles</div>
+  <table class="fhrp-table">
+    <thead>
+      <tr><th>Protocolo</th><th>Tipo</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>HSRP<span class="badge-cisco">CISCO</span></td>
+        <td>Propietario de Cisco</td>
+        <td>Hot Standby Router Protocol. El más usado en entornos Cisco. Un router activo, uno en standby. Cuando falla el activo, el standby toma control automáticamente.</td>
+      </tr>
+      <tr>
+        <td>HSRP for IPv6<span class="badge-cisco">CISCO</span></td>
+        <td>Propietario de Cisco</td>
+        <td>Versión de HSRP para redes IPv6. Mismo principio pero adaptado al protocolo de nueva generación.</td>
+      </tr>
+      <tr>
+        <td>VRRPv2<span class="badge-open">OPEN</span></td>
+        <td>Estándar IEEE</td>
+        <td>Virtual Router Redundancy Protocol. Similar a HSRP pero es estándar abierto, funciona con cualquier fabricante.</td>
+      </tr>
+      <tr>
+        <td>GLBP<span class="badge-cisco">CISCO</span></td>
+        <td>Propietario de Cisco</td>
+        <td>Gateway Load Balancing Protocol. Más avanzado: permite que múltiples routers compartan activamente el tráfico (balanceo de carga), no solo tener uno activo y uno de reserva.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">HSRP — Cómo funciona en detalle</div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h3>🏆 Router Activo</h3>
+      <p>El que realmente reenvía el tráfico de los clientes. Responde a la IP y MAC virtual. Solo puede haber uno activo por grupo HSRP.</p>
+      <div class="tag">reenvía tráfico real</div>
+    </div>
+    <div class="concept-card">
+      <h3>💤 Router Standby (Reserva)</h3>
+      <p>Escucha los "hellos" del activo. Si deja de recibirlos en 10 segundos, asume automáticamente el rol de activo sin intervención humana.</p>
+      <div class="tag">listo para tomar el control</div>
+    </div>
+    <div class="concept-card">
+      <h3>🔮 IP Virtual (VIP)</h3>
+      <p>La IP que configuran las PCs como gateway. No pertenece al router activo ni al standby, pertenece al <em>grupo virtual</em>. Siempre está disponible.</p>
+      <div class="tag">standby ip &lt;VIP&gt;</div>
+    </div>
+    <div class="concept-card">
+      <h3>💌 Mensajes Hello</h3>
+      <p>El router activo envía mensajes "Hello" cada 3 segundos diciendo "Sigo vivo". Si el standby no recibe hellos en 10 segundos, asume que el activo falló y toma el control.</p>
+      <div class="tag">cada 3 seg / espera 10 seg</div>
+    </div>
+    <div class="concept-card">
+      <h3>📊 Prioridad HSRP</h3>
+      <p>Determina quién será el router activo. El de mayor prioridad gana. Por defecto es 100. Rango: 0–255. Si hay empate, gana el de mayor IP.</p>
+      <div class="tag">standby priority &lt;0-255&gt;</div>
+    </div>
+    <div class="concept-card">
+      <h3>⚡ Preempt (Intento)</h3>
+      <p>Si un router con mayor prioridad vuelve a estar online, ¿debería "recuperar" el rol de activo? Solo si tiene activado <code>preempt</code>. Sin esta opción, el que sea activo lo sigue siendo aunque llegue uno de más prioridad.</p>
+      <div class="tag">standby preempt</div>
+    </div>
+  </div>
+
+  <div class="section-title">Estados HSRP — El ciclo de vida de un router en el grupo</div>
+  <div class="states-flow">
+    <div class="state-badge">
+      <div class="state-badge-name">Initial</div>
+      <div class="state-badge-desc">Estado inicial al arrancar</div>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--accent3);font-size:18px;padding:0 4px;">→</div>
+    <div class="state-badge">
+      <div class="state-badge-name">Learn</div>
+      <div class="state-badge-desc">Esperando conocer la IP virtual</div>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--accent3);font-size:18px;padding:0 4px;">→</div>
+    <div class="state-badge">
+      <div class="state-badge-name">Listen</div>
+      <div class="state-badge-desc">Conoce la VIP, escucha hellos pero no es ni activo ni standby</div>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--accent3);font-size:18px;padding:0 4px;">→</div>
+    <div class="state-badge">
+      <div class="state-badge-name">Speak</div>
+      <div class="state-badge-desc">Envía hellos y participa en la elección del activo</div>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--accent3);font-size:18px;padding:0 4px;">→</div>
+    <div class="state-badge">
+      <div class="state-badge-name">Standby</div>
+      <div class="state-badge-desc">Candidato a activo. Monitorea al activo actual</div>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--accent3);font-size:18px;padding:0 4px;">→</div>
+    <div class="state-badge">
+      <div class="state-badge-name" style="color:var(--accent)">Active</div>
+      <div class="state-badge-desc">Reenvía tráfico. Es el gateway real</div>
+    </div>
+  </div>
+
+  <div class="section-title">Configurar HSRP — Comandos Completos</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Configurar HSRP en R1 (activo) y R2 (standby)</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">========================================================</span>
+<span class="cli-comment">ESCENARIO:</span>
+<span class="cli-comment">  R1: IP real 192.168.10.2/24 → será el router ACTIVO</span>
+<span class="cli-comment">  R2: IP real 192.168.10.3/24 → será el router STANDBY</span>
+<span class="cli-comment">  IP Virtual (VIP): 192.168.10.1  ← esta es la que usan las PCs</span>
+<span class="cli-comment">  Grupo HSRP: 1 (número identificador del grupo, puede ser 0-255)</span>
+<span class="cli-comment">========================================================</span>
+
+<span class="cli-comment">=== CONFIGURACIÓN EN R1 (Router Activo) ===</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/1</span>
+<span class="cli-comment">          → Interfaz hacia la LAN de los clientes</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby version 2</span>
+<span class="cli-comment">           → Usar HSRPv2 (recomendado — más grupos, mejor para IPv6)</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby 1 ip 192.168.10.1</span>
+<span class="cli-comment">           → Grupo 1, IP Virtual = 192.168.10.1 ← lo que configuran las PCs</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby 1 priority 150</span>
+<span class="cli-comment">           → Prioridad 150 > 100 (default de R2) → R1 ganará la elección</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby 1 preempt</span>
+<span class="cli-comment">           → Si R1 cae y vuelve, recuperará automáticamente el rol activo</span>
+
+<span class="cli-comment">=== CONFIGURACIÓN EN R2 (Router Standby) ===</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/1</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">standby version 2</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">standby 1 ip 192.168.10.1</span>
+<span class="cli-comment">           → ¡Misma IP Virtual y mismo grupo! Así se unen al mismo grupo HSRP</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">standby 1 priority 100</span>
+<span class="cli-comment">           → Prioridad 100 (menor que R1) → R2 será el standby</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">standby 1 preempt</span>
+<span class="cli-comment">           → Opcional en el standby, pero buena práctica activarlo</span></div>
+  </div>
+
+  <div class="section-title">Verificar que HSRP está funcionando</div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">IOS CLI — Comandos de verificación HSRP</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">--- Ver el estado completo del grupo HSRP ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show standby</span>
+<span class="cli-out">GigabitEthernet0/0/1 - Group 1 (version 2)
+  State is Active                    ← R1 es el router activo
+  2 state changes, last state change 00:05:23
+  Virtual IP address is 192.168.10.1  ← IP Virtual compartida
+  Active virtual MAC address is 0000.0c9f.f001
+  Local virtual MAC address is 0000.0c9f.f001 (v2 default)
+  Hello time 3 sec, hold time 10 sec  ← Hello cada 3s, espera 10s
+  Next hello sent in 1.584 secs
+  Preemption enabled                  ← preempt activo
+  Active router is local              ← "local" = yo mismo soy el activo
+  Standby router is 192.168.10.3      ← R2 está listo como reserva
+  Priority 150 (configured 150)       ← mi prioridad
+  Group name is "hsrp-Gi0/0/1-1" (default)</span>
+
+<span class="cli-comment">--- Ver resumen breve de todos los grupos HSRP ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show standby brief</span>
+<span class="cli-out">                     P indicates configured to preempt.
+                     |
+Interface   Grp  Pri P State   Active          Standby         Virtual IP
+Gi0/0/1     1    150 P Active  local           192.168.10.3    192.168.10.1</span>
+<span class="cli-comment">            ↑    ↑   ↑  ↑       ↑               ↑               ↑</span>
+<span class="cli-comment">         Interfaz Prioridad Estado  Quién es activo  Quién es standby  IP Virtual</span></div>
+  </div>
+
+  <div class="section-title">Glosario Clave — Semana 4</div>
+  <table class="key-table">
+    <thead><tr><th>Término / Comando</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td>DHCP</td><td>Dynamic Host Configuration Protocol — asigna IPs automáticamente a los dispositivos de la red.</td></tr>
+      <tr><td>Lease (Arrendamiento)</td><td>El "préstamo" de una dirección IP por un tiempo determinado. Al vencer, el cliente la renueva.</td></tr>
+      <tr><td>DORA</td><td>Discover → Offer → Request → Acknowledge — los 4 pasos del proceso de obtención de IP.</td></tr>
+      <tr><td>ip dhcp pool</td><td>Crea el grupo (pool) de IPs disponibles para asignar a los clientes.</td></tr>
+      <tr><td>ip dhcp excluded-address</td><td>Excluye IPs del pool para que no se asignen dinámicamente (reservadas para routers/servidores).</td></tr>
+      <tr><td>ip helper-address</td><td>Configura el relay DHCP: el router reenvía los broadcasts DHCP al servidor en otra subred.</td></tr>
+      <tr><td>ip address dhcp</td><td>Configura una interfaz del router para obtener su IP via DHCP (actúa como cliente).</td></tr>
+      <tr><td>show ip dhcp binding</td><td>Muestra las IPs asignadas y a qué dispositivo (MAC) fueron entregadas.</td></tr>
+      <tr><td>FHRP</td><td>First Hop Redundancy Protocol — familia de protocolos para redundancia de gateway predeterminado.</td></tr>
+      <tr><td>HSRP</td><td>Hot Standby Router Protocol — protocolo Cisco para redundancia de gateway. Un activo + un standby.</td></tr>
+      <tr><td>IP Virtual (VIP)</td><td>La IP que configuran las PCs como gateway. Pertenece al grupo, no al router físico. Siempre disponible.</td></tr>
+      <tr><td>standby priority</td><td>Establece la prioridad del router para ser elegido activo (0-255, default 100). Mayor prioridad = gana.</td></tr>
+      <tr><td>standby preempt</td><td>Permite al router recuperar el rol de activo cuando vuelve a conectarse, si tiene mayor prioridad.</td></tr>
+      <tr><td>standby ip</td><td>Define la IP virtual del grupo HSRP. Todos los routers del mismo grupo deben tener la misma VIP.</td></tr>
+      <tr><td>Router Activo</td><td>El que reenvía el tráfico real de los clientes hacia el exterior de la red.</td></tr>
+      <tr><td>Router Standby</td><td>El que espera en reserva. Monitorea al activo con mensajes Hello y toma el control si este falla.</td></tr>
+    </tbody>
+  </table>
+
+</div><!-- fin teoría -->
+
+<!-- =============== LABORATORIOS =============== -->
+<div class="tab-content" id="tab-labs">
+
+  <div style="padding: 1rem 0 1.5rem;">
+    <p style="color: var(--muted); font-size: 14px; max-width: 700px;">Solución completa de los 3 labs de Packet Tracer de la Semana 4. Para cada lab: enunciado original, objetivo, pasos con todos los comandos IOS necesarios y verificación final.</p>
+  </div>
+
+  <!-- LAB 1 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 7.2.10</div>
+      <div class="lab-solution-title">Configurar DHCPv4</div>
+      <div class="lab-solution-ref">Servidor DHCP · Relay · Cliente DHCP</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-enunciado">
+        <h4>📋 Enunciado del Lab</h4>
+        <ul>
+          <li>Parte 1: Configurar un router como servidor de DHCPv4</li>
+          <li>Parte 2: Configurar la retransmisión de DHCP (relay) en otro router</li>
+          <li>Parte 3: Configurar un router como cliente DHCP (recibe IP del ISP)</li>
+          <li>Parte 4: Verificar DHCP y la conectividad end-to-end</li>
+        </ul>
+      </div>
+      <div class="lab-objective">
+        Configurar R1 como servidor DHCPv4 para dos subredes. Configurar R2 para retransmitir los mensajes DHCP de sus clientes hacia R1 (relay). Finalmente, configurar la interfaz WAN de R1 para obtener su IP del ISP via DHCP.
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Configurar R1 como Servidor DHCP para dos subredes</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R1 — Servidor DHCPv4 (dos pools)</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Pool 1: para la red local de R1 (192.168.10.0/24) ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp excluded-address 192.168.10.1 192.168.10.9</span>
+<span class="cli-comment">          → Excluye .1 a .9 para el router y dispositivos fijos</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp pool R1-LAN</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">network 192.168.10.0 255.255.255.0</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">default-router 192.168.10.1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">dns-server 10.1.1.1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">domain-name ccna-lab.com</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">exit</span>
+
+<span class="cli-comment">--- Pool 2: para la red detrás de R2 (192.168.20.0/24) ---</span>
+<span class="cli-comment">  R2 pedirá IPs para sus clientes vía relay → R1 las asigna de este pool</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp excluded-address 192.168.20.1 192.168.20.9</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp pool R2-LAN</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">network 192.168.20.0 255.255.255.0</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">default-router 192.168.20.1</span>
+<span class="cli-comment">          → El gateway de los clientes de R2 es R2 (.20.1), no R1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">dns-server 10.1.1.1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">domain-name ccna-lab.com</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">end</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Configurar Relay DHCP en R2</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R2 — ip helper-address apuntando a R1</span></div>
+          <div class="cli-body"><span class="cli-comment">Los clientes de R2 están en 192.168.20.0/24</span>
+<span class="cli-comment">El servidor DHCP (R1) tiene IP 10.0.0.1 en el enlace R1-R2</span>
+
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/0</span>
+<span class="cli-comment">          → Interfaz de R2 que da a la LAN de sus clientes</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">ip helper-address 10.0.0.1</span>
+<span class="cli-comment">           → Dirección IP de R1 (el servidor DHCP real)</span>
+<span class="cli-comment">           → Ahora R2 reenvía los DHCPDISCOVER de sus clientes a R1</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Verificar en R2 que el helper-address quedó configurado ---</span>
+<span class="cli-prompt">R2#</span> <span class="cli-cmd">show ip interface g0/0/0</span>
+<span class="cli-out">  Helper address is 10.0.0.1    ← ✓ relay configurado correctamente</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 3</span> Configurar R1 como Cliente DHCP hacia el ISP</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R1 — Interfaz WAN pide IP al ISP</span></div>
+          <div class="cli-body"><span class="cli-comment">La interfaz g0/0/2 de R1 está conectada al router del ISP</span>
+
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/2</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">ip address dhcp</span>
+<span class="cli-comment">           → R1 actuará como cliente DHCP en esta interfaz</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Verificar que el ISP asignó una IP a R1 ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip interface g0/0/2</span>
+<span class="cli-out">  Internet address is 209.165.201.x/27    ← IP asignada por el ISP</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 4</span> Verificar que todo funciona</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Checklist de verificación completa</span></div>
+          <div class="cli-body"><span class="cli-comment">--- En R1: ver los arrendamientos asignados ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip dhcp binding</span>
+<span class="cli-out">IP address       Client-ID          Lease expiration   Type
+192.168.10.10    01aa.bbcc.dd11.22  ...                Automatic
+192.168.20.10    01aa.bbcc.dd33.44  ...                Automatic</span>
+<span class="cli-comment">→ Debe haber IPs del rango .10.x para clientes de R1</span>
+<span class="cli-comment">→ Y del rango .20.x para clientes que pasaron por R2 (relay)</span>
+
+<span class="cli-comment">--- Ver estadísticas DHCP ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip dhcp server statistics</span>
+<span class="cli-comment">→ Discover y ACK deben tener valores > 0 si hay clientes</span>
+
+<span class="cli-comment">--- En los PCs (en Packet Tracer, ir a Desktop > IP Configuration) ---</span>
+<span class="cli-comment">  PC1 en red de R1: debe tener IP 192.168.10.10-253, GW 192.168.10.1</span>
+<span class="cli-comment">  PC2 en red de R2: debe tener IP 192.168.20.10-253, GW 192.168.20.1</span>
+
+<span class="cli-comment">--- Prueba de conectividad ---</span>
+<span class="cli-out">PC1> ping 192.168.20.10   → Debe llegar (routing entre redes via R1-R2)
+PC1> ping 209.165.201.1   → Ping al ISP (si hay ruta default configurada)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 2 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 7.4.1</div>
+      <div class="lab-solution-title">Implementar DHCPv4 — Lab Integrador</div>
+      <div class="lab-solution-ref">Configuración completa · Dos subredes · Relay</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-enunciado">
+        <h4>📋 Enunciado del Lab</h4>
+        <ul>
+          <li>Parte 1: Armar la red y configurar los parámetros básicos de los dispositivos (hostname, contraseñas, SVI de gestión)</li>
+          <li>Parte 2: Configurar y verificar dos servidores DHCPv4 en R1 (uno por cada subred)</li>
+          <li>Parte 3: Configurar y verificar una retransmisión DHCP en R2 (relay hacia R1)</li>
+        </ul>
+      </div>
+      <div class="lab-objective">
+        Lab completo que combina configuración básica, dos pools DHCP en R1 y relay en R2 para la subred remota. Este lab es el más completo de DHCP — domina este y dominas el tema.
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 1</span> Configuración básica de todos los routers</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Aplicar en R1 y R2 — Configuración base estándar</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Aplicar en R1 (cambiar hostname según corresponda) ---</span>
+<span class="cli-prompt">Router#</span> <span class="cli-cmd">configure terminal</span>
+<span class="cli-prompt">Router(config)#</span> <span class="cli-cmd">hostname R1</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">no ip domain-lookup</span>           <span class="cli-comment">→ Evita esperar por DNS al escribir mal</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">enable secret class</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">line console 0</span>
+<span class="cli-prompt">R1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">R1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">R1(config-line)#</span> <span class="cli-cmd">logging synchronous</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">line vty 0 4</span>
+<span class="cli-prompt">R1(config-line)#</span> <span class="cli-cmd">password cisco</span>
+<span class="cli-prompt">R1(config-line)#</span> <span class="cli-cmd">login</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">service password-encryption</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">banner motd # R1 — Acceso solo personal autorizado #</span>
+
+<span class="cli-comment">--- Configurar interfaces de R1 ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface g0/0/0</span>              <span class="cli-comment">→ Hacia la LAN de R1</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.1 255.255.255.192</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">description R1-LAN-A</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface g0/0/1</span>              <span class="cli-comment">→ Hacia R2 (enlace WAN)</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">ip address 10.0.0.1 255.255.255.252</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">description R1-a-R2</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 2</span> Configurar los dos servidores DHCP en R1</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R1 — Pool para su propia LAN + Pool para la LAN de R2</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Pool A: Red local de R1 (192.168.1.0/26) ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp excluded-address 192.168.1.1 192.168.1.5</span>
+<span class="cli-comment">          → Excluir .1 (gateway) y los primeros para dispositivos fijos</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp pool POOL-A</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">network 192.168.1.0 255.255.255.192</span>
+<span class="cli-comment">              → /26 = máscara 255.255.255.192 (64 hosts)</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">default-router 192.168.1.1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">dns-server 10.0.0.1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">domain-name ccna-lab.com</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">lease 2 12 30</span>
+<span class="cli-comment">              → Arrendamiento: 2 días, 12 horas, 30 minutos</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">exit</span>
+
+<span class="cli-comment">--- Pool B: Red de R2 (192.168.1.192/26) — entregado vía relay ---</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp excluded-address 192.168.1.193 192.168.1.197</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">ip dhcp pool POOL-B</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">network 192.168.1.192 255.255.255.192</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">default-router 192.168.1.193</span>
+<span class="cli-comment">              → Gateway = interfaz de R2 hacia su LAN (.193)</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">dns-server 10.0.0.1</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">domain-name ccna-lab.com</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">lease 2 12 30</span>
+<span class="cli-prompt">R1(dhcp-config)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Verificar config DHCP ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show running-config | section dhcp</span>
+<span class="cli-comment">→ Debe mostrar los dos pools (POOL-A y POOL-B) y las exclusiones</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PARTE 3</span> Configurar Relay DHCP en R2 y verificar</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R2 — Relay hacia R1 + verificación final completa</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Configurar interfaces de R2 ---</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">interface g0/0/0</span>              <span class="cli-comment">→ Hacia los clientes de R2</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">ip address 192.168.1.193 255.255.255.192</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">ip helper-address 10.0.0.1</span>
+<span class="cli-comment">           → ¡Este es el relay! Apunta a la IP de R1 en el enlace R1-R2</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">interface g0/0/1</span>              <span class="cli-comment">→ Hacia R1 (enlace WAN)</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">ip address 10.0.0.2 255.255.255.252</span>
+<span class="cli-prompt">R2(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-prompt">R2(config)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- VERIFICACIÓN FINAL COMPLETA ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip dhcp binding</span>
+<span class="cli-comment">→ Debe mostrar IPs de .1.x para PC de R1 y .193.x para PC de R2</span>
+
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show ip dhcp server statistics</span>
+<span class="cli-comment">→ DHCPDISCOVER y DHCPACK deben tener valores > 0</span>
+
+<span class="cli-prompt">R2#</span> <span class="cli-cmd">show ip interface g0/0/0</span>
+<span class="cli-out">  Helper address is 10.0.0.1    ← relay activo en R2</span>
+
+<span class="cli-comment">--- En los PCs de Packet Tracer (Desktop > Command Prompt) ---</span>
+<span class="cli-out">PC-A> ipconfig                  → Ver IP recibida vía DHCP Pool A
+PC-B> ipconfig                  → Ver IP recibida vía relay + Pool B
+PC-A> ping 192.168.1.200        → Ping a PC-B (diferente subred, pasa por router)</span>
+
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">copy running-config startup-config</span>
+<span class="cli-prompt">R2#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 3 -->
+  <div class="lab-solution">
+    <div class="lab-solution-header" onclick="toggleLab(this)">
+      <div class="lab-solution-num">LAB 9.3.3</div>
+      <div class="lab-solution-title">Guía de Configuración HSRP</div>
+      <div class="lab-solution-ref">Router Activo · Router Standby · Verificación failover</div>
+      <span style="color:var(--muted); font-size:18px;">▼</span>
+    </div>
+    <div class="lab-solution-body">
+      <div class="lab-enunciado">
+        <h4>📋 Enunciado del Lab</h4>
+        <ul>
+          <li>Objetivo: Configurar HSRP para proporcionar un gateway predeterminado redundante a los hosts de la LAN</li>
+          <li>Paso 1: Configurar un router activo HSRP (R1 con prioridad alta)</li>
+          <li>Paso 2: Configurar un router en espera HSRP (R3 como standby)</li>
+          <li>Paso 3: Verificar la operación HSRP (incluyendo failover cuando cae el activo)</li>
+        </ul>
+      </div>
+      <div class="lab-objective">
+        Configurar HSRP entre R1 y R3 para que las PCs tengan un gateway virtual 192.168.1.254 que siga funcionando si alguno de los routers físicos falla. Probar que el failover es automático y transparente.
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 1</span> Configurar R1 como Router Activo HSRP</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R1 — Prioridad alta → será el Activo</span></div>
+          <div class="cli-body"><span class="cli-comment">Topología:  R1 (192.168.1.1) ─── R3 (192.168.1.3)</span>
+<span class="cli-comment">            Ambos conectados a la misma LAN 192.168.1.0/24</span>
+<span class="cli-comment">            IP Virtual HSRP: 192.168.1.254 ← lo que configuran las PCs</span>
+
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/1</span>
+<span class="cli-comment">          → Interfaz de R1 conectada a la LAN de los clientes</span>
+
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby version 2</span>
+<span class="cli-comment">           → Usar HSRPv2 (recomendado, soporta hasta 4096 grupos)</span>
+
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby 1 ip 192.168.1.254</span>
+<span class="cli-comment">           → Grupo HSRP número 1</span>
+<span class="cli-comment">           → IP Virtual = 192.168.1.254 (esta IP la ponen las PCs como gateway)</span>
+
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby 1 priority 150</span>
+<span class="cli-comment">           → Prioridad 150 > default 100 → R1 gana la elección = activo</span>
+
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">standby 1 preempt</span>
+<span class="cli-comment">           → Si R1 cae y vuelve a levantarse, recupera el rol de activo</span>
+<span class="cli-comment">           → Sin preempt, el que sea activo seguiría siéndolo aunque R1 volviera</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Verificar estado de R1 en HSRP ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show standby brief</span>
+<span class="cli-out">Interface   Grp  Pri P State    Active   Standby         Virtual IP
+Gi0/0/1     1    150 P Active   local    192.168.1.3     192.168.1.254</span>
+<span class="cli-comment">→ State = Active ✓   P = preempt activo ✓</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 2</span> Configurar R3 como Router Standby HSRP</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">R3 — Prioridad default 100 → será el Standby</span></div>
+          <div class="cli-body"><span class="cli-comment">R3 usa la misma IP virtual y el mismo grupo (1) → se une al grupo HSRP</span>
+
+<span class="cli-prompt">R3(config)#</span> <span class="cli-cmd">interface gigabitethernet 0/0/1</span>
+
+<span class="cli-prompt">R3(config-if)#</span> <span class="cli-cmd">standby version 2</span>
+
+<span class="cli-prompt">R3(config-if)#</span> <span class="cli-cmd">standby 1 ip 192.168.1.254</span>
+<span class="cli-comment">           → ¡Misma VIP que R1! Así se sabe que forman el mismo grupo virtual</span>
+
+<span class="cli-prompt">R3(config-if)#</span> <span class="cli-cmd">standby 1 priority 100</span>
+<span class="cli-comment">           → Prioridad 100 < 150 (R1) → R3 será el standby automáticamente</span>
+
+<span class="cli-prompt">R3(config-if)#</span> <span class="cli-cmd">standby 1 preempt</span>
+<span class="cli-prompt">R3(config-if)#</span> <span class="cli-cmd">end</span>
+
+<span class="cli-comment">--- Verificar estado de R3 en HSRP ---</span>
+<span class="cli-prompt">R3#</span> <span class="cli-cmd">show standby brief</span>
+<span class="cli-out">Interface   Grp  Pri P State    Active         Standby  Virtual IP
+Gi0/0/1     1    100 P Standby  192.168.1.1    local    192.168.1.254</span>
+<span class="cli-comment">→ State = Standby ✓   Active = R1 (192.168.1.1) ✓</span></div>
+        </div>
+      </div>
+
+      <div class="lab-step">
+        <div class="lab-step-title"><span class="step-num">PASO 3</span> Verificar HSRP y probar el Failover</div>
+        <div class="cli-block">
+          <div class="cli-header"><div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div><span class="cli-label">Verificación completa y prueba de failover automático</span></div>
+          <div class="cli-body"><span class="cli-comment">--- Ver estado detallado del grupo HSRP ---</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show standby</span>
+<span class="cli-out">GigabitEthernet0/0/1 - Group 1 (version 2)
+  State is Active
+  Virtual IP address is 192.168.1.254    ← IP que usan las PCs
+  Active virtual MAC address is 0000.0c9f.f001
+  Hello time 3 sec, hold time 10 sec     ← Hello cada 3s, timeout 10s
+  Preemption enabled
+  Active router is local
+  Standby router is 192.168.1.3         ← R3 listo como reserva
+  Priority 150 (configured 150)</span>
+
+<span class="cli-comment">--- Confirmar que las PCs tienen la IP virtual como gateway ---</span>
+<span class="cli-out">PC-A Gateway: 192.168.1.254   ← IP Virtual, no la IP real del router</span>
+
+<span class="cli-comment">=== PRUEBA DE FAILOVER ===</span>
+<span class="cli-comment">Paso 1: Apagar la interfaz de R1 (simula falla del router activo)</span>
+<span class="cli-prompt">R1(config)#</span> <span class="cli-cmd">interface g0/0/1</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">shutdown</span>
+<span class="cli-comment">→ R3 deja de recibir hellos de R1</span>
+<span class="cli-comment">→ Después de 10 segundos, R3 asume el rol de ACTIVO automáticamente</span>
+
+<span class="cli-comment">Paso 2: Verificar en R3 que asumió el rol activo</span>
+<span class="cli-prompt">R3#</span> <span class="cli-cmd">show standby brief</span>
+<span class="cli-out">Interface   Grp  Pri P State   Active  Standby  Virtual IP
+Gi0/0/1     1    100 P Active  local   unknown  192.168.1.254</span>
+<span class="cli-comment">→ State cambió a Active ✓  (antes era Standby)</span>
+
+<span class="cli-comment">Paso 3: Las PCs siguen funcionando sin cambiar nada</span>
+<span class="cli-out">PC-A> ping 192.168.1.254   → ¡Sigue respondiendo! (ahora responde R3)
+PC-A> ping 8.8.8.8         → Internet también sigue funcionando</span>
+
+<span class="cli-comment">Paso 4: Volver a activar R1 — debe recuperar el rol activo (preempt)</span>
+<span class="cli-prompt">R1(config-if)#</span> <span class="cli-cmd">no shutdown</span>
+<span class="cli-comment">→ R1 vuelve, detecta que tiene mayor prioridad y hace preempt</span>
+<span class="cli-comment">→ R1 vuelve a ser el activo, R3 vuelve a standby</span>
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">show standby brief</span>
+<span class="cli-out">Interface   Grp  Pri P State   Active  Standby       Virtual IP
+Gi0/0/1     1    150 P Active  local   192.168.1.3   192.168.1.254</span>
+<span class="cli-comment">→ R1 volvió a ser Active ✓</span>
+
+<span class="cli-prompt">R1#</span> <span class="cli-cmd">copy running-config startup-config</span>
+<span class="cli-prompt">R3#</span> <span class="cli-cmd">copy running-config startup-config</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERENCIA RÁPIDA -->
+  <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 10px;">
+    Referencia Rápida — Comandos Semana 4
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+  </div>
+  <div class="cli-block">
+    <div class="cli-header">
+      <div class="cli-dots"><div class="cli-dot" style="background:#ff5f57"></div><div class="cli-dot" style="background:#febc2e"></div><div class="cli-dot" style="background:#28c840"></div></div>
+      <span class="cli-label">Quick Reference — DHCPv4 + HSRP</span>
+    </div>
+    <div class="cli-body"><span class="cli-comment">===== DHCP — SERVIDOR =====</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">ip dhcp excluded-address &lt;low&gt; [high]</span>        <span class="cli-comment">→ Excluir IPs del pool</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">ip dhcp pool &lt;nombre&gt;</span>                        <span class="cli-comment">→ Crear pool</span>
+<span class="cli-prompt">R(dhcp-config)#</span>  <span class="cli-cmd">network &lt;red&gt; &lt;mascara&gt;</span>             <span class="cli-comment">→ Rango de IPs a asignar</span>
+<span class="cli-prompt">R(dhcp-config)#</span>  <span class="cli-cmd">default-router &lt;ip&gt;</span>                 <span class="cli-comment">→ Gateway para los clientes</span>
+<span class="cli-prompt">R(dhcp-config)#</span>  <span class="cli-cmd">dns-server &lt;ip&gt;</span>                     <span class="cli-comment">→ DNS para los clientes</span>
+<span class="cli-prompt">R(dhcp-config)#</span>  <span class="cli-cmd">domain-name &lt;dominio&gt;</span>               <span class="cli-comment">→ Dominio (opcional)</span>
+<span class="cli-prompt">R(dhcp-config)#</span>  <span class="cli-cmd">lease &lt;dias&gt; [horas [min]]</span>          <span class="cli-comment">→ Tiempo de arrendamiento</span>
+<span class="cli-prompt">R(config)#</span>  <span class="cli-cmd">no service dhcp</span>  /  <span class="cli-cmd">service dhcp</span>          <span class="cli-comment">→ Deshabilitar/habilitar</span>
+
+<span class="cli-comment">===== DHCP — RELAY =====</span>
+<span class="cli-prompt">R(config-if)#</span>  <span class="cli-cmd">ip helper-address &lt;ip-servidor-dhcp&gt;</span>    <span class="cli-comment">→ En interfaz hacia clientes</span>
+
+<span class="cli-comment">===== DHCP — CLIENTE =====</span>
+<span class="cli-prompt">R(config-if)#</span>  <span class="cli-cmd">ip address dhcp</span>                          <span class="cli-comment">→ Pedir IP via DHCP</span>
+
+<span class="cli-comment">===== DHCP — VERIFICACIÓN =====</span>
+<span class="cli-prompt">R#</span>  <span class="cli-cmd">show ip dhcp binding</span>                          <span class="cli-comment">→ IPs asignadas y a qué MAC</span>
+<span class="cli-prompt">R#</span>  <span class="cli-cmd">show ip dhcp server statistics</span>                <span class="cli-comment">→ Contadores DORA</span>
+<span class="cli-prompt">R#</span>  <span class="cli-cmd">show running-config | section dhcp</span>           <span class="cli-comment">→ Ver config DHCP</span>
+<span class="cli-prompt">R#</span>  <span class="cli-cmd">show ip interface &lt;if&gt;</span>                        <span class="cli-comment">→ Ver helper-address</span>
+
+<span class="cli-comment">===== HSRP — CONFIGURACIÓN =====</span>
+<span class="cli-prompt">R(config-if)#</span>  <span class="cli-cmd">standby version 2</span>                        <span class="cli-comment">→ HSRPv2 (recomendado)</span>
+<span class="cli-prompt">R(config-if)#</span>  <span class="cli-cmd">standby &lt;grupo&gt; ip &lt;VIP&gt;</span>                 <span class="cli-comment">→ IP virtual del grupo</span>
+<span class="cli-prompt">R(config-if)#</span>  <span class="cli-cmd">standby &lt;grupo&gt; priority &lt;0-255&gt;</span>         <span class="cli-comment">→ Prioridad (default 100)</span>
+<span class="cli-prompt">R(config-if)#</span>  <span class="cli-cmd">standby &lt;grupo&gt; preempt</span>                  <span class="cli-comment">→ Recuperar rol activo al volver</span>
+
+<span class="cli-comment">===== HSRP — VERIFICACIÓN =====</span>
+<span class="cli-prompt">R#</span>  <span class="cli-cmd">show standby</span>                                  <span class="cli-comment">→ Estado detallado del grupo</span>
+<span class="cli-prompt">R#</span>  <span class="cli-cmd">show standby brief</span>                            <span class="cli-comment">→ Resumen rápido (más usado)</span></div>
+  </div>
+
+</div><!-- fin labs -->
+</main>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  if (name === 'teoria') document.querySelectorAll('.nav-pill')[0].classList.add('active');
+  else document.querySelectorAll('.nav-pill')[1].classList.add('active');
+}
+function setSection(name) {
+  const btn = name === 'teoria'
+    ? document.querySelectorAll('.tab-btn')[0]
+    : document.querySelectorAll('.tab-btn')[1];
+  showTab(name, btn);
+}
+function toggleLab(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('span:last-child');
+  const isOpen = body.style.display !== 'none' && body.style.display !== '';
+  if (isOpen) {
+    body.style.display = 'none';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.lab-solution-body').forEach(b => b.style.display = 'block');
+});
+</script>
+</body>
+</html>
